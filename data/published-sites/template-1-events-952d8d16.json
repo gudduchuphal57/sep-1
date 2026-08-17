@@ -1,0 +1,1448 @@
+{
+  "id": "template-1-events-952d8d16",
+  "templateId": "template-1",
+  "category": "Events",
+  "pageLinks": [
+    {
+      "label": "HOME",
+      "href": "/",
+      "badge": "02",
+      "active": true
+    },
+    {
+      "label": "ABOUT",
+      "href": "",
+      "children": [
+        {
+          "label": "Company Overview",
+          "href": "/src/pages/aboutus"
+        },
+        {
+          "label": "Our Story",
+          "href": "/src/pages/ourstory"
+        },
+        {
+          "label": "Vision & Mission",
+          "href": "/src/pages/vision"
+        },
+        {
+          "label": "Our Team",
+          "href": "/src/pages/teams"
+        },
+        {
+          "label": "Awards & Recognition",
+          "href": "/src/pages/award"
+        },
+        {
+          "label": "Global Presence",
+          "href": "/src/pages/globalpresence"
+        }
+      ]
+    },
+    {
+      "label": "EVENTS",
+      "href": "/src/pages/event"
+    },
+    {
+      "label": "GALLERY",
+      "href": "/src/pages/gallery"
+    },
+    {
+      "label": "BLOG",
+      "href": "/src/pages/blog"
+    },
+    {
+      "label": " CAREERS",
+      "href": "/src/pages/careers"
+    },
+    {
+      "label": "CONTACT",
+      "href": "/src/pages/contact"
+    }
+  ],
+  "sections": [
+    {
+      "type": "Header",
+      "variant": "Header-1",
+      "data": {
+        "Header-1": {
+          "logo": {
+            "text1": "E",
+            "text2": "vent",
+            "text3": "L",
+            "text4": "ab"
+          },
+          "headerBackgroundType": "solid",
+          "headerBackgroundColor": "#245c6e",
+          "headerGradientColor": "#0668ff",
+          "headerTextColor": "#ffffff",
+          "menu": [
+            {
+              "label": "HOME",
+              "href": "/",
+              "badge": "02",
+              "active": true
+            },
+            {
+              "label": "ABOUT",
+              "href": "",
+              "children": [
+                {
+                  "label": "Company Overview",
+                  "href": "/src/pages/aboutus"
+                },
+                {
+                  "label": "Our Story",
+                  "href": "/src/pages/ourstory"
+                },
+                {
+                  "label": "Vision & Mission",
+                  "href": "/src/pages/vision"
+                },
+                {
+                  "label": "Our Team",
+                  "href": "/src/pages/teams"
+                },
+                {
+                  "label": "Awards & Recognition",
+                  "href": "/src/pages/award"
+                },
+                {
+                  "label": "Global Presence",
+                  "href": "/src/pages/globalpresence"
+                }
+              ]
+            },
+            {
+              "label": "EVENTS",
+              "href": "/src/pages/event"
+            },
+            {
+              "label": "GALLERY",
+              "href": "/src/pages/gallery"
+            },
+            {
+              "label": "BLOG",
+              "href": "/src/pages/blog"
+            },
+            {
+              "label": " CAREERS",
+              "href": "/src/pages/careers"
+            },
+            {
+              "label": "CONTACT",
+              "href": "/src/pages/contact"
+            }
+          ],
+          "buttons": [
+            {
+              "label": "Generate Report",
+              "href": "#",
+              "variant": "primary"
+            },
+            {
+              "label": "Call Us",
+              "href": "#",
+              "variant": "secondary"
+            }
+          ],
+          "logoImage": "",
+          "logoTag": "Events",
+          "button": {
+            "label": "Book Now",
+            "href": "/src/pages/contact"
+          }
+        },
+        "Header-2": {
+          "logo": "Header2",
+          "headerBackgroundType": "solid",
+          "headerBackgroundColor": "#245c6e",
+          "headerGradientColor": "#0668ff",
+          "headerTextColor": "#ffffff",
+          "menu": [
+            {
+              "label": "Home",
+              "href": "#"
+            },
+            {
+              "label": "Services",
+              "href": "#"
+            },
+            {
+              "label": "Contact",
+              "href": "#"
+            }
+          ],
+          "buttons": [
+            {
+              "label": "Call 2",
+              "href": "#"
+            }
+          ]
+        }
+      },
+      "id": "shared-Header"
+    },
+    {
+      "type": "Banner",
+      "variant": "Banner-2",
+      "data": {
+        "Banner-1": {
+          "bannerBackgroundMode": "image",
+          "backgroundImage": "/bg1.jpg",
+          "backgroundImageTitle": "BG1",
+          "backgroundVideo": "",
+          "bannerBackgroundColor": "#0f172a",
+          "bannerGradientColor": "#0ea5e9",
+          "bannerHeight": 70,
+          "pretitle": "Free AI tools from Google Cloud",
+          "title": "Watch your cart shrink.",
+          "desc": "Google AI Studio is the fast path for developers, students, and researchers who want to try Gemini models and start building with the Gemini Developer API. We also offer free tools for common AI use cases, including translation, image and video analysis, speech-to-text, and more.",
+          "buttons": [
+            {
+              "label": "Learn more",
+              "href": "#"
+            }
+          ]
+        },
+        "Banner-2": {
+          "bannerBackgroundMode": "video",
+          "backgroundImage": "/bg2.jpg",
+          "backgroundImageTitle": "AI rays",
+          "backgroundVideo": "/video.mp4",
+          "bannerBackgroundColor": "#0f172a",
+          "bannerGradientColor": "#0ea5e9",
+          "bannerHeight": 70,
+          "pretitle": "Launch faster with AI",
+          "title": "Build smarter pages in minutes.",
+          "desc": "You can build AI agents with Gemini Enterprise Agent Platform. Get started by exploring Agent Garden for pre-built, customizable blueprints, complete with source code and configuration files.",
+          "buttons": [
+            {
+              "label": "Start building",
+              "href": "#"
+            }
+          ]
+        },
+        "Banner-3": {
+          "bannerHeight": 70,
+          "bannerSlides": [
+            {
+              "image": "/bg1.jpg",
+              "alt": "AI website builder dashboard",
+              "title": "Build Your Website Today",
+              "desc": "Create polished pages from reusable blocks that your backend can update with clean JSON.",
+              "button": {
+                "label": "Get Started",
+                "href": "#",
+                "variant": "primary"
+              }
+            },
+            {
+              "image": "/bg2.jpg",
+              "alt": "AI powered banner design",
+              "title": "Change Every Slide",
+              "desc": "Each slide has its own image, title, description, and button so content stays simple to manage.",
+              "button": {
+                "label": "View Demo",
+                "href": "#",
+                "variant": "primary"
+              }
+            },
+            {
+              "image": "/ai_rays.png",
+              "alt": "AI rays visual",
+              "title": "Ready For Backend Data",
+              "desc": "Send bannerSlides from the backend and this layout will render the slider automatically.",
+              "button": {
+                "label": "Learn More",
+                "href": "#",
+                "variant": "primary"
+              }
+            }
+          ]
+        }
+      },
+      "id": "home-Banner"
+    },
+    {
+      "type": "EventCategories",
+      "variant": "EventCategories-1",
+      "data": {},
+      "id": "home-EventCategories"
+    },
+    {
+      "type": "PopularEvents",
+      "variant": "PopularEvents-1",
+      "data": {},
+      "id": "home-PopularEvents"
+    },
+    {
+      "type": "WhyChooseUs",
+      "variant": "WhyChooseUs-1",
+      "data": {
+        "WhyChooseUs-1": {
+          "pretitle": "Why choose us",
+          "title": "A better experience from first click.",
+          "desc": "Use category-specific proof points to help visitors trust your business faster.",
+          "whyChooseUsItems": [
+            {
+              "title": "Clear guidance",
+              "desc": "Helpful details and simple next steps for every visitor.",
+              "stat": "01"
+            },
+            {
+              "title": "Trusted process",
+              "desc": "A focused flow designed around the user decision journey.",
+              "stat": "02"
+            },
+            {
+              "title": "Fast response",
+              "desc": "Make it easy for people to enquire, compare, and act.",
+              "stat": "03"
+            }
+          ]
+        },
+        "WhyChooseUs-2": {
+          "pretitle": "Why choose us",
+          "title": "A better experience from first click.",
+          "desc": "Use category-specific proof points to help visitors trust your business faster.",
+          "whyChooseUsItems": [
+            {
+              "title": "Clear guidance",
+              "desc": "Helpful details and simple next steps for every visitor.",
+              "stat": "01"
+            },
+            {
+              "title": "Trusted process",
+              "desc": "A focused flow designed around the user decision journey.",
+              "stat": "02"
+            },
+            {
+              "title": "Fast response",
+              "desc": "Make it easy for people to enquire, compare, and act.",
+              "stat": "03"
+            }
+          ]
+        },
+        "WhyChooseUs-3": {
+          "pretitle": "Why choose us",
+          "title": "A better experience from first click.",
+          "desc": "Use category-specific proof points to help visitors trust your business faster.",
+          "whyChooseUsItems": [
+            {
+              "title": "Clear guidance",
+              "desc": "Helpful details and simple next steps for every visitor.",
+              "stat": "01"
+            },
+            {
+              "title": "Trusted process",
+              "desc": "A focused flow designed around the user decision journey.",
+              "stat": "02"
+            },
+            {
+              "title": "Fast response",
+              "desc": "Make it easy for people to enquire, compare, and act.",
+              "stat": "03"
+            }
+          ]
+        },
+        "WhyChooseUs-4": {
+          "pretitle": "Why choose us",
+          "title": "A better experience from first click.",
+          "desc": "Use category-specific proof points to help visitors trust your business faster.",
+          "whyChooseUsItems": [
+            {
+              "title": "Clear guidance",
+              "desc": "Helpful details and simple next steps for every visitor.",
+              "stat": "01"
+            },
+            {
+              "title": "Trusted process",
+              "desc": "A focused flow designed around the user decision journey.",
+              "stat": "02"
+            },
+            {
+              "title": "Fast response",
+              "desc": "Make it easy for people to enquire, compare, and act.",
+              "stat": "03"
+            }
+          ]
+        }
+      },
+      "id": "home-WhyChooseUs"
+    },
+    {
+      "type": "Schedule",
+      "variant": "Schedule-1",
+      "data": {},
+      "id": "home-Schedule"
+    },
+    {
+      "type": "Speakers",
+      "variant": "Speakers-1",
+      "data": {},
+      "id": "home-Speakers"
+    },
+    {
+      "type": "About",
+      "variant": "About-1",
+      "data": {
+        "About-1": {
+          "pretitle": "Know more of us",
+          "title": "About Us",
+          "desc": "Google AI Studio is the fast path for developers, students, and researchers who want to try Gemini models and start building with the Gemini Developer API. We also offer free tools for common AI use cases, including translation, image and video analysis, speech-to-text, and more.",
+          "desc2": "This integration can help you spend less time on infrastructure management and more time on refining your models to solve complex business problems.",
+          "backgroundImage": "/bg2.jpg",
+          "backgroundImageTitle": "About image",
+          "buttons": [
+            {
+              "label": "Contact Us",
+              "href": "#"
+            }
+          ]
+        },
+        "About-2": {
+          "pretitle": "Know More of Us",
+          "title": "About Us",
+          "subtitle": "Luxurious Interior and Industrial Design",
+          "desc": "Modern Elegance: Designs featuring clean lines, neutral palettes, and high-quality materials.",
+          "backgroundImage": "/blackbay.png",
+          "backgroundImageTitle": "Modern luxury living room interior",
+          "sideImage": "/shaye.png",
+          "sideImageTitle": "Luxury interior chair design",
+          "philosophyTitle": "Our Philosophy",
+          "philosophyDesc": "At Britto Charette, we believe in creating luxurious, personalized environments that reflect our clients' tastes and lifestyles.",
+          "buttons": [
+            {
+              "label": "Contact Us",
+              "href": "#",
+              "variant": "primary"
+            }
+          ]
+        },
+        "About-3": {
+          "pretitle": "Know more of us",
+          "title": "About Us",
+          "desc": "Google AI Studio is the fast path for developers, students, and researchers who want to try Gemini models and start building with the Gemini Developer API. We also offer free tools for common AI use cases, including translation, image and video analysis, speech-to-text, and more.",
+          "desc2": "This integration can help you spend less time on infrastructure management and more time on refining your models to solve complex business problems.",
+          "backgroundImage": "/bg2.jpg",
+          "backgroundImageTitle": "About image",
+          "buttons": [
+            {
+              "label": "Contact Us",
+              "href": "#"
+            }
+          ]
+        }
+      },
+      "id": "home-About"
+    },
+    {
+      "type": "Trust",
+      "variant": "Trust-1",
+      "data": {},
+      "id": "home-Trust"
+    },
+    {
+      "type": "Testimonial",
+      "variant": "Testimonial-1",
+      "data": {
+        "Testimonial-1": {
+          "pretitle": "Testimonials",
+          "title": "Trusted by buyers, renters, and homeowners.",
+          "desc": "Real feedback from people who found their next home with HAUS Group.",
+          "testimonialItems": [
+            {
+              "name": "Aarav Mehta",
+              "role": "Homebuyer, South Delhi",
+              "quote": "They shortlisted three strong options in a week and made every site visit feel clear and pressure-free.",
+              "image": "https://i.pinimg.com/1200x/44/4e/8e/444e8ee62b093f4e48312a627b91486b.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Neha Kapoor",
+              "role": "First-time renter",
+              "quote": "Honest pricing, verified documents, and advisors who actually answered follow-up questions the same day.",
+              "image": "https://i.pinimg.com/1200x/16/93/de/1693de5f7a785c4ba56af61eca60aed3.jpg",
+              "rating": "4.9"
+            },
+            {
+              "name": "Rahul Verma",
+              "role": "Property investor",
+              "quote": "Neighborhood comps and rental potential were laid out simply — that made the decision much easier.",
+              "image": "https://i.pinimg.com/1200x/d0/18/d3/d018d3646a7d320d800a428b66d7c768.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Isha Malhotra",
+              "role": "Home seller",
+              "quote": "Listing support felt premium without being pushy. We closed with a serious buyer faster than expected.",
+              "image": "https://i.pinimg.com/1200x/c1/c2/51/c1c2516462d7050a0db5ee42e9ea6ef5.jpg",
+              "rating": "4.8"
+            },
+            {
+              "name": "Kabir Anand",
+              "role": "Relocating family",
+              "quote": "School catchments, commute times, and amenity checks were all part of the shortlist. Huge help.",
+              "image": "https://i.pinimg.com/1200x/af/e7/23/afe723e9b040978dd864edcd02c5b641.jpg",
+              "rating": "4.7"
+            },
+            {
+              "name": "Sara Khan",
+              "role": "Apartment buyer",
+              "quote": "From enquiry to registration, the process stayed organized and we always knew the next step.",
+              "image": "https://i.pinimg.com/736x/72/ff/ce/72ffce7dd84957cf5c5bfe270db6afe1.jpg",
+              "rating": "5.0"
+            }
+          ]
+        },
+        "Testimonial-2": {
+          "pretitle": "Testimonials",
+          "title": "Trusted by buyers, renters, and homeowners.",
+          "desc": "Real feedback from people who found their next home with HAUS Group.",
+          "testimonialItems": [
+            {
+              "name": "Aarav Mehta",
+              "role": "Homebuyer, South Delhi",
+              "quote": "They shortlisted three strong options in a week and made every site visit feel clear and pressure-free.",
+              "image": "https://i.pinimg.com/1200x/44/4e/8e/444e8ee62b093f4e48312a627b91486b.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Neha Kapoor",
+              "role": "First-time renter",
+              "quote": "Honest pricing, verified documents, and advisors who actually answered follow-up questions the same day.",
+              "image": "https://i.pinimg.com/1200x/16/93/de/1693de5f7a785c4ba56af61eca60aed3.jpg",
+              "rating": "4.9"
+            },
+            {
+              "name": "Rahul Verma",
+              "role": "Property investor",
+              "quote": "Neighborhood comps and rental potential were laid out simply — that made the decision much easier.",
+              "image": "https://i.pinimg.com/1200x/d0/18/d3/d018d3646a7d320d800a428b66d7c768.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Isha Malhotra",
+              "role": "Home seller",
+              "quote": "Listing support felt premium without being pushy. We closed with a serious buyer faster than expected.",
+              "image": "https://i.pinimg.com/1200x/c1/c2/51/c1c2516462d7050a0db5ee42e9ea6ef5.jpg",
+              "rating": "4.8"
+            },
+            {
+              "name": "Kabir Anand",
+              "role": "Relocating family",
+              "quote": "School catchments, commute times, and amenity checks were all part of the shortlist. Huge help.",
+              "image": "https://i.pinimg.com/1200x/af/e7/23/afe723e9b040978dd864edcd02c5b641.jpg",
+              "rating": "4.7"
+            },
+            {
+              "name": "Sara Khan",
+              "role": "Apartment buyer",
+              "quote": "From enquiry to registration, the process stayed organized and we always knew the next step.",
+              "image": "https://i.pinimg.com/736x/72/ff/ce/72ffce7dd84957cf5c5bfe270db6afe1.jpg",
+              "rating": "5.0"
+            }
+          ]
+        },
+        "Testimonial-3": {
+          "pretitle": "Testimonials",
+          "title": "Trusted by buyers, renters, and homeowners.",
+          "desc": "Real feedback from people who found their next home with HAUS Group.",
+          "testimonialItems": [
+            {
+              "name": "Aarav Mehta",
+              "role": "Homebuyer, South Delhi",
+              "quote": "They shortlisted three strong options in a week and made every site visit feel clear and pressure-free.",
+              "image": "https://i.pinimg.com/1200x/44/4e/8e/444e8ee62b093f4e48312a627b91486b.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Neha Kapoor",
+              "role": "First-time renter",
+              "quote": "Honest pricing, verified documents, and advisors who actually answered follow-up questions the same day.",
+              "image": "https://i.pinimg.com/1200x/16/93/de/1693de5f7a785c4ba56af61eca60aed3.jpg",
+              "rating": "4.9"
+            },
+            {
+              "name": "Rahul Verma",
+              "role": "Property investor",
+              "quote": "Neighborhood comps and rental potential were laid out simply — that made the decision much easier.",
+              "image": "https://i.pinimg.com/1200x/d0/18/d3/d018d3646a7d320d800a428b66d7c768.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Isha Malhotra",
+              "role": "Home seller",
+              "quote": "Listing support felt premium without being pushy. We closed with a serious buyer faster than expected.",
+              "image": "https://i.pinimg.com/1200x/c1/c2/51/c1c2516462d7050a0db5ee42e9ea6ef5.jpg",
+              "rating": "4.8"
+            },
+            {
+              "name": "Kabir Anand",
+              "role": "Relocating family",
+              "quote": "School catchments, commute times, and amenity checks were all part of the shortlist. Huge help.",
+              "image": "https://i.pinimg.com/1200x/af/e7/23/afe723e9b040978dd864edcd02c5b641.jpg",
+              "rating": "4.7"
+            },
+            {
+              "name": "Sara Khan",
+              "role": "Apartment buyer",
+              "quote": "From enquiry to registration, the process stayed organized and we always knew the next step.",
+              "image": "https://i.pinimg.com/736x/72/ff/ce/72ffce7dd84957cf5c5bfe270db6afe1.jpg",
+              "rating": "5.0"
+            }
+          ]
+        }
+      },
+      "id": "home-Testimonial"
+    },
+    {
+      "type": "FAQ",
+      "variant": "FAQ-1",
+      "data": {
+        "FAQ-1": {
+          "pretitle": "FAQ",
+          "title": "Frequently asked questions",
+          "faqItems": [
+            {
+              "question": "How quickly can we start?",
+              "answer": "You can start as soon as the basic details are ready."
+            },
+            {
+              "question": "Can this content be changed?",
+              "answer": "Yes, text and media can be customized from the editor data."
+            },
+            {
+              "question": "Does this match the selected category?",
+              "answer": "Yes, inserted sections merge with the active category JSON."
+            }
+          ]
+        },
+        "FAQ-2": {
+          "pretitle": "FAQ",
+          "title": "Frequently asked questions",
+          "faqItems": [
+            {
+              "question": "How quickly can we start?",
+              "answer": "You can start as soon as the basic details are ready."
+            },
+            {
+              "question": "Can this content be changed?",
+              "answer": "Yes, text and media can be customized from the editor data."
+            },
+            {
+              "question": "Does this match the selected category?",
+              "answer": "Yes, inserted sections merge with the active category JSON."
+            }
+          ]
+        },
+        "FAQ-3": {
+          "pretitle": "FAQ",
+          "title": "Frequently asked questions",
+          "faqItems": [
+            {
+              "question": "How quickly can we start?",
+              "answer": "You can start as soon as the basic details are ready."
+            },
+            {
+              "question": "Can this content be changed?",
+              "answer": "Yes, text and media can be customized from the editor data."
+            },
+            {
+              "question": "Does this match the selected category?",
+              "answer": "Yes, inserted sections merge with the active category JSON."
+            }
+          ]
+        },
+        "FAQ-4": {
+          "pretitle": "FAQ",
+          "title": "Frequently asked questions",
+          "faqItems": [
+            {
+              "question": "How quickly can we start?",
+              "answer": "You can start as soon as the basic details are ready."
+            },
+            {
+              "question": "Can this content be changed?",
+              "answer": "Yes, text and media can be customized from the editor data."
+            },
+            {
+              "question": "Does this match the selected category?",
+              "answer": "Yes, inserted sections merge with the active category JSON."
+            }
+          ]
+        }
+      },
+      "id": "home-FAQ"
+    },
+    {
+      "id": "about-AboutUsPage-1",
+      "page": "about",
+      "type": "AboutUsPage",
+      "variant": "EventAboutUsPage1",
+      "data": {
+        "EventAboutUsPage1": {}
+      }
+    },
+    {
+      "id": "our-story-OurStory-1",
+      "page": "our-story",
+      "type": "OurStory",
+      "variant": "EventOurStory1",
+      "data": {
+        "EventOurStory1": {}
+      }
+    },
+    {
+      "id": "vision-VisionMission-1",
+      "page": "vision",
+      "type": "VisionMission",
+      "variant": "EventVisionMission1",
+      "data": {
+        "EventVisionMission1": {}
+      }
+    },
+    {
+      "id": "teams-Teams-1",
+      "page": "teams",
+      "type": "Teams",
+      "variant": "EventTeams1",
+      "data": {
+        "EventTeams1": {}
+      }
+    },
+    {
+      "id": "awards-AwardsPage-1",
+      "page": "awards",
+      "type": "AwardsPage",
+      "variant": "EventAwardsPage1",
+      "data": {
+        "EventAwardsPage1": {
+          "pretitle": "Awards",
+          "title": "Recognition earned across Delhi NCR.",
+          "desc": "Industry honors for verified listings, transparent advice, and the way our advisors stay present from first shortlist to keys.",
+          "awardItems": [
+            {
+              "year": "2023",
+              "title": "Best Results — Enterprise",
+              "org": "G2 Winter Awards",
+              "desc": "Recognized for delivering outstanding results and a consistently strong customer experience.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview%20(3).png"
+            },
+            {
+              "year": "2022",
+              "title": "Front Runners",
+              "org": "Software Advice",
+              "desc": "Named a Front Runner for trusted service, usability, and customer satisfaction.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview%20(2).png"
+            },
+            {
+              "year": "2023",
+              "title": "Leader — Winter",
+              "org": "G2 Winter Awards",
+              "desc": "Recognized as an industry leader for dependable service and customer-focused results.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview%20(1).png"
+            },
+            {
+              "year": "2021",
+              "title": "Best Ease of Use",
+              "org": "Capterra",
+              "desc": "Awarded for an intuitive experience that makes every step clear and easy to complete.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview.png"
+            },
+            {
+              "year": "2023",
+              "title": "Leader — Enterprise",
+              "org": "G2 Winter Awards",
+              "desc": "Recognized as an Enterprise Leader for trusted service and strong customer results.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview%20(4).png"
+            }
+          ],
+          "breadcrumb": [
+            {
+              "label": "Home",
+              "href": "/"
+            },
+            {
+              "label": "Awards",
+              "href": "/awards"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "gallery-PageBanner-1",
+      "page": "gallery",
+      "type": "PageBanner",
+      "variant": "RealEstateInnerBanner1",
+      "data": {
+        "RealEstateInnerBanner1": {}
+      }
+    },
+    {
+      "id": "gallery-GalleryCollection-1",
+      "page": "gallery",
+      "type": "GalleryCollection",
+      "variant": "RealEstateGalleryCollection1",
+      "data": {
+        "RealEstateGalleryCollection1": {}
+      }
+    },
+    {
+      "id": "blog-Blog-1",
+      "page": "blog",
+      "type": "Blog",
+      "variant": "EventBlog1",
+      "data": {
+        "EventBlog1": {}
+      }
+    },
+    {
+      "id": "how-to-pack-your-stuff-BlogDetails-1",
+      "page": "how-to-pack-your-stuff",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "https://i.pinimg.com/736x/19/d9/2b/19d92b013b71a16f6442eb9609436a9b.jpg",
+          "alt": "Moving into a new home with packed boxes and furniture.",
+          "title": "How to pack your stuff",
+          "date": "May 20, 2024",
+          "href": "/blog/how-to-pack-your-stuff",
+          "excerpt": "A simple room-by-room checklist for a smoother move, from clear labels to your first-night essentials."
+        }
+      }
+    },
+    {
+      "id": "features-that-buyers-have-come-to-expect-BlogDetails-2",
+      "page": "features-that-buyers-have-come-to-expect",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "https://i.pinimg.com/736x/77/c0/a5/77c0a5138e60c0fa76697e4442ff2d48.jpg",
+          "alt": "Modern living room features buyers expect today.",
+          "title": "Features that buyers have come to expect",
+          "date": "May 18, 2024",
+          "href": "/blog/features-that-buyers-have-come-to-expect",
+          "excerpt": "The amenities, documentation, and everyday conveniences that frequently decide a buyer's shortlist."
+        }
+      }
+    },
+    {
+      "id": "living-spaces-that-feel-like-home-BlogDetails-3",
+      "page": "living-spaces-that-feel-like-home",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "https://i.pinimg.com/736x/5e/d3/8e/5ed38e4d7d65d7c9e088cd3a68312d92.jpg",
+          "alt": "Bright living space with natural light and soft interiors.",
+          "title": "Living spaces that feel like home",
+          "date": "May 12, 2024",
+          "href": "/blog/living-spaces-that-feel-like-home",
+          "excerpt": "Why natural light, practical storage, ventilation, and a usable layout matter more than decorative finishes.",
+          "body": "Light, storage, and layout matter more than fancy finishes. Cross-ventilation, a usable balcony, and a kitchen that fits daily cooking make a flat feel liveable from day one."
+        }
+      }
+    },
+    {
+      "id": "premium-details-that-raise-value-BlogDetails-4",
+      "page": "premium-details-that-raise-value",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "https://i.pinimg.com/1200x/18/31/f2/1831f216593fa80c3b37644c7815f0ad.jpg",
+          "alt": "Premium exterior detail of a modern residence at dusk.",
+          "title": "Premium details that raise value",
+          "date": "May 08, 2024",
+          "href": "/blog/premium-details-that-raise-value",
+          "excerpt": "Small construction and maintenance details that can signal stronger long-term value and resale potential."
+        }
+      }
+    },
+    {
+      "id": "what-to-check-before-a-night-viewing-BlogDetails-5",
+      "page": "what-to-check-before-a-night-viewing",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "https://i.pinimg.com/736x/f3/71/56/f37156ff1ecc90b1e0a2ef50eea5a731.jpg",
+          "alt": "Modern luxury home at sunset.",
+          "title": "What to check before a night viewing",
+          "date": "May 02, 2024",
+          "href": "/blog/what-to-check-before-a-night-viewing",
+          "excerpt": "Use an evening visit to evaluate real traffic, street lighting, neighborhood noise, and the approach road."
+        }
+      }
+    },
+    {
+      "id": "choosing-the-right-floor-and-view-BlogDetails-6",
+      "page": "choosing-the-right-floor-and-view",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "https://i.pinimg.com/1200x/23/91/89/2391894774d4909707eb01e45c03f659.jpg",
+          "alt": "Apartment interior with large windows and city views.",
+          "title": "Choosing the right floor and view",
+          "date": "Apr 28, 2024",
+          "href": "/blog/choosing-the-right-floor-and-view",
+          "excerpt": "Compare light, heat, lift reliance, road noise, and accessibility before choosing your apartment floor."
+        }
+      }
+    },
+    {
+      "id": "contact-Contact-1",
+      "page": "contact",
+      "type": "Contact",
+      "variant": "EventContact1",
+      "data": {
+        "EventContact1": {}
+      }
+    },
+    {
+      "id": "careers-Careers-1",
+      "page": "careers",
+      "type": "Careers",
+      "variant": "EventCareers1",
+      "data": {
+        "EventCareers1": {}
+      }
+    },
+    {
+      "id": "support-Support-1",
+      "page": "support",
+      "type": "Support",
+      "variant": "EventSupport1",
+      "data": {
+        "EventSupport1": {}
+      }
+    },
+    {
+      "id": "privacy-PrivacyPolicy-1",
+      "page": "privacy",
+      "type": "PrivacyPolicy",
+      "variant": "EventPrivacyPolicy1",
+      "data": {
+        "EventPrivacyPolicy1": {}
+      }
+    },
+    {
+      "id": "terms-TermsCondition-1",
+      "page": "terms",
+      "type": "TermsCondition",
+      "variant": "EventTermsCondition1",
+      "data": {
+        "EventTermsCondition1": {}
+      }
+    },
+    {
+      "id": "global-presence-GlobalPresence-1",
+      "page": "global-presence",
+      "type": "GlobalPresence",
+      "variant": "EventGlobalPresence1",
+      "data": {
+        "EventGlobalPresence1": {}
+      }
+    },
+    {
+      "id": "case-study-CaseStudy-1",
+      "page": "case-study",
+      "type": "CaseStudy",
+      "variant": "EventCaseStudy1",
+      "data": {
+        "EventCaseStudy1": {}
+      }
+    },
+    {
+      "id": "CustomPage-services",
+      "page": "services",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-company-overview",
+      "page": "company-overview",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Company Overview",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Company Overview",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Company Overview",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-vision-&-mission",
+      "page": "vision-&-mission",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Vision & Mission",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Vision & Mission",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Vision & Mission",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-our-team",
+      "page": "our-team",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Our Team",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Our Team",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Our Team",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-awards-&-recognition",
+      "page": "awards-&-recognition",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Awards & Recognition",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Awards & Recognition",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Awards & Recognition",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-events",
+      "page": "events",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "EVENTS",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "EVENTS",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "EVENTS",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "type": "Footer",
+      "variant": "Footer-1",
+      "data": {
+        "Footer-1": {
+          "logo": "BlackBay",
+          "desc": "Editable website content powered by one category and template JSON file.",
+          "footerBackgroundType": "solid",
+          "footerBackgroundColor": "#0d1f2a",
+          "footerGradientColor": "#1d4ed8",
+          "footerTextColor": "#ffffff",
+          "footerMutedTextColor": "#cbd5e1",
+          "footerSocialLinks": [
+            {
+              "label": "facebook",
+              "href": "#"
+            },
+            {
+              "label": "instagram",
+              "href": "#"
+            },
+            {
+              "label": "twitter",
+              "href": "#"
+            },
+            {
+              "label": "linkedin",
+              "href": "#"
+            }
+          ],
+          "footerColumns": [
+            {
+              "title": "Pages",
+              "links": [
+                {
+                  "label": "Home",
+                  "href": "#"
+                },
+                {
+                  "label": "About",
+                  "href": "#about"
+                },
+                {
+                  "label": "Service",
+                  "href": "#service"
+                },
+                {
+                  "label": "Gallery",
+                  "href": "#gallery"
+                },
+                {
+                  "label": "Contact",
+                  "href": "#contact"
+                }
+              ]
+            },
+            {
+              "title": "Sections",
+              "links": [
+                {
+                  "label": "Listings",
+                  "href": "#"
+                },
+                {
+                  "label": "Services",
+                  "href": "#"
+                },
+                {
+                  "label": "Programs",
+                  "href": "#"
+                },
+                {
+                  "label": "FAQ",
+                  "href": "#faq"
+                }
+              ]
+            }
+          ],
+          "footerContact": {
+            "location": "India",
+            "email": "hello@example.com",
+            "phone": "+91 98765 43210"
+          },
+          "footerLegalLinks": [
+            {
+              "label": "Privacy Policy",
+              "href": "#privacy"
+            },
+            {
+              "label": "Terms",
+              "href": "#terms"
+            }
+          ],
+          "copyrightText": "Copyright 2026. All rights reserved.",
+          "logoImage": "/etacard.png",
+          "logoImageTitle": "ETA Card logo",
+          "whatsappLink": "https://api.whatsapp.com/send?phone=962786336414",
+          "callLink": "tel:+919876543210"
+        },
+        "Footer-2": {
+          "logo": "BlackBay",
+          "desc": "Editable website content powered by one category and template JSON file.",
+          "footerBackgroundType": "solid",
+          "footerBackgroundColor": "#0d1f2a",
+          "footerGradientColor": "#1d4ed8",
+          "footerTextColor": "#ffffff",
+          "footerMutedTextColor": "#cbd5e1",
+          "footerSocialLinks": [
+            {
+              "label": "facebook",
+              "href": "#"
+            },
+            {
+              "label": "instagram",
+              "href": "#"
+            },
+            {
+              "label": "twitter",
+              "href": "#"
+            },
+            {
+              "label": "linkedin",
+              "href": "#"
+            }
+          ],
+          "footerColumns": [
+            {
+              "title": "Pages",
+              "links": [
+                {
+                  "label": "Home",
+                  "href": "#"
+                },
+                {
+                  "label": "About",
+                  "href": "#about"
+                },
+                {
+                  "label": "Service",
+                  "href": "#service"
+                },
+                {
+                  "label": "Gallery",
+                  "href": "#gallery"
+                },
+                {
+                  "label": "Contact",
+                  "href": "#contact"
+                }
+              ]
+            },
+            {
+              "title": "Sections",
+              "links": [
+                {
+                  "label": "Listings",
+                  "href": "#"
+                },
+                {
+                  "label": "Services",
+                  "href": "#"
+                },
+                {
+                  "label": "Programs",
+                  "href": "#"
+                },
+                {
+                  "label": "FAQ",
+                  "href": "#faq"
+                }
+              ]
+            }
+          ],
+          "footerContact": {
+            "location": "India",
+            "email": "hello@example.com",
+            "phone": "+91 98765 43210"
+          },
+          "footerLegalLinks": [
+            {
+              "label": "Privacy Policy",
+              "href": "#privacy"
+            },
+            {
+              "label": "Terms",
+              "href": "#terms"
+            }
+          ],
+          "copyrightText": "Copyright 2026. All rights reserved.",
+          "logoImage": "/etacard.png",
+          "logoImageTitle": "ETA Card logo",
+          "whatsappLink": "https://api.whatsapp.com/send?phone=962786336414",
+          "callLink": "tel:+919876543210"
+        },
+        "Footer-3": {
+          "logo": "BlackBay",
+          "desc": "Editable website content powered by one category and template JSON file.",
+          "footerBackgroundType": "solid",
+          "footerBackgroundColor": "#0d1f2a",
+          "footerGradientColor": "#1d4ed8",
+          "footerTextColor": "#ffffff",
+          "footerMutedTextColor": "#cbd5e1",
+          "footerSocialLinks": [
+            {
+              "label": "facebook",
+              "href": "#"
+            },
+            {
+              "label": "instagram",
+              "href": "#"
+            },
+            {
+              "label": "twitter",
+              "href": "#"
+            },
+            {
+              "label": "linkedin",
+              "href": "#"
+            }
+          ],
+          "footerColumns": [
+            {
+              "title": "Pages",
+              "links": [
+                {
+                  "label": "Home",
+                  "href": "#"
+                },
+                {
+                  "label": "About",
+                  "href": "#about"
+                },
+                {
+                  "label": "Service",
+                  "href": "#service"
+                },
+                {
+                  "label": "Gallery",
+                  "href": "#gallery"
+                },
+                {
+                  "label": "Contact",
+                  "href": "#contact"
+                }
+              ]
+            },
+            {
+              "title": "Sections",
+              "links": [
+                {
+                  "label": "Listings",
+                  "href": "#"
+                },
+                {
+                  "label": "Services",
+                  "href": "#"
+                },
+                {
+                  "label": "Programs",
+                  "href": "#"
+                },
+                {
+                  "label": "FAQ",
+                  "href": "#faq"
+                }
+              ]
+            }
+          ],
+          "footerContact": {
+            "location": "India",
+            "email": "hello@example.com",
+            "phone": "+91 98765 43210"
+          },
+          "footerLegalLinks": [
+            {
+              "label": "Privacy Policy",
+              "href": "#privacy"
+            },
+            {
+              "label": "Terms",
+              "href": "#terms"
+            }
+          ],
+          "copyrightText": "Copyright 2026. All rights reserved.",
+          "logoImage": "/etacard.png",
+          "logoImageTitle": "ETA Card logo",
+          "whatsappLink": "https://api.whatsapp.com/send?phone=962786336414",
+          "callLink": "tel:+919876543210"
+        }
+      },
+      "id": "shared-Footer"
+    }
+  ],
+  "publishedAt": "2026-08-11T06:46:04.945Z"
+}

@@ -1,0 +1,2453 @@
+{
+  "id": "template-1-events-287e965c",
+  "templateId": "template-1",
+  "category": "Events",
+  "pageLinks": [
+    {
+      "label": "HOME",
+      "href": "/",
+      "badge": "02",
+      "active": true
+    },
+    {
+      "label": "ABOUT",
+      "href": "",
+      "children": [
+        {
+          "label": "Company Overview",
+          "href": "/src/pages/aboutus"
+        },
+        {
+          "label": "Our Story",
+          "href": "/src/pages/ourstory"
+        },
+        {
+          "label": "Vision & Mission",
+          "href": "/src/pages/vision"
+        },
+        {
+          "label": "Our Team",
+          "href": "/src/pages/teams"
+        },
+        {
+          "label": "Awards & Recognition",
+          "href": "/src/pages/award"
+        },
+        {
+          "label": "Global Presence",
+          "href": "/src/pages/globalpresence"
+        }
+      ]
+    },
+    {
+      "label": "EVENTS",
+      "href": "/src/pages/event"
+    },
+    {
+      "label": "GALLERY",
+      "href": "/src/pages/gallery"
+    },
+    {
+      "label": "BLOG",
+      "href": "/src/pages/blog"
+    },
+    {
+      "label": " CAREERS",
+      "href": "/src/pages/careers"
+    },
+    {
+      "label": "CONTACT",
+      "href": "/src/pages/contact"
+    }
+  ],
+  "sections": [
+    {
+      "type": "Header",
+      "variant": "Header-1",
+      "data": {
+        "Header-1": {
+          "logo": "Events",
+          "headerBackgroundType": "solid",
+          "headerBackgroundColor": "#F3F4F6",
+          "headerGradientColor": "#ffffff",
+          "headerTextColor": "#475569",
+          "menu": [
+            {
+              "label": "HOME",
+              "href": "/",
+              "badge": "02",
+              "active": true
+            },
+            {
+              "label": "ABOUT",
+              "href": "",
+              "children": [
+                {
+                  "label": "Company Overview",
+                  "href": "/src/pages/aboutus"
+                },
+                {
+                  "label": "Our Story",
+                  "href": "/src/pages/ourstory"
+                },
+                {
+                  "label": "Vision & Mission",
+                  "href": "/src/pages/vision"
+                },
+                {
+                  "label": "Our Team",
+                  "href": "/src/pages/teams"
+                },
+                {
+                  "label": "Awards & Recognition",
+                  "href": "/src/pages/award"
+                },
+                {
+                  "label": "Global Presence",
+                  "href": "/src/pages/globalpresence"
+                }
+              ]
+            },
+            {
+              "label": "EVENTS",
+              "href": "/src/pages/event"
+            },
+            {
+              "label": "GALLERY",
+              "href": "/src/pages/gallery"
+            },
+            {
+              "label": "BLOG",
+              "href": "/src/pages/blog"
+            },
+            {
+              "label": " CAREERS",
+              "href": "/src/pages/careers"
+            },
+            {
+              "label": "CONTACT",
+              "href": "/src/pages/contact"
+            }
+          ],
+          "buttons": [
+            {
+              "label": "Generate Report",
+              "href": "#",
+              "variant": "primary"
+            },
+            {
+              "label": "Call Us",
+              "href": "#",
+              "variant": "secondary"
+            }
+          ],
+          "logoImage": "/categories/events/template1/logo/logoo.png",
+          "button": {
+            "label": "Book Now",
+            "href": "/src/pages/contact"
+          }
+        },
+        "Header-2": {
+          "logo": "Header2",
+          "headerBackgroundType": "solid",
+          "headerBackgroundColor": "#245c6e",
+          "headerGradientColor": "#0668ff",
+          "headerTextColor": "#ffffff",
+          "menu": [
+            {
+              "label": "Home",
+              "href": "#"
+            },
+            {
+              "label": "Services",
+              "href": "#"
+            },
+            {
+              "label": "Contact",
+              "href": "#"
+            }
+          ],
+          "buttons": [
+            {
+              "label": "Call 2",
+              "href": "#"
+            }
+          ]
+        }
+      },
+      "id": "shared-Header"
+    },
+    {
+      "type": "Banner",
+      "variant": "Banner-1",
+      "data": {
+        "Banner-1": {
+          "bannerBackgroundMode": "image",
+          "backgroundImage": "/categories/events/template1/banner.jpg",
+          "backgroundImageTitle": "Business growth team",
+          "backgroundVideo": "",
+          "bannerBackgroundColor": "#0f172a",
+          "bannerGradientColor": "#0ea5e9",
+          "bannerHeight": 100,
+          "pretitle": "Celebrate Every Special Moment",
+          "title": "Turn ambitious business ideas into measurable growth.",
+          "desc": "Showcase your expertise, services, results, and customer success through a modern business experience.",
+          "buttons": [
+            {
+              "label": "Book Event",
+              "href": "/src/pages/contact",
+              "variant": "primary"
+            },
+            {
+              "label": "View Event Plan",
+              "href": "/src/pages/event",
+              "variant": "secondary"
+            }
+          ],
+          "badge": "Built to perform",
+          "decorativeNumber": "02",
+          "bannerSlides": [
+            {
+              "image": "/categories/events/template1/ban2.jpg",
+              "alt": "Business growth strategy",
+              "title": "Exceptional Event Planning For Every Special Occasion Today.",
+              "desc": "Showcase your expertise, services, results, and customer success through a modern business experience.",
+              "button": {
+                "label": "Book Event",
+                "href": "/src/pages/contact",
+                "variant": "primary"
+              }
+            },
+            {
+              "image": "/categories/events/template1/banner6.jpg",
+              "alt": "Modern business workspace",
+              "title": "Crafting Extraordinary Experiences For Every Grand Occasion.",
+              "desc": "Showcase your expertise, services, results, and customer success through a modern business experience.",
+              "button": {
+                "label": "Book Event",
+                "href": "/src/pages/contact",
+                "variant": "secondary"
+              }
+            },
+            {
+              "image": "/categories/events/template1/ban1.jpg",
+              "alt": "Elegant event celebration",
+              "title": "Delivering Flawless Events from Concept Celebration.",
+              "desc": "Create immersive moments with thoughtful design, expert coordination, and memorable execution.",
+              "button": {
+                "label": "Book Event",
+                "href": "/src/pages/contact",
+                "variant": "secondary"
+              }
+            }
+          ]
+        },
+        "Banner-2": {
+          "bannerBackgroundMode": "video",
+          "backgroundImage": "/bg2.jpg",
+          "backgroundImageTitle": "AI rays",
+          "backgroundVideo": "/video.mp4",
+          "bannerBackgroundColor": "#0f172a",
+          "bannerGradientColor": "#0ea5e9",
+          "bannerHeight": 70,
+          "pretitle": "Launch faster with AI",
+          "title": "Build smarter pages in minutes.",
+          "desc": "You can build AI agents with Gemini Enterprise Agent Platform. Get started by exploring Agent Garden for pre-built, customizable blueprints, complete with source code and configuration files.",
+          "buttons": [
+            {
+              "label": "Start building",
+              "href": "#"
+            }
+          ]
+        },
+        "Banner-3": {
+          "bannerHeight": 70,
+          "bannerSlides": [
+            {
+              "image": "/bg1.jpg",
+              "alt": "AI website builder dashboard",
+              "title": "Build Your Website Today",
+              "desc": "Create polished pages from reusable blocks that your backend can update with clean JSON.",
+              "button": {
+                "label": "Get Started",
+                "href": "#",
+                "variant": "primary"
+              }
+            },
+            {
+              "image": "/bg2.jpg",
+              "alt": "AI powered banner design",
+              "title": "Change Every Slide",
+              "desc": "Each slide has its own image, title, description, and button so content stays simple to manage.",
+              "button": {
+                "label": "View Demo",
+                "href": "#",
+                "variant": "primary"
+              }
+            },
+            {
+              "image": "/ai_rays.png",
+              "alt": "AI rays visual",
+              "title": "Ready For Backend Data",
+              "desc": "Send bannerSlides from the backend and this layout will render the slider automatically.",
+              "button": {
+                "label": "Learn More",
+                "href": "#",
+                "variant": "primary"
+              }
+            }
+          ]
+        }
+      },
+      "id": "home-Banner"
+    },
+    {
+      "type": "About",
+      "variant": "About-1",
+      "data": {
+        "About-1": {
+          "pretitle": "About",
+          "title": "About Events",
+          "desc": "We create unforgettable events with creativity, precision, and passion. From weddings and corporate gatherings to birthdays weddings, corporate events, birthday parties, social gatherings and private celebrations.",
+          "desc2": "At our event management company, we believe every celebration deserves to be extraordinary. With years of experience in planning weddings, corporate events, birthday parties, social gatherings, and private celebrations, we handle every detail with creativity, precision, and professionalism. From venue selection and elegant decorations to catering, entertainment, photography, and on-site coordination, our dedicated team ensures a seamless experience from start to finish. We work closely.",
+          "backgroundImage": "/categories/events/template1/about.jpg",
+          "backgroundImageTitle": "Business office",
+          "buttons": [
+            {
+              "label": "View More",
+              "href": "/about/aboutus",
+              "variant": "primary"
+            }
+          ],
+          "subtitle": "Elegant Events Delivered",
+          "sideImage": "/categories/events/template1/about.jpg",
+          "sideImageTitle": "Business design",
+          "image2": "/categories/events/template1/corporateabout.jpg",
+          "image2Alt": "Event Decoration",
+          "stats1": [
+            {
+              "value": "10+",
+              "label": "Years Experience"
+            }
+          ],
+          "features": [
+            {
+              "icon": "IconUsers",
+              "title": "Wedding Planning",
+              "desc": "Personalized ceremonies and full venue coordination."
+            },
+            {
+              "icon": "IconBuildingStore",
+              "title": "Venue Decoration",
+              "desc": "Signature decor that brings your vision to life."
+            },
+            {
+              "icon": "IconBriefcase",
+              "title": "Corporate Events",
+              "desc": "Professional events planned with precision and polish."
+            },
+            {
+              "icon": "IconHeartHandshake",
+              "title": "Catering & Hospitality",
+              "desc": "Curated menus and guest services for seamless events."
+            },
+            {
+              "icon": "IconCalendar",
+              "title": "Birthday Parties",
+              "desc": "Creative celebrations for every age and occasion."
+            },
+            {
+              "icon": "IconCamera",
+              "title": "Photography & Video",
+              "desc": "Capture every moment with expert visual storytelling."
+            }
+          ],
+          "stats": [
+            {
+              "icon": "IconUsers",
+              "value": "500+",
+              "label": "Successful Events"
+            },
+            {
+              "icon": "IconAward",
+              "value": "10+",
+              "label": "Years Experience"
+            }
+          ],
+          "quote": "Every event has a story — we make sure yours is unforgettable.",
+          "philosophyTitle": "How We Work",
+          "philosophyDesc": "Clear messaging, strong sections, and fast editing for teams."
+        },
+        "About-2": {
+          "pretitle": "Know More of Us",
+          "title": "About Us",
+          "subtitle": "Luxurious Interior and Industrial Design",
+          "desc": "Modern Elegance: Designs featuring clean lines, neutral palettes, and high-quality materials.",
+          "backgroundImage": "/blackbay.png",
+          "backgroundImageTitle": "Modern luxury living room interior",
+          "sideImage": "/shaye.png",
+          "sideImageTitle": "Luxury interior chair design",
+          "philosophyTitle": "Our Philosophy",
+          "philosophyDesc": "At Britto Charette, we believe in creating luxurious, personalized environments that reflect our clients' tastes and lifestyles.",
+          "buttons": [
+            {
+              "label": "Contact Us",
+              "href": "#",
+              "variant": "primary"
+            }
+          ]
+        }
+      },
+      "id": "home-About"
+    },
+    {
+      "type": "WhyChooseUs",
+      "variant": "WhyChooseUs-1",
+      "data": {
+        "WhyChooseUs-1": {
+          "pretitle": "WHY CHOOSE US",
+          "title": "Why Choose Us",
+          "desc": "We events, we create unforgettable experiences.",
+          "whyChooseUsItems": [
+            {
+              "icon": "IconHeart",
+              "stat": "01",
+              "title": "You Can Trust",
+              "desc": "With over [X] years of experience, our team of event experts has traversed the globe, creating.",
+              "image": "/categories/events/template1/wedding1.jpg"
+            },
+            {
+              "icon": "IconFileText",
+              "stat": "02",
+              "title": "Tailored for You",
+              "desc": "We believe in the power of personalized events. Your celebration should reflect your unique style and story.",
+              "image": "/categories/events/template1/corporate1.jpg"
+            },
+            {
+              "icon": "IconShieldCheck",
+              "stat": "03",
+              "title": "Safety and Quality",
+              "desc": "Your well-being is at the heart of everything we do. We adhere to the highest safety and quality standards.",
+              "image": "/categories/events/template1/entertainment1.jpg"
+            }
+          ]
+        },
+        "WhyChooseUs-2": {
+          "pretitle": "Why choose us",
+          "title": "A better experience from first click.",
+          "desc": "Use category-specific proof points to help visitors trust your business faster.",
+          "whyChooseUsItems": [
+            {
+              "title": "Clear guidance",
+              "desc": "Helpful details and simple next steps for every visitor.",
+              "stat": "01"
+            },
+            {
+              "title": "Trusted process",
+              "desc": "A focused flow designed around the user decision journey.",
+              "stat": "02"
+            },
+            {
+              "title": "Fast response",
+              "desc": "Make it easy for people to enquire, compare, and act.",
+              "stat": "03"
+            }
+          ]
+        },
+        "WhyChooseUs-3": {
+          "pretitle": "Why choose us",
+          "title": "A better experience from first click.",
+          "desc": "Use category-specific proof points to help visitors trust your business faster.",
+          "whyChooseUsItems": [
+            {
+              "title": "Clear guidance",
+              "desc": "Helpful details and simple next steps for every visitor.",
+              "stat": "01"
+            },
+            {
+              "title": "Trusted process",
+              "desc": "A focused flow designed around the user decision journey.",
+              "stat": "02"
+            },
+            {
+              "title": "Fast response",
+              "desc": "Make it easy for people to enquire, compare, and act.",
+              "stat": "03"
+            }
+          ]
+        },
+        "WhyChooseUs-4": {
+          "pretitle": "Why choose us",
+          "title": "A better experience from first click.",
+          "desc": "Use category-specific proof points to help visitors trust your business faster.",
+          "whyChooseUsItems": [
+            {
+              "title": "Clear guidance",
+              "desc": "Helpful details and simple next steps for every visitor.",
+              "stat": "01"
+            },
+            {
+              "title": "Trusted process",
+              "desc": "A focused flow designed around the user decision journey.",
+              "stat": "02"
+            },
+            {
+              "title": "Fast response",
+              "desc": "Make it easy for people to enquire, compare, and act.",
+              "stat": "03"
+            }
+          ]
+        }
+      },
+      "id": "home-WhyChooseUs"
+    },
+    {
+      "type": "EventCategories",
+      "variant": "EventCategories-1",
+      "data": {},
+      "id": "home-EventCategories"
+    },
+    {
+      "type": "PopularEvents",
+      "variant": "PopularEvents-1",
+      "data": {
+        "PopularEvents-1": {
+          "pretitle": "Event",
+          "title": "Upcoming Events",
+          "desc": "Most exciting upcoming events and book your seat today.",
+          "categories": [
+            "Wedding Events",
+            "Corporate Events",
+            "Social Events",
+            "Entertainment Events"
+          ],
+          "buttonLabel": "View Event",
+          "buttonIcon": "→",
+          "events": [
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/wedding1.jpg",
+              "date": "January 21, 2021",
+              "location": "New York",
+              "title": "Pink Floral Wedding Showcase",
+              "description": "A dreamy seaside ceremony with elegant floral decor and curated guest experiences.",
+              "category": "Wedding Events",
+              "id": "pink-floral-wedding-showcase",
+              "longDescription": "Welcome to the Pink Floral Wedding Showcase. A dreamy seaside ceremony with elegant floral decor and curated guest experiences. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at New York on January 21, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/wedding2.jpg",
+              "date": "Feb 14, 2021",
+              "location": "California",
+              "title": "Sunset Beach Wedding Ceremony",
+              "description": "Romantic vows beneath a flower-draped arch and a sunset reception by the water.",
+              "category": "Wedding Events",
+              "id": "sunset-beach-wedding-ceremony",
+              "longDescription": "Welcome to the Sunset Beach Wedding Ceremony. Romantic vows beneath a flower-draped arch and a sunset reception by the water. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at California on Feb 14, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/wedding3.jpg",
+              "date": "March 10, 2021",
+              "location": "London, UK",
+              "title": "Luxury Ballroom Wedding Reception",
+              "description": "A glamorous evening event with fine dining, live music, and elegant lighting.",
+              "category": "Wedding Events",
+              "id": "luxury-ballroom-wedding-reception",
+              "longDescription": "Welcome to the Luxury Ballroom Wedding Reception. A glamorous evening event with fine dining, live music, and elegant lighting. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at London, UK on March 10, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/wedding4.jpg",
+              "date": "March 22, 2021",
+              "location": "Paris",
+              "title": "Garden Chateau Wedding Celebration",
+              "description": "Intimate garden styling with luxe floral arrangements and refined dining.",
+              "category": "Wedding Events",
+              "id": "garden-chateau-wedding-celebration",
+              "longDescription": "Welcome to the Garden Chateau Wedding Celebration. Intimate garden styling with luxe floral arrangements and refined dining. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Paris on March 22, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/wedding5.jpg",
+              "date": "April 05, 2021",
+              "location": "Santorini",
+              "title": "Clifftop Destination Wedding",
+              "description": "A blue-domed seaside ceremony with a magical sunset reception.",
+              "category": "Wedding Events",
+              "id": "clifftop-destination-wedding",
+              "longDescription": "Welcome to the Clifftop Destination Wedding. A blue-domed seaside ceremony with a magical sunset reception. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Santorini on April 05, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/wedding2.jpg",
+              "date": "May 12, 2021",
+              "location": "Tuscany, Italy",
+              "title": "Vineyard Villa Wedding Dinner",
+              "description": "Rustic elegance with candlelit long-table dining among rolling vineyards.",
+              "category": "Wedding Events",
+              "id": "vineyard-villa-wedding-dinner",
+              "longDescription": "Welcome to the Vineyard Villa Wedding Dinner. Rustic elegance with candlelit long-table dining among rolling vineyards. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Tuscany, Italy on May 12, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/corporate1.jpg",
+              "date": "April 25, 2021",
+              "location": "New York",
+              "title": "Executive Conference Summit",
+              "description": "A premium corporate event focused on leadership, networking, and growth strategy.",
+              "category": "Corporate Events",
+              "id": "executive-conference-summit",
+              "longDescription": "Welcome to the Executive Conference Summit. A premium corporate event focused on leadership, networking, and growth strategy. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at New York on April 25, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/corporate2.jpg",
+              "date": "May 18, 2021",
+              "location": "Texas",
+              "title": "Product Launch Experience",
+              "description": "An immersive launch event with keynote speakers, demos, and investor networking.",
+              "category": "Corporate Events",
+              "id": "product-launch-experience",
+              "longDescription": "Welcome to the Product Launch Experience. An immersive launch event with keynote speakers, demos, and investor networking. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Texas on May 18, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/corporate3.jpg",
+              "date": "June 12, 2021",
+              "location": "Chicago, IL",
+              "title": "Annual Business Awards Gala",
+              "description": "A formal awards dinner celebrating top performers and industry excellence.",
+              "category": "Corporate Events",
+              "id": "annual-business-awards-gala",
+              "longDescription": "Welcome to the Annual Business Awards Gala. A formal awards dinner celebrating top performers and industry excellence. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Chicago, IL on June 12, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/social1.jpg",
+              "date": "July 04, 2021",
+              "location": "Miami, FL",
+              "title": "Summer Social Mixer",
+              "description": "A lively social gathering with cocktails, live DJs, and modern party decor.",
+              "category": "Social Events",
+              "id": "summer-social-mixer",
+              "longDescription": "Welcome to the Summer Social Mixer. A lively social gathering with cocktails, live DJs, and modern party decor. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Miami, FL on July 04, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/social2.jpg",
+              "date": "August 21, 2021",
+              "location": "Austin, TX",
+              "title": "Friends Reunion Party",
+              "description": "A cozy evening celebration with intimate seating, music, and warm hospitality.",
+              "category": "Social Events",
+              "id": "friends-reunion-party",
+              "longDescription": "Welcome to the Friends Reunion Party. A cozy evening celebration with intimate seating, music, and warm hospitality. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Austin, TX on August 21, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/social3.jpg",
+              "date": "Sept 09, 2021",
+              "location": "Los Angeles",
+              "title": "Rooftop Social Soiree",
+              "description": "A stylish urban event with city views, craft cocktails, and curated entertainment.",
+              "category": "Social Events",
+              "id": "rooftop-social-soiree",
+              "longDescription": "Welcome to the Rooftop Social Soiree. A stylish urban event with city views, craft cocktails, and curated entertainment. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Los Angeles on Sept 09, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/entertainment1.jpg",
+              "date": "Oct 30, 2021",
+              "location": "Las Vegas",
+              "title": "Live Entertainment Festival",
+              "description": "A high-energy entertainment event featuring live performances and immersive staging.",
+              "category": "Entertainment Events",
+              "id": "live-entertainment-festival",
+              "longDescription": "Welcome to the Live Entertainment Festival. A high-energy entertainment event featuring live performances and immersive staging. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Las Vegas on Oct 30, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/entertainment2.jpg",
+              "date": "Nov 15, 2021",
+              "location": "Nashville",
+              "title": "Music Showcase Night",
+              "description": "An inspiring evening of live bands, local artists, and music community celebration.",
+              "category": "Entertainment Events",
+              "id": "music-showcase-night",
+              "longDescription": "Welcome to the Music Showcase Night. An inspiring evening of live bands, local artists, and music community celebration. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Nashville on Nov 15, 2021."
+            },
+            {
+              "link": "#",
+              "seats": "500",
+              "time": "05:00 PM - 09:00 PM",
+              "price": " onwards",
+              "organizer": "Event Management Group",
+              "highlights": [
+                "Exclusive Access & Seating",
+                "Custom Catering & Refreshments",
+                "Interactive Sessions & Networking",
+                "Guided Tour & Gift Bag"
+              ],
+              "image": "/categories/events/template1/entertainment3.jpg",
+              "date": "Dec 05, 2021",
+              "location": "Orlando",
+              "title": "Family Entertainment Expo",
+              "description": "A fun-filled event with shows, attractions, and interactive entertainment booths.",
+              "category": "Entertainment Events",
+              "id": "family-entertainment-expo",
+              "longDescription": "Welcome to the Family Entertainment Expo. A fun-filled event with shows, attractions, and interactive entertainment booths. This premium event features top-tier coordination, breathtaking design, and a curated atmosphere designed to exceed all expectations. Join us for a memorable experience at Orlando on Dec 05, 2021."
+            }
+          ]
+        }
+      },
+      "id": "home-PopularEvents"
+    },
+    {
+      "type": "Gallery",
+      "variant": "Gallery-1",
+      "data": {
+        "Gallery-1": {
+          "pretitle": "Gallery",
+          "title": "Our Gallery",
+          "desc": "Explore our finest events, elegance and unforgettable experiences.",
+          "galleryItems": [
+            {
+              "image": "/bg1.jpg",
+              "alt": "Gallery image one",
+              "title": "View one"
+            },
+            {
+              "image": "/bg2.jpg",
+              "alt": "Gallery image two",
+              "title": "View two"
+            },
+            {
+              "image": "/blackbay.png",
+              "alt": "Gallery image three",
+              "title": "View three"
+            },
+            {
+              "image": "/shaye.png",
+              "alt": "Gallery image four",
+              "title": "View four"
+            }
+          ],
+          "images": [
+            {
+              "src": "/categories/events/template1/wedgal.jpg",
+              "alt": "Luxury wedding decor",
+              "label": "Weddings",
+              "title": "Elegant themes for your special day.",
+              "description": "Soft pink florals, candlelit aisles, and curated table settings for unforgettable ceremonies."
+            },
+            {
+              "src": "/categories/events/template1/copgal.jpg",
+              "alt": "Corporate event stage",
+              "label": "Corporate",
+              "title": "Professional events with flawless execution.",
+              "description": "Premium stage design, seamless logistics, and impressive branding for business gatherings."
+            },
+            {
+              "src": "/categories/events/template1/birthgal.jpg",
+              "alt": "Birthday celebration decor",
+              "label": "Birthdays",
+              "title": "Joyful celebrations for every age.",
+              "description": "Playful setups, balloon arches, and personalized details for memorable parties."
+            }
+          ],
+          "cta": {
+            "label": "More Gallery",
+            "href": "/src/pages/gallery"
+          },
+          "tabs": [
+            "WEDDINGS",
+            "CORPORATE",
+            "BUSINESS",
+            "ENTERTAINMENT"
+          ],
+          "cards": [
+            {
+              "title": "Luxury Wedding Decor",
+              "subtitle": "Weddings",
+              "badge": "Weddings",
+              "image": "/categories/events/template1/wedding1.jpg"
+            },
+            {
+              "title": "Romantic Reception Setup",
+              "subtitle": "Weddings",
+              "badge": "Weddings",
+              "image": "/categories/events/template1/gallery2.jpg"
+            },
+            {
+              "title": "Floral Ceremony Aisle",
+              "subtitle": "Weddings",
+              "badge": "Weddings",
+              "image": "/categories/events/template1/wedding3.jpg"
+            },
+            {
+              "title": "Corporate Launch Events",
+              "subtitle": "Corporate",
+              "badge": "Corporate",
+              "image": "/categories/events/template1/corporate1.jpg"
+            },
+            {
+              "title": "Conference Stage Design",
+              "subtitle": "Corporate",
+              "badge": "Corporate",
+              "image": "/categories/events/template1/corporate2.jpg"
+            },
+            {
+              "title": "Executive Meeting Space",
+              "subtitle": "Corporate",
+              "badge": "Corporate",
+              "image": "/categories/events/template1/corporate3.jpg"
+            },
+            {
+              "title": "Brand Activation Area",
+              "subtitle": "Corporate",
+              "badge": "Corporate",
+              "image": "/categories/events/template1/copgal.jpg"
+            },
+            {
+              "title": "Modern Business Gathering",
+              "subtitle": "Business",
+              "badge": "Business",
+              "image": "/categories/events/template1/business1.jpg"
+            },
+            {
+              "title": "Executive Networking Space",
+              "subtitle": "Business",
+              "badge": "Business",
+              "image": "/categories/events/template1/business2.jpg"
+            },
+            {
+              "title": "Creative Business Lounge",
+              "subtitle": "Business",
+              "badge": "Business",
+              "image": "/categories/events/template1/business3.jpg"
+            },
+            {
+              "title": "Business Team Collaboration",
+              "subtitle": "Business",
+              "badge": "Business",
+              "image": "/categories/events/template1/business4.jpg"
+            },
+            {
+              "title": "Joyful Party Moments",
+              "subtitle": "Entertainment",
+              "badge": "Entertainment",
+              "image": "/categories/events/template1/birthgal.jpg"
+            },
+            {
+              "title": "Stage Performance Night",
+              "subtitle": "Entertainment",
+              "badge": "Entertainment",
+              "image": "/categories/events/template1/entertainment2.jpg"
+            },
+            {
+              "title": "Dance Floor Celebration",
+              "subtitle": "Entertainment",
+              "badge": "Entertainment",
+              "image": "/categories/events/template1/entertainment3.jpg"
+            }
+          ]
+        },
+        "Gallery-2": {
+          "pretitle": "Gallery",
+          "title": "Explore the experience",
+          "desc": "A visual section powered by the selected category media.",
+          "galleryItems": [
+            {
+              "image": "/bg1.jpg",
+              "alt": "Gallery image one",
+              "title": "View one"
+            },
+            {
+              "image": "/bg2.jpg",
+              "alt": "Gallery image two",
+              "title": "View two"
+            },
+            {
+              "image": "/blackbay.png",
+              "alt": "Gallery image three",
+              "title": "View three"
+            },
+            {
+              "image": "/shaye.png",
+              "alt": "Gallery image four",
+              "title": "View four"
+            }
+          ]
+        },
+        "Gallery-3": {
+          "pretitle": "Gallery",
+          "title": "Explore the experience",
+          "desc": "A visual section powered by the selected category media.",
+          "galleryItems": [
+            {
+              "image": "/bg1.jpg",
+              "alt": "Gallery image one",
+              "title": "View one"
+            },
+            {
+              "image": "/bg2.jpg",
+              "alt": "Gallery image two",
+              "title": "View two"
+            },
+            {
+              "image": "/blackbay.png",
+              "alt": "Gallery image three",
+              "title": "View three"
+            },
+            {
+              "image": "/shaye.png",
+              "alt": "Gallery image four",
+              "title": "View four"
+            }
+          ]
+        },
+        "Gallery-4": {
+          "pretitle": "Gallery",
+          "title": "Explore the experience",
+          "desc": "A visual section powered by the selected category media.",
+          "galleryItems": [
+            {
+              "image": "/bg1.jpg",
+              "alt": "Gallery image one",
+              "title": "View one"
+            },
+            {
+              "image": "/bg2.jpg",
+              "alt": "Gallery image two",
+              "title": "View two"
+            },
+            {
+              "image": "/blackbay.png",
+              "alt": "Gallery image three",
+              "title": "View three"
+            },
+            {
+              "image": "/shaye.png",
+              "alt": "Gallery image four",
+              "title": "View four"
+            }
+          ]
+        },
+        "Gallery-5": {
+          "pretitle": "Gallery",
+          "title": "Explore the experience",
+          "desc": "A visual section powered by the selected category media.",
+          "galleryItems": [
+            {
+              "image": "/bg1.jpg",
+              "alt": "Gallery image one",
+              "title": "View one"
+            },
+            {
+              "image": "/bg2.jpg",
+              "alt": "Gallery image two",
+              "title": "View two"
+            },
+            {
+              "image": "/blackbay.png",
+              "alt": "Gallery image three",
+              "title": "View three"
+            },
+            {
+              "image": "/shaye.png",
+              "alt": "Gallery image four",
+              "title": "View four"
+            }
+          ]
+        },
+        "Gallery-6": {
+          "pretitle": "Gallery",
+          "title": "Explore the experience",
+          "desc": "A visual section powered by the selected category media.",
+          "galleryItems": [
+            {
+              "image": "/bg1.jpg",
+              "alt": "Gallery image one",
+              "title": "View one"
+            },
+            {
+              "image": "/bg2.jpg",
+              "alt": "Gallery image two",
+              "title": "View two"
+            },
+            {
+              "image": "/blackbay.png",
+              "alt": "Gallery image three",
+              "title": "View three"
+            },
+            {
+              "image": "/shaye.png",
+              "alt": "Gallery image four",
+              "title": "View four"
+            }
+          ]
+        }
+      },
+      "id": "home-Gallery"
+    },
+    {
+      "type": "Schedule",
+      "variant": "Schedule-1",
+      "data": {},
+      "id": "home-Schedule"
+    },
+    {
+      "type": "Awards",
+      "variant": "Awards-1",
+      "data": {
+        "Awards-1": {
+          "pretitle": "AWARDS & RECOGNITION",
+          "title": "Our Achievements",
+          "desc": "Recognized For Event Excellence",
+          "items": [
+            {
+              "icon": "IconAward",
+              "value": "25+",
+              "title": "AWARDS WON",
+              "description": "For excellence in event planning & management."
+            },
+            {
+              "icon": "IconRibbon",
+              "value": "10+",
+              "title": "INDUSTRY HONORS",
+              "description": "Recognized by leading platforms & associations."
+            },
+            {
+              "icon": "IconStar",
+              "value": "5+",
+              "title": "YEARS OF EXCELLENCE",
+              "description": "Consistently delivering unforgettable experiences."
+            },
+            {
+              "icon": "IconUsers",
+              "value": "1000+",
+              "title": "SUCCESSFUL EVENTS",
+              "description": "Milestones that reflect trust & client satisfaction."
+            },
+            {
+              "icon": "IconHeartHandshake",
+              "value": "98%",
+              "title": "CLIENT RECOMMENDATION",
+              "description": "Happy clients who trust us again & again."
+            }
+          ]
+        }
+      },
+      "id": "home-Awards"
+    },
+    {
+      "type": "Team",
+      "variant": "Team-1",
+      "data": {
+        "Team-1": {
+          "pretitle": "Leadership",
+          "title": "Talented Teams",
+          "desc": "Creative Event Experts.",
+          "teamItems": [
+            {
+              "name": "Arjun Mehta",
+              "role": "Project Lead",
+              "image": "https://i.pinimg.com/736x/dd/de/09/ddde094724373791608fd38b28d94739.jpg",
+              "bio": "Leads site delivery with clear timelines and hands-on coordination."
+            },
+            {
+              "name": "Ananya Kapoor",
+              "role": "Design Director",
+              "image": "https://i.pinimg.com/736x/2c/0d/09/2c0d097dd9e6a8e89b93da865ecbc60a.jpg",
+              "bio": "Turns briefs into warm, practical interiors families love to live in."
+            },
+            {
+              "name": "Rohan Malhotra",
+              "role": "Site Manager",
+              "image": "https://i.pinimg.com/736x/81/11/c7/8111c71e7d3831bc1312fc62d414d80d.jpg",
+              "bio": "Keeps trades aligned, quality checked, and handovers stress-free."
+            },
+            {
+              "name": "Vikram Singh",
+              "role": "Client Advisor",
+              "image": "https://i.pinimg.com/736x/af/9c/a0/af9ca040cc1bf0f0a5150e33dee22797.jpg",
+              "bio": "Guides budgets, choices, and next steps from first call to finish."
+            },
+            {
+              "name": "Priya Sharma",
+              "role": "Procurement Lead",
+              "image": "https://i.pinimg.com/1200x/ec/26/16/ec261607eff327fee32c90c1d02b707c.jpg",
+              "bio": "Sources finishes and fixtures that balance quality with cost."
+            },
+            {
+              "name": "Kabir Iyer",
+              "role": "Sustainability Lead",
+              "image": "https://i.pinimg.com/736x/7a/61/82/7a61821e4e9d78d57bf15ce86806b485.jpg",
+              "bio": "Builds greener specs into everyday renovation decisions."
+            }
+          ],
+          "members": [
+            {
+              "id": "jacob-logan",
+              "image": "/categories/events/template1/team1.jpg",
+              "name": "Jacob Logan",
+              "role": "Business Manager",
+              "department": "Management",
+              "bio": "Leads planning strategy and client partnerships for high-impact celebrations.",
+              "social": {
+                "linkedin": "#",
+                "twitter": "#",
+                "instagram": "#"
+              }
+            },
+            {
+              "id": "santiago-axel",
+              "image": "/categories/events/template1/team2.jpg",
+              "name": "Santiago Axel",
+              "role": "Senior Visual Designer",
+              "department": "Design",
+              "bio": "Crafts immersive event visuals, branding, and stage experience design.",
+              "social": {
+                "linkedin": "#",
+                "twitter": "#",
+                "instagram": "#"
+              }
+            },
+            {
+              "id": "scarlett-eleanor",
+              "image": "/categories/events/template1/team3.jpg",
+              "name": "Scarlett Eleanor",
+              "role": "Marketing",
+              "department": "Marketing",
+              "bio": "Builds campaigns that attract guests and elevate every event story.",
+              "social": {
+                "linkedin": "#",
+                "twitter": "#",
+                "instagram": "#"
+              }
+            }
+          ],
+          "joinButton": {
+            "label": "View Teams",
+            "href": "/src/pages/teams"
+          }
+        }
+      },
+      "id": "home-Team"
+    },
+    {
+      "type": "Testimonial",
+      "variant": "Testimonial-1",
+      "data": {
+        "Testimonial-1": {
+          "pretitle": "Testimonial",
+          "title": "Memorable Experiences",
+          "desc": "Happy Client Experiences.",
+          "testimonialItems": [
+            {
+              "quote": "I wore the Jade Jacquard for my sister's reception in Delhi. The craftsmanship is unparalleled, and it perfectly blended traditional motifs with a modern silhouette The craftsmanship is unparalleled, and it perfectly blended.",
+              "initials": "AK",
+              "name": "Ananya Kapoor",
+              "role": "Wedding Reception Banglore",
+              "rating": "5"
+            },
+            {
+              "quote": "Three magazine covers, two award nights. Every time I need a statement piece, I reach for Gen-Z. The Midnight Charmeuse turned every head at the Mumbai Business Gala The craftsmanship is unparalleled, and it perfectly blended.",
+              "initials": "RS",
+              "name": "Riya Sharma",
+              "role": "Celebrity Stylist pune Mumbai",
+              "rating": "5"
+            },
+            {
+              "quote": "I commissioned a bespoke silk piece for a high-profile commercial gala in Noida. The fitting process was seamless, and the memories will truly last a generation The craftsmanship is unparalleled, and it perfectly blended.",
+              "initials": "NV",
+              "name": "Neha Verma",
+              "role": "Bespoke Commission Noida",
+              "rating": "5"
+            },
+            {
+              "quote": "I commissioned a bespoke silk piece for a high-profile commercial gala in Noida. The fitting process was seamless, and the memories will truly last a generation The craftsmanship is unparalleled, and it perfectly blended.",
+              "initials": "NV",
+              "name": "Neha Verma",
+              "role": "Bespoke Commission Noida",
+              "rating": "5"
+            },
+            {
+              "quote": "I commissioned a bespoke silk piece for a high-profile commercial gala in Noida. The fitting process was seamless, and the memories will truly last a generation The craftsmanship is unparalleled, and it perfectly blended.",
+              "initials": "NV",
+              "name": "Neha Verma",
+              "role": "Bespoke Commission Noida",
+              "rating": "5"
+            },
+            {
+              "quote": "I commissioned a bespoke silk piece for a high-profile commercial gala in Noida. The fitting process was seamless, and the memories will truly last a generation The craftsmanship is unparalleled, and it perfectly blended.",
+              "initials": "NV",
+              "name": "Neha Verma",
+              "role": "Bespoke Commission Noida",
+              "rating": "5"
+            }
+          ]
+        },
+        "Testimonial-2": {
+          "pretitle": "Testimonials",
+          "title": "Trusted by buyers, renters, and homeowners.",
+          "desc": "Real feedback from people who found their next home with HAUS Group.",
+          "testimonialItems": [
+            {
+              "name": "Aarav Mehta",
+              "role": "Homebuyer, South Delhi",
+              "quote": "They shortlisted three strong options in a week and made every site visit feel clear and pressure-free.",
+              "image": "https://i.pinimg.com/1200x/44/4e/8e/444e8ee62b093f4e48312a627b91486b.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Neha Kapoor",
+              "role": "First-time renter",
+              "quote": "Honest pricing, verified documents, and advisors who actually answered follow-up questions the same day.",
+              "image": "https://i.pinimg.com/1200x/16/93/de/1693de5f7a785c4ba56af61eca60aed3.jpg",
+              "rating": "4.9"
+            },
+            {
+              "name": "Rahul Verma",
+              "role": "Property investor",
+              "quote": "Neighborhood comps and rental potential were laid out simply — that made the decision much easier.",
+              "image": "https://i.pinimg.com/1200x/d0/18/d3/d018d3646a7d320d800a428b66d7c768.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Isha Malhotra",
+              "role": "Home seller",
+              "quote": "Listing support felt premium without being pushy. We closed with a serious buyer faster than expected.",
+              "image": "https://i.pinimg.com/1200x/c1/c2/51/c1c2516462d7050a0db5ee42e9ea6ef5.jpg",
+              "rating": "4.8"
+            },
+            {
+              "name": "Kabir Anand",
+              "role": "Relocating family",
+              "quote": "School catchments, commute times, and amenity checks were all part of the shortlist. Huge help.",
+              "image": "https://i.pinimg.com/1200x/af/e7/23/afe723e9b040978dd864edcd02c5b641.jpg",
+              "rating": "4.7"
+            },
+            {
+              "name": "Sara Khan",
+              "role": "Apartment buyer",
+              "quote": "From enquiry to registration, the process stayed organized and we always knew the next step.",
+              "image": "https://i.pinimg.com/736x/72/ff/ce/72ffce7dd84957cf5c5bfe270db6afe1.jpg",
+              "rating": "5.0"
+            }
+          ]
+        },
+        "Testimonial-3": {
+          "pretitle": "Testimonials",
+          "title": "Trusted by buyers, renters, and homeowners.",
+          "desc": "Real feedback from people who found their next home with HAUS Group.",
+          "testimonialItems": [
+            {
+              "name": "Aarav Mehta",
+              "role": "Homebuyer, South Delhi",
+              "quote": "They shortlisted three strong options in a week and made every site visit feel clear and pressure-free.",
+              "image": "https://i.pinimg.com/1200x/44/4e/8e/444e8ee62b093f4e48312a627b91486b.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Neha Kapoor",
+              "role": "First-time renter",
+              "quote": "Honest pricing, verified documents, and advisors who actually answered follow-up questions the same day.",
+              "image": "https://i.pinimg.com/1200x/16/93/de/1693de5f7a785c4ba56af61eca60aed3.jpg",
+              "rating": "4.9"
+            },
+            {
+              "name": "Rahul Verma",
+              "role": "Property investor",
+              "quote": "Neighborhood comps and rental potential were laid out simply — that made the decision much easier.",
+              "image": "https://i.pinimg.com/1200x/d0/18/d3/d018d3646a7d320d800a428b66d7c768.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Isha Malhotra",
+              "role": "Home seller",
+              "quote": "Listing support felt premium without being pushy. We closed with a serious buyer faster than expected.",
+              "image": "https://i.pinimg.com/1200x/c1/c2/51/c1c2516462d7050a0db5ee42e9ea6ef5.jpg",
+              "rating": "4.8"
+            },
+            {
+              "name": "Kabir Anand",
+              "role": "Relocating family",
+              "quote": "School catchments, commute times, and amenity checks were all part of the shortlist. Huge help.",
+              "image": "https://i.pinimg.com/1200x/af/e7/23/afe723e9b040978dd864edcd02c5b641.jpg",
+              "rating": "4.7"
+            },
+            {
+              "name": "Sara Khan",
+              "role": "Apartment buyer",
+              "quote": "From enquiry to registration, the process stayed organized and we always knew the next step.",
+              "image": "https://i.pinimg.com/736x/72/ff/ce/72ffce7dd84957cf5c5bfe270db6afe1.jpg",
+              "rating": "5.0"
+            }
+          ]
+        }
+      },
+      "id": "home-Testimonial"
+    },
+    {
+      "type": "Blog",
+      "variant": "Blog-1",
+      "data": {
+        "Blog-1": {
+          "pretitle": "BLOG",
+          "title": "Our Latest Blog",
+          "desc": "Stories to help you plan unforgettable events.",
+          "buttonLabel": "Read More",
+          "buttonIcon": "→",
+          "blogItems": [
+            {
+              "image": "/categories/events/template1/blog2.jpg",
+              "alt": "Elegant event lighting",
+              "label": "Trends",
+              "title": "Top Event Trends to Watch in 2025",
+              "description": "Stay ahead with the latest event trends that are shaping unforgettable experiences this year.",
+              "date": "May 15, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/blog3.jpg",
+              "alt": "Conference stage lighting",
+              "label": "Marketing",
+              "title": "How Events Can Boost Your Brand",
+              "description": "Discover how well-planned events can increase brand visibility and audience engagement.",
+              "date": "May 10, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/gallery1.jpg",
+              "alt": "Conference room layout",
+              "label": "Venues",
+              "title": "Choosing the Perfect Venue for Your Next Conference",
+              "description": "Selecting the right location is the single most critical decision in event planning.",
+              "date": "May 08, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/gallery2.jpg",
+              "alt": "Tech exhibition hall",
+              "label": "Technology",
+              "title": "The Role of Technology in Modern Trade Shows",
+              "description": "From smart badges to virtual booths, discover how tech is redefining exhibition halls.",
+              "date": "May 05, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/social1.jpg",
+              "alt": "Networking area setup",
+              "label": "Networking",
+              "title": "How to Design Interactive Networking Sessions",
+              "description": "Break the ice and build genuine connections with structured networking formats.",
+              "date": "May 01, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/blog2.jpg",
+              "alt": "Elegant event lighting",
+              "label": "Trends",
+              "title": "Top Event Trends to Watch in 2025",
+              "description": "Stay ahead with the latest event trends that are shaping unforgettable experiences this year.",
+              "date": "May 15, 2025",
+              "link": "/blog"
+            }
+          ]
+        }
+      },
+      "id": "home-Blog"
+    },
+    {
+      "type": "FAQ",
+      "variant": "FAQ-1",
+      "data": {
+        "FAQ-1": {
+          "pretitle": "BUSINESS FAQ",
+          "title": "Common questions before starting.",
+          "faqItems": [
+            {
+              "question": "What types of events do you organize?",
+              "answer": "We plan weddings, corporate events, birthday celebrations, engagement ceremonies, private parties, and social gatherings with customized themes, professional coordination, and complete event management services."
+            },
+            {
+              "question": "Can we customize the event package?",
+              "answer": "Yes, every package is fully customizable. You can choose specific services, décor styles, entertainment, catering, and budget options to match your event requirements."
+            },
+            {
+              "question": "How far in advance should we book?",
+              "answer": "We recommend booking at least two to six months in advance to secure your preferred date, venue, vendors, and ensure enough time for detailed planning."
+            },
+            {
+              "question": "Do you handle event-day coordination?",
+              "answer": "Absolutely. Our team manages schedules, vendors, guest coordination, logistics, and on-site execution so you can enjoy your event without any unnecessary stress."
+            },
+            {
+              "question": "Can the website content be updated later?",
+              "answer": "Yes, all content is managed through JSON, making it easy to update FAQs, services, testimonials, images, and other sections without modifying the component structure."
+            }
+          ],
+          "desc": "Find answers to the most important questions about our event management services."
+        },
+        "FAQ-2": {
+          "pretitle": "FAQ",
+          "title": "Frequently asked questions",
+          "faqItems": [
+            {
+              "question": "How quickly can we start?",
+              "answer": "You can start as soon as the basic details are ready."
+            },
+            {
+              "question": "Can this content be changed?",
+              "answer": "Yes, text and media can be customized from the editor data."
+            },
+            {
+              "question": "Does this match the selected category?",
+              "answer": "Yes, inserted sections merge with the active category JSON."
+            }
+          ]
+        },
+        "FAQ-3": {
+          "pretitle": "FAQ",
+          "title": "Frequently asked questions",
+          "faqItems": [
+            {
+              "question": "How quickly can we start?",
+              "answer": "You can start as soon as the basic details are ready."
+            },
+            {
+              "question": "Can this content be changed?",
+              "answer": "Yes, text and media can be customized from the editor data."
+            },
+            {
+              "question": "Does this match the selected category?",
+              "answer": "Yes, inserted sections merge with the active category JSON."
+            }
+          ]
+        },
+        "FAQ-4": {
+          "pretitle": "FAQ",
+          "title": "Frequently asked questions",
+          "faqItems": [
+            {
+              "question": "How quickly can we start?",
+              "answer": "You can start as soon as the basic details are ready."
+            },
+            {
+              "question": "Can this content be changed?",
+              "answer": "Yes, text and media can be customized from the editor data."
+            },
+            {
+              "question": "Does this match the selected category?",
+              "answer": "Yes, inserted sections merge with the active category JSON."
+            }
+          ]
+        }
+      },
+      "id": "home-FAQ"
+    },
+    {
+      "type": "Contact",
+      "variant": "Contact-1",
+      "data": {
+        "Contact-1": {
+          "pretitle": "Get in Touch",
+          "title": "CONTACT US",
+          "desc": "Ask a question, we’re always here to listen and help.",
+          "leftContent": {
+            "badge": "LET'S PLAN SOMETHING",
+            "title": "Unforgettable\nTogether",
+            "description": "Whether it's a corporate event, wedding, or private celebration — we're here to bring your vision to life with creativity and precision.",
+            "features": [
+              {
+                "icon": "shield",
+                "title": "Tailored Experiences",
+                "description": "Custom events designed around your goals."
+              },
+              {
+                "icon": "users",
+                "title": "Expert Team",
+                "description": "Dedicated professionals ensuring every detail."
+              }
+            ],
+            "cta": {
+              "label": "Let's Connect",
+              "href": "/contact"
+            }
+          },
+          "form": {
+            "namePlaceholder": "Your Name *",
+            "emailPlaceholder": "Email Address *",
+            "subjectPlaceholder": "Subject *",
+            "messagePlaceholder": "Message *",
+            "buttonLabel": "Send Message",
+            "buttonIcon": "send"
+          }
+        }
+      },
+      "id": "home-Contact"
+    },
+    {
+      "id": "about-AboutUsPage-1",
+      "page": "about",
+      "type": "AboutUsPage",
+      "variant": "EventAboutUsPage1",
+      "data": {
+        "EventAboutUsPage1": {}
+      }
+    },
+    {
+      "id": "our-story-OurStory-1",
+      "page": "our-story",
+      "type": "OurStory",
+      "variant": "EventOurStory1",
+      "data": {
+        "EventOurStory1": {}
+      }
+    },
+    {
+      "id": "vision-VisionMission-1",
+      "page": "vision",
+      "type": "VisionMission",
+      "variant": "EventVisionMission1",
+      "data": {
+        "EventVisionMission1": {}
+      }
+    },
+    {
+      "id": "teams-Teams-1",
+      "page": "teams",
+      "type": "Teams",
+      "variant": "EventTeams1",
+      "data": {
+        "EventTeams1": {}
+      }
+    },
+    {
+      "id": "awards-AwardsPage-1",
+      "page": "awards",
+      "type": "AwardsPage",
+      "variant": "EventAwardsPage1",
+      "data": {
+        "EventAwardsPage1": {
+          "pretitle": "Awards",
+          "title": "Recognition earned across Delhi NCR.",
+          "desc": "Industry honors for verified listings, transparent advice, and the way our advisors stay present from first shortlist to keys.",
+          "awardItems": [
+            {
+              "year": "2023",
+              "title": "Best Results — Enterprise",
+              "org": "G2 Winter Awards",
+              "desc": "Recognized for delivering outstanding results and a consistently strong customer experience.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview%20(3).png"
+            },
+            {
+              "year": "2022",
+              "title": "Front Runners",
+              "org": "Software Advice",
+              "desc": "Named a Front Runner for trusted service, usability, and customer satisfaction.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview%20(2).png"
+            },
+            {
+              "year": "2023",
+              "title": "Leader — Winter",
+              "org": "G2 Winter Awards",
+              "desc": "Recognized as an industry leader for dependable service and customer-focused results.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview%20(1).png"
+            },
+            {
+              "year": "2021",
+              "title": "Best Ease of Use",
+              "org": "Capterra",
+              "desc": "Awarded for an intuitive experience that makes every step clear and easy to complete.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview.png"
+            },
+            {
+              "year": "2023",
+              "title": "Leader — Enterprise",
+              "org": "G2 Winter Awards",
+              "desc": "Recognized as an Enterprise Leader for trusted service and strong customer results.",
+              "image": "https://ik.imagekit.io/0qbkwaf3x/image-removebg-preview%20(4).png"
+            }
+          ],
+          "breadcrumb": [
+            {
+              "label": "Home",
+              "href": "/"
+            },
+            {
+              "label": "Awards",
+              "href": "/awards"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "gallery-Gallery-1",
+      "page": "gallery",
+      "type": "Gallery",
+      "variant": "EventsGallery1",
+      "data": {
+        "EventsGallery1": {
+          "pretitle": "Gallery",
+          "title": "Our Gallery",
+          "desc": "Explore our finest events, elegance and unforgettable experiences.",
+          "images": [
+            {
+              "src": "/categories/events/template1/wedgal.jpg",
+              "alt": "Luxury wedding decor",
+              "label": "Weddings",
+              "title": "Elegant themes for your special day.",
+              "description": "Soft pink florals, candlelit aisles, and curated table settings for unforgettable ceremonies."
+            },
+            {
+              "src": "/categories/events/template1/copgal.jpg",
+              "alt": "Corporate event stage",
+              "label": "Corporate",
+              "title": "Professional events with flawless execution.",
+              "description": "Premium stage design, seamless logistics, and impressive branding for business gatherings."
+            },
+            {
+              "src": "/categories/events/template1/birthgal.jpg",
+              "alt": "Birthday celebration decor",
+              "label": "Birthdays",
+              "title": "Joyful celebrations for every age.",
+              "description": "Playful setups, balloon arches, and personalized details for memorable parties."
+            }
+          ],
+          "cta": {
+            "label": "More Gallery",
+            "href": "/src/pages/gallery"
+          },
+          "tabs": [
+            "WEDDINGS",
+            "CORPORATE",
+            "BUSINESS",
+            "ENTERTAINMENT"
+          ],
+          "cards": [
+            {
+              "title": "Luxury Wedding Decor",
+              "subtitle": "Weddings",
+              "badge": "Weddings",
+              "image": "/categories/events/template1/wedding1.jpg"
+            },
+            {
+              "title": "Romantic Reception Setup",
+              "subtitle": "Weddings",
+              "badge": "Weddings",
+              "image": "/categories/events/template1/gallery2.jpg"
+            },
+            {
+              "title": "Floral Ceremony Aisle",
+              "subtitle": "Weddings",
+              "badge": "Weddings",
+              "image": "/categories/events/template1/wedding3.jpg"
+            },
+            {
+              "title": "Corporate Launch Events",
+              "subtitle": "Corporate",
+              "badge": "Corporate",
+              "image": "/categories/events/template1/corporate1.jpg"
+            },
+            {
+              "title": "Conference Stage Design",
+              "subtitle": "Corporate",
+              "badge": "Corporate",
+              "image": "/categories/events/template1/corporate2.jpg"
+            },
+            {
+              "title": "Executive Meeting Space",
+              "subtitle": "Corporate",
+              "badge": "Corporate",
+              "image": "/categories/events/template1/corporate3.jpg"
+            },
+            {
+              "title": "Brand Activation Area",
+              "subtitle": "Corporate",
+              "badge": "Corporate",
+              "image": "/categories/events/template1/copgal.jpg"
+            },
+            {
+              "title": "Modern Business Gathering",
+              "subtitle": "Business",
+              "badge": "Business",
+              "image": "/categories/events/template1/business1.jpg"
+            },
+            {
+              "title": "Executive Networking Space",
+              "subtitle": "Business",
+              "badge": "Business",
+              "image": "/categories/events/template1/business2.jpg"
+            },
+            {
+              "title": "Creative Business Lounge",
+              "subtitle": "Business",
+              "badge": "Business",
+              "image": "/categories/events/template1/business3.jpg"
+            },
+            {
+              "title": "Business Team Collaboration",
+              "subtitle": "Business",
+              "badge": "Business",
+              "image": "/categories/events/template1/business4.jpg"
+            },
+            {
+              "title": "Joyful Party Moments",
+              "subtitle": "Entertainment",
+              "badge": "Entertainment",
+              "image": "/categories/events/template1/birthgal.jpg"
+            },
+            {
+              "title": "Stage Performance Night",
+              "subtitle": "Entertainment",
+              "badge": "Entertainment",
+              "image": "/categories/events/template1/entertainment2.jpg"
+            },
+            {
+              "title": "Dance Floor Celebration",
+              "subtitle": "Entertainment",
+              "badge": "Entertainment",
+              "image": "/categories/events/template1/entertainment3.jpg"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "blog-Blog-1",
+      "page": "blog",
+      "type": "Blog",
+      "variant": "EventsBlog1",
+      "data": {
+        "EventsBlog1": {
+          "pretitle": "BLOG",
+          "title": "Our Latest Blog",
+          "desc": "Stories to help you plan unforgettable events.",
+          "buttonLabel": "Read More",
+          "buttonIcon": "→",
+          "blogItems": [
+            {
+              "image": "/categories/events/template1/blog2.jpg",
+              "alt": "Elegant event lighting",
+              "label": "Trends",
+              "title": "Top Event Trends to Watch in 2025",
+              "description": "Stay ahead with the latest event trends that are shaping unforgettable experiences this year.",
+              "date": "May 15, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/blog3.jpg",
+              "alt": "Conference stage lighting",
+              "label": "Marketing",
+              "title": "How Events Can Boost Your Brand",
+              "description": "Discover how well-planned events can increase brand visibility and audience engagement.",
+              "date": "May 10, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/gallery1.jpg",
+              "alt": "Conference room layout",
+              "label": "Venues",
+              "title": "Choosing the Perfect Venue for Your Next Conference",
+              "description": "Selecting the right location is the single most critical decision in event planning.",
+              "date": "May 08, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/gallery2.jpg",
+              "alt": "Tech exhibition hall",
+              "label": "Technology",
+              "title": "The Role of Technology in Modern Trade Shows",
+              "description": "From smart badges to virtual booths, discover how tech is redefining exhibition halls.",
+              "date": "May 05, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/social1.jpg",
+              "alt": "Networking area setup",
+              "label": "Networking",
+              "title": "How to Design Interactive Networking Sessions",
+              "description": "Break the ice and build genuine connections with structured networking formats.",
+              "date": "May 01, 2025",
+              "link": "/blog"
+            },
+            {
+              "image": "/categories/events/template1/blog2.jpg",
+              "alt": "Elegant event lighting",
+              "label": "Trends",
+              "title": "Top Event Trends to Watch in 2025",
+              "description": "Stay ahead with the latest event trends that are shaping unforgettable experiences this year.",
+              "date": "May 15, 2025",
+              "link": "/blog"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "blog-detail-1-BlogDetails-1",
+      "page": "blog-detail-1",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "/categories/events/template1/blog2.jpg",
+          "alt": "Elegant event lighting",
+          "label": "Trends",
+          "title": "Top Event Trends to Watch in 2025",
+          "description": "Stay ahead with the latest event trends that are shaping unforgettable experiences this year.",
+          "date": "May 15, 2025",
+          "link": "/blog"
+        }
+      }
+    },
+    {
+      "id": "blog-detail-2-BlogDetails-2",
+      "page": "blog-detail-2",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "/categories/events/template1/blog3.jpg",
+          "alt": "Conference stage lighting",
+          "label": "Marketing",
+          "title": "How Events Can Boost Your Brand",
+          "description": "Discover how well-planned events can increase brand visibility and audience engagement.",
+          "date": "May 10, 2025",
+          "link": "/blog"
+        }
+      }
+    },
+    {
+      "id": "blog-detail-3-BlogDetails-3",
+      "page": "blog-detail-3",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "/categories/events/template1/gallery1.jpg",
+          "alt": "Conference room layout",
+          "label": "Venues",
+          "title": "Choosing the Perfect Venue for Your Next Conference",
+          "description": "Selecting the right location is the single most critical decision in event planning.",
+          "date": "May 08, 2025",
+          "link": "/blog"
+        }
+      }
+    },
+    {
+      "id": "blog-detail-4-BlogDetails-4",
+      "page": "blog-detail-4",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "/categories/events/template1/gallery2.jpg",
+          "alt": "Tech exhibition hall",
+          "label": "Technology",
+          "title": "The Role of Technology in Modern Trade Shows",
+          "description": "From smart badges to virtual booths, discover how tech is redefining exhibition halls.",
+          "date": "May 05, 2025",
+          "link": "/blog"
+        }
+      }
+    },
+    {
+      "id": "blog-detail-5-BlogDetails-5",
+      "page": "blog-detail-5",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "/categories/events/template1/social1.jpg",
+          "alt": "Networking area setup",
+          "label": "Networking",
+          "title": "How to Design Interactive Networking Sessions",
+          "description": "Break the ice and build genuine connections with structured networking formats.",
+          "date": "May 01, 2025",
+          "link": "/blog"
+        }
+      }
+    },
+    {
+      "id": "blog-detail-6-BlogDetails-6",
+      "page": "blog-detail-6",
+      "type": "BlogDetails",
+      "variant": "EventBlogDetails1",
+      "data": {
+        "EventBlogDetails1": {
+          "image": "/categories/events/template1/blog2.jpg",
+          "alt": "Elegant event lighting",
+          "label": "Trends",
+          "title": "Top Event Trends to Watch in 2025",
+          "description": "Stay ahead with the latest event trends that are shaping unforgettable experiences this year.",
+          "date": "May 15, 2025",
+          "link": "/blog"
+        }
+      }
+    },
+    {
+      "id": "contact-Contact-1",
+      "page": "contact",
+      "type": "Contact",
+      "variant": "EventsContact1",
+      "data": {
+        "EventsContact1": {
+          "pretitle": "Get in Touch",
+          "title": "CONTACT US",
+          "desc": "Ask a question, we’re always here to listen and help.",
+          "leftContent": {
+            "badge": "LET'S PLAN SOMETHING",
+            "title": "Unforgettable\nTogether",
+            "description": "Whether it's a corporate event, wedding, or private celebration — we're here to bring your vision to life with creativity and precision.",
+            "features": [
+              {
+                "icon": "shield",
+                "title": "Tailored Experiences",
+                "description": "Custom events designed around your goals."
+              },
+              {
+                "icon": "users",
+                "title": "Expert Team",
+                "description": "Dedicated professionals ensuring every detail."
+              }
+            ],
+            "cta": {
+              "label": "Let's Connect",
+              "href": "/contact"
+            }
+          },
+          "form": {
+            "namePlaceholder": "Your Name *",
+            "emailPlaceholder": "Email Address *",
+            "subjectPlaceholder": "Subject *",
+            "messagePlaceholder": "Message *",
+            "buttonLabel": "Send Message",
+            "buttonIcon": "send"
+          }
+        }
+      }
+    },
+    {
+      "id": "careers-Careers-1",
+      "page": "careers",
+      "type": "Careers",
+      "variant": "EventCareers1",
+      "data": {
+        "EventCareers1": {}
+      }
+    },
+    {
+      "id": "support-Support-1",
+      "page": "support",
+      "type": "Support",
+      "variant": "EventSupport1",
+      "data": {
+        "EventSupport1": {}
+      }
+    },
+    {
+      "id": "privacy-PrivacyPolicy-1",
+      "page": "privacy",
+      "type": "PrivacyPolicy",
+      "variant": "EventPrivacyPolicy1",
+      "data": {
+        "EventPrivacyPolicy1": {}
+      }
+    },
+    {
+      "id": "terms-TermsCondition-1",
+      "page": "terms",
+      "type": "TermsCondition",
+      "variant": "EventTermsCondition1",
+      "data": {
+        "EventTermsCondition1": {}
+      }
+    },
+    {
+      "id": "global-presence-GlobalPresence-1",
+      "page": "global-presence",
+      "type": "GlobalPresence",
+      "variant": "EventGlobalPresence1",
+      "data": {
+        "EventGlobalPresence1": {}
+      }
+    },
+    {
+      "id": "case-study-CaseStudy-1",
+      "page": "case-study",
+      "type": "CaseStudy",
+      "variant": "EventCaseStudy1",
+      "data": {
+        "EventCaseStudy1": {}
+      }
+    },
+    {
+      "id": "CustomPage-services",
+      "page": "services",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-company-overview",
+      "page": "company-overview",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Company Overview",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Company Overview",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Company Overview",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-vision-&-mission",
+      "page": "vision-&-mission",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Vision & Mission",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Vision & Mission",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Vision & Mission",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-our-team",
+      "page": "our-team",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Our Team",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Our Team",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Our Team",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-awards-&-recognition",
+      "page": "awards-&-recognition",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Awards & Recognition",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Awards & Recognition",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Awards & Recognition",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-events",
+      "page": "events",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "EVENTS",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "EVENTS",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "EVENTS",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "type": "Footer",
+      "variant": "Footer-1",
+      "data": {
+        "Footer-1": {
+          "logo": "Events",
+          "desc": "Creating Memorable Events With Seamless Planning.",
+          "footerBackgroundType": "solid",
+          "footerBackgroundColor": "#230f20",
+          "footerGradientColor": "#3d1a33",
+          "footerTextColor": "#ffffff",
+          "footerMutedTextColor": "#cbd5e1",
+          "footerSocialLinks": [
+            {
+              "label": "facebook",
+              "href": "#"
+            },
+            {
+              "label": "instagram",
+              "href": "#"
+            },
+            {
+              "label": "twitter",
+              "href": "#"
+            },
+            {
+              "label": "linkedin",
+              "href": "#"
+            }
+          ],
+          "footerColumns": [
+            {
+              "title": "Company",
+              "links": [
+                {
+                  "label": "About Us",
+                  "href": "/src/pages/aboutus"
+                },
+                {
+                  "label": "Teams",
+                  "href": "/src/pages/teams"
+                },
+                {
+                  "label": "Careers",
+                  "href": "/src/pages/careers"
+                },
+                {
+                  "label": "Awards",
+                  "href": "/src/pages/award"
+                },
+                {
+                  "label": "Global Presence",
+                  "href": "/src/pages/globalpresence"
+                }
+              ]
+            },
+            {
+              "title": "Events",
+              "links": [
+                {
+                  "label": "Weddings Events",
+                  "href": "/src/pages/event/wedding"
+                },
+                {
+                  "label": "Corporate Events",
+                  "href": "/src/pages/event/corporate"
+                },
+                {
+                  "label": "Entertainment",
+                  "href": "/src/pages/event/entertainment"
+                },
+                {
+                  "label": "Social",
+                  "href": "/src/pages/event/social"
+                }
+              ]
+            },
+            {
+              "title": "Portfolio",
+              "links": [
+                {
+                  "label": "Blog",
+                  "href": "/src/pages/blog"
+                },
+                {
+                  "label": "Case Studies",
+                  "href": "/src/pages/casestudy"
+                },
+                {
+                  "label": "Gallery",
+                  "href": "/src/pages/gallery"
+                },
+                {
+                  "label": "Support",
+                  "href": "/src/pages/support"
+                }
+              ]
+            }
+          ],
+          "footerContact": {
+            "location": "India",
+            "email": "hello@example.com",
+            "phone": "0000 0000 00"
+          },
+          "footerLegalLinks": [
+            {
+              "label": "Privacy Policy",
+              "href": "/src/pages/privacypolicy"
+            },
+            {
+              "label": "Terms & Conditions",
+              "href": "/src/pages/termscondition"
+            }
+          ],
+          "copyrightText": "Copyright @ 2026. All rights reserved.",
+          "logoImage": "/categories/events/template1/logo/logoo.png",
+          "logoImageTitle": "ETA Card logo",
+          "whatsappLink": "https://api.whatsapp.com/send?phone=962786336414",
+          "callLink": "tel:+919876543210",
+          "footerSubscribe": {
+            "title": "Subscribe For Event Updates",
+            "description": "Get the latest updates, tips, and special offers straight to your inbox.",
+            "placeholder": "Enter your email",
+            "buttonText": "Subscribe"
+          }
+        }
+      },
+      "id": "shared-Footer"
+    }
+  ],
+  "publishedAt": "2026-08-12T12:35:25.363Z"
+}
