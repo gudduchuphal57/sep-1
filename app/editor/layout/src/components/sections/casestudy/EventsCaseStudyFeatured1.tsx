@@ -30,7 +30,7 @@ export default function EventsCaseStudyFeatured1({ data = {} }: SectionProps) {
       )}
 
       {stats.length > 0 && (
-        <div className="grid gap-4 md:grid-cols-3">
+        <div data-box-layout-grid="grid" className="grid gap-4 md:grid-cols-3">
           {stats.map((stat, index) => (
             <div
               key={`${stat.label}-${index}`}

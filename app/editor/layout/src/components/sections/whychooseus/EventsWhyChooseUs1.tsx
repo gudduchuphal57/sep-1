@@ -67,7 +67,7 @@ export default function EventsWhyChooseUs1({ data = {} }: SectionProps) {
           )}
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div data-box-layout-grid="grid" className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {cards.map((card, idx) => (
             <div
               key={`${card.title ?? "card"}-${idx}`}

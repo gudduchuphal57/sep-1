@@ -48,7 +48,7 @@ export default function EventsEventCta1({ data = {} }: SectionProps) {
         </div>
 
         {ctaItems.length > 0 && (
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div data-box-layout-grid="grid" className="mt-8 grid gap-4 sm:grid-cols-3">
             {ctaItems.map((item, index) => (
               <div
                 key={`${item.label}-${index}`}

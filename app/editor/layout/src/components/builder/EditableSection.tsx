@@ -397,22 +397,30 @@ export default function EditableSection({
 
     setSectionHeight(sectionRect.height);
 
+    const hoverRect = innerSection
+      ? innerSection.getBoundingClientRect()
+      : sectionRect;
+    const hoverTop = innerSection ? hoverRect.top - sectionRect.top : 0;
+    const hoverHeight = hoverRect.height;
     const halfToolbarHeight = TOOLBAR_HEIGHT / 2;
     const padding = 12;
-    const minY = halfToolbarHeight + padding;
+    const minY = hoverTop + halfToolbarHeight + padding;
     const maxY = Math.max(
       minY,
-      sectionRect.height - halfToolbarHeight - padding,
+      hoverTop + hoverHeight - halfToolbarHeight - padding,
     );
     const cursorY = event.clientY - sectionRect.top + TOOLBAR_CURSOR_GAP;
 
     setToolbarY(Math.min(Math.max(cursorY, minY), maxY));
   };
 
-  const isBottomToolbar =
+  const hoverBlockBottom = subsectionBounds
+    ? subsectionBounds.top + subsectionBounds.height
+    : sectionHeight;
+  const isMergedToolbar =
     canShowSectionAddButton &&
-    sectionHeight > 0 &&
-    toolbarY >= sectionHeight - TOOLBAR_HEIGHT - BOTTOM_TOOLBAR_GAP;
+    hoverBlockBottom > 0 &&
+    toolbarY >= hoverBlockBottom - TOOLBAR_HEIGHT - BOTTOM_TOOLBAR_GAP;
   const normalizedLabel = label.toLowerCase();
   const sectionStackClass =
     normalizedLabel === "topbar"
@@ -556,28 +564,28 @@ export default function EditableSection({
     });
   };
 
-  const editDeleteControls = (
-    <>
-      <span className="min-w-0 flex-1 truncate text-sm font-semibold text-gray-900">
-        {activeSubsectionLabel} :
-      </span>
+  const sectionLabel = (
+    <span className="min-w-0 flex-1 truncate text-sm font-semibold text-gray-900">
+      {activeSubsectionLabel} :
+    </span>
+  );
 
-      {canShowSectionAddButton && (
-        <button
-          type="button"
-          aria-label={`Add component after ${sectionName}`}
-          data-editor-toolbar
-          title="Add section"
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            setShowAddPopup(true);
-          }}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-slate-500 bg-white text-slate-900 hover:bg-slate-100"
-        >
-          <Plus size={16} />
-        </button>
-      )}
+  const addMoveControls = (
+    <>
+      <button
+        type="button"
+        aria-label={`Add component after ${sectionName}`}
+        data-editor-toolbar
+        title="Add section"
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          setShowAddPopup(true);
+        }}
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-500 bg-white text-slate-900 hover:bg-slate-100"
+      >
+        <Plus size={18} />
+      </button>
 
       <button
         type="button"
@@ -592,9 +600,9 @@ export default function EditableSection({
           handleMoveUp?.();
         }}
         disabled={!isMoveUpEnabled}
-        className="flex h-8 w-11 shrink-0 items-center justify-center rounded-full border border-gray-400 bg-gray-100 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-gray-100"
+        className="flex h-9 w-12 shrink-0 items-center justify-center rounded-full border border-gray-400 bg-white text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-white"
       >
-        <Play size={15} className="rotate-150" />
+        <Play size={16} className="rotate-150" />
       </button>
 
       <button
@@ -612,11 +620,15 @@ export default function EditableSection({
           handleMoveDown?.();
         }}
         disabled={!isMoveDownEnabled}
-        className="flex h-8 w-11 shrink-0 items-center justify-center rounded-full border border-gray-400 bg-gray-100 text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-gray-100"
+        className="flex h-9 w-12 shrink-0 items-center justify-center rounded-full border border-gray-400 bg-white text-xs font-medium text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-white"
       >
-        <Play size={15} className="rotate-90" />
+        <Play size={16} className="rotate-90" />
       </button>
+    </>
+  );
 
+  const editDeleteControls = (
+    <>
       <button
         type="button"
         onClick={openEditor}
@@ -646,6 +658,17 @@ export default function EditableSection({
     </>
   );
 
+  const stickyBarStyle = subsectionBounds
+    ? {
+        top: hoverBlockBottom - 12,
+        left: "50%",
+        transform: "translate(-50%, -100%)",
+      }
+    : undefined;
+  const stickyBarPositionClass = subsectionBounds
+    ? "absolute"
+    : "absolute bottom-3 left-1/2 -translate-x-1/2";
+
   return (
     <div
       ref={sectionRef}
@@ -674,24 +697,45 @@ export default function EditableSection({
           data-editor-toolbar
           className="pointer-events-none invisible absolute inset-0 z-40 opacity-0 transition-opacity duration-300 group-hover/editor-section:visible group-hover/editor-section:opacity-100"
         >
-          {isBottomToolbar ? (
-            <div className="absolute bottom-3 left-1/2 flex w-[min(94vw,520px)] -translate-x-1/2 items-center justify-center gap-3">
-              <div className="pointer-events-auto flex h-12 min-w-0 flex-1 items-center gap-3 rounded-full border border-slate-200 bg-white px-4 shadow-lg">
+          {isMergedToolbar ? (
+            <div
+              className={`${stickyBarPositionClass} flex items-center justify-center gap-2`}
+              style={stickyBarStyle}
+            >
+              <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-slate-100 px-2.5 py-1.5 shadow-lg">
+                {addMoveControls}
+              </div>
+              <div className="pointer-events-auto flex h-12 min-w-0 max-w-[min(72vw,420px)] items-center gap-3 rounded-full border border-slate-200 bg-white px-4 shadow-lg">
+                {sectionLabel}
                 {editDeleteControls}
               </div>
             </div>
           ) : (
-            <div
-              className="absolute left-0 right-0 flex -translate-y-1/2 justify-center gap-3 py-0"
-              style={{ top: shouldCenterToolbar ? "50%" : toolbarY }}
-            >
+            <>
               <div
-                className="pointer-events-auto flex h-10 items-center justify-center gap-3 rounded-full border border-slate-300 bg-white px-3 py-1 shadow-lg"
-                style={{ maxWidth: TOOLBAR_WIDTH }}
+                className="absolute left-0 right-0 flex -translate-y-1/2 justify-center gap-3 py-0"
+                style={{ top: shouldCenterToolbar ? "50%" : toolbarY }}
               >
-                {editDeleteControls}
+                <div
+                  className="pointer-events-auto flex h-10 items-center justify-center gap-3 rounded-full border border-slate-300 bg-white px-3 py-1 shadow-lg"
+                  style={{ maxWidth: TOOLBAR_WIDTH }}
+                >
+                  {sectionLabel}
+                  {editDeleteControls}
+                </div>
               </div>
-            </div>
+
+              {canShowSectionAddButton && (
+                <div
+                  className={`${stickyBarPositionClass} flex items-center justify-center`}
+                  style={stickyBarStyle}
+                >
+                  <div className="pointer-events-auto flex items-center gap-2 rounded-full bg-slate-100 px-2.5 py-1.5 shadow-lg">
+                    {addMoveControls}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

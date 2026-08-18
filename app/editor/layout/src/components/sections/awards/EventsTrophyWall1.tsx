@@ -57,7 +57,7 @@ export default function EventsTrophyWall1({ data = {} }: SectionProps) {
           )}
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div data-box-layout-grid="grid" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {awards.map((award, index) => (
             <div
               key={`${award.year}-${award.title}-${index}`}

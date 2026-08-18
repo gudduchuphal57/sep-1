@@ -131,7 +131,7 @@ export default function EventsAwards1({ data = {} }: SectionProps) {
           )}
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div data-box-layout-grid="grid" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {parsedItems.map((item, idx) => (
             <div
               key={`${item.title ?? "award"}-${idx}`}

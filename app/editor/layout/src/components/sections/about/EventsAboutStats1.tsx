@@ -12,7 +12,7 @@ export default function EventsAboutStats1({ data = {} }: SectionProps) {
           className="mt-8 md:mt-10 lg:mt-14"
         >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="grid gap-6 md:grid-cols-3">
+              <div data-box-layout-grid="grid" className="grid gap-6 md:grid-cols-3">
                 {stats.map((stat, index) => (
                   <div
                     key={`${stat.label}-${index}`}

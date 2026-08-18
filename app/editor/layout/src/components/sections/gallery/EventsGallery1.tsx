@@ -81,7 +81,7 @@ export default function EventsGallery1({ data = {} }: SectionProps) {
           )}
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div data-box-layout-grid="grid" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {images.map((image, idx) => {
             const src = image.src ?? image.image ?? "";
 

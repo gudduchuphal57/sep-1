@@ -24,7 +24,13 @@ export default function EventsTeam1({ data = {} }: SectionProps) {
     ((data as { items?: TeamMemberData[] }).items ?? [])
   ) as TeamMemberData[];
   const joinButton = data.joinButton;
-  const visibleMembers = members.slice(0, 3);
+  const boxesPerRow =
+    typeof data.boxesPerRow === "number" &&
+    data.boxesPerRow >= 2 &&
+    data.boxesPerRow <= 6
+      ? data.boxesPerRow
+      : 3;
+  const visibleMembers = members.slice(0, boxesPerRow);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
 
@@ -66,6 +72,7 @@ export default function EventsTeam1({ data = {} }: SectionProps) {
         </div>
 
         <div
+          data-box-layout-grid="grid"
           className={`grid gap-6 transition-all delay-200 duration-1000 sm:grid-cols-2 lg:grid-cols-3 ${
             isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
           }`}

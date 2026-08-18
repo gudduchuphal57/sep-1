@@ -65,7 +65,7 @@ export default function EventsBlog1({ data = {} }: SectionProps) {
           )}
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div data-box-layout-grid="grid" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post, idx) => {
             const image = post.image ?? "";
             const title = post.title ?? "";

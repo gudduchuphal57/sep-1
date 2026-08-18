@@ -8,7 +8,11 @@ import type { PopularEventItemData, SectionProps } from "../../../types/section"
 import { isUnoptimizedImageSrc } from "../../../lib/media";
 
 export default function EventsPopularEvents1({ data = {} }: SectionProps) {
-  const categories = (data.categories ?? []).filter(
+  const categories = (
+    (Array.isArray(data.tabs) && data.tabs.length > 0
+      ? data.tabs
+      : data.categories) ?? []
+  ).filter(
     (item): item is string => typeof item === "string" && Boolean(item.trim()),
   );
   const events = (data.events ?? []) as PopularEventItemData[];
@@ -120,6 +124,7 @@ export default function EventsPopularEvents1({ data = {} }: SectionProps) {
         </div>
 
         <div
+          data-box-layout-grid="grid"
           className={`grid gap-5 transition-opacity duration-300 md:grid-cols-2 xl:grid-cols-3 ${
             isTransitioning ? "opacity-30" : "opacity-100"
           }`}

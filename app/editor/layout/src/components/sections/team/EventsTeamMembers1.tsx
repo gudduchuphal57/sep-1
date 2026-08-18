@@ -88,6 +88,7 @@ export default function EventsTeamMembers1({ data = {} }: SectionProps) {
         )}
 
         <div
+          data-box-layout-grid="grid"
           className={`grid gap-6 transition-all delay-200 duration-1000 sm:grid-cols-2 lg:grid-cols-3 ${
             isVisible
               ? "translate-y-0 opacity-100"

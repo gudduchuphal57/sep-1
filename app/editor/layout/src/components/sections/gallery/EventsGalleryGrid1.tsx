@@ -57,9 +57,9 @@ export default function EventsGalleryGrid1({ data = {} }: SectionProps) {
           ))}
         </div>
 
-        <div className="mt-10 grid grid-cols-1 content-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div data-box-layout-grid="grid" className="mt-10 grid grid-cols-1 content-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {filteredCards.length === 0 ? (
-            <div className="rounded-[2rem] border border-[#f4d4e1] bg-white p-10 text-center text-slate-600 shadow-[0_20px_60px_-35px_rgba(214,27,88,0.12)] sm:col-span-2 lg:col-span-3">
+            <div className="col-span-full rounded-[2rem] border border-[#f4d4e1] bg-white p-10 text-center text-slate-600 shadow-[0_20px_60px_-35px_rgba(214,27,88,0.12)]">
               {emptyLabel}
             </div>
           ) : (

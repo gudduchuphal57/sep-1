@@ -55,7 +55,7 @@ export default function EventsCoreBeliefs1({ data = {} }: SectionProps) {
               )}
             </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div data-box-layout-grid="grid" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {coreBeliefs.map((belief, index) => (
                 <div
                   key={`${belief.title}-${index}`}

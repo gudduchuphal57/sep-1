@@ -6,9 +6,8 @@ import Link from "next/link";
 
 import type { EventsBlogPostData, SectionProps } from "../../../types/section";
 import { isUnoptimizedImageSrc } from "../../../lib/media";
+import useCardPagination from "../types/useCardPagination";
 import EventsPagination1 from "./EventsPagination1";
-
-const POSTS_PER_PAGE = 3;
 
 export default function EventsBlogGrid1({ data = {} }: SectionProps) {
   const posts =
@@ -18,8 +17,18 @@ export default function EventsBlogGrid1({ data = {} }: SectionProps) {
   const buttonIcon = data.buttonIcon ?? "→";
 
   const [isVisible, setIsVisible] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const sectionRef = useRef<HTMLElement | null>(null);
+  const {
+    currentPage,
+    itemsPerPage,
+    totalPages,
+    setCurrentPage,
+  } = useCardPagination({
+    itemCount: posts.length,
+    boxesPerRow: data.boxesPerRow,
+    fallbackColumns: 3,
+    rowsPerPage: 1,
+  });
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -39,17 +48,10 @@ export default function EventsBlogGrid1({ data = {} }: SectionProps) {
     return () => observer.disconnect();
   }, []);
 
-  const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(1);
-    }
-  }, [posts.length, totalPages, currentPage]);
-
-  const indexOfLastPost = currentPage * POSTS_PER_PAGE;
-  const indexOfFirstPost = indexOfLastPost - POSTS_PER_PAGE;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = posts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -71,7 +73,7 @@ export default function EventsBlogGrid1({ data = {} }: SectionProps) {
       data-editor-fields="blogItems buttonLabel buttonIcon"
       className="mx-auto mt-8 max-w-7xl scroll-mt-8 px-4 pb-16 sm:px-6 md:mt-10 lg:mt-14 lg:px-8"
     >
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div data-box-layout-grid="grid" className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {currentPosts.map((post, idx) => {
           const image = post.image ?? "";
           const title = post.title ?? "";

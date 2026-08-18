@@ -43,7 +43,7 @@ export default function EventsAboutValues1({ data = {} }: SectionProps) {
                 </h2>
               </div>
 
-              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+              <div data-box-layout-grid="grid" className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
                 {values.map((value, index) => (
                   <div
                     key={`${value.title}-${index}`}

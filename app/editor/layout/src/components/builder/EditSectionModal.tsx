@@ -269,10 +269,20 @@ const componentContentFieldsByVariant: Record<string, string[]> = {
     "title",
     "desc",
     "description",
+    "tabs",
     "buttonLabel",
     "buttonIcon",
     "events",
+  ],
+  "EventsPopularEvents1": [
+    "pretitle",
+    "title",
+    "desc",
+    "description",
     "tabs",
+    "buttonLabel",
+    "buttonIcon",
+    "events",
   ],
   "Gallery-1": ["title", "desc", "galleryItems"],
   "Gallery-2": ["title", "galleryItems"],
@@ -872,6 +882,7 @@ const normalizeSectionType = (sectionType: string) => {
     globalpresence: "GlobalPresence",
     eventcategories: "EventCategories",
     eventdetail: "EventDetail",
+    popularevents: "PopularEvents",
     blogdetails: "BlogDetails",
     careers: "Careers",
     careersapply: "CareersApply",
@@ -1232,6 +1243,7 @@ const userManageableCollectionFields = new Set([
   "impactStats",
   "groups",
   "events",
+  "tabs",
   "images",
   "cards",
   "members",
@@ -1403,10 +1415,18 @@ const GenericFieldEditor = ({
       sectionType === "PropertyProcess" &&
       fieldName === "steps" &&
       path.length === 1;
+    const isTabStringList =
+      fieldName === "tabs" &&
+      path.length === 1 &&
+      (value.length === 0 ||
+        value.every((item) => typeof item === "string"));
     const isNestedStringList =
-      path.length > 1 &&
+      (path.length > 1 || isTabStringList) &&
       (value.length === 0
-        ? fieldName === "content" || fieldName === "items" || fieldName === "text"
+        ? fieldName === "content" ||
+          fieldName === "items" ||
+          fieldName === "text" ||
+          isTabStringList
         : value.every((item) => typeof item === "string"));
     const canAddTopLevelItems =
       path.length === 1 &&
@@ -1493,7 +1513,9 @@ const GenericFieldEditor = ({
                   : isFeatureCollection
                     ? "Add Feature"
                     : isNestedStringList
-                      ? "Add Item"
+                      ? isTabStringList
+                        ? "Add Tab"
+                        : "Add Item"
                       : "Add New"}
             </button>
           )}
@@ -1534,7 +1556,7 @@ const GenericFieldEditor = ({
       )}
 
       <GenericFieldEditor
-        fieldName={`Item ${index + 1}`}
+        fieldName={isTabStringList ? `Tab heading Item ${index + 1}` : `Item ${index + 1}`}
         value={item}
         path={[...path, index]}
         sectionType={sectionType}
@@ -1705,7 +1727,10 @@ const GenericFieldEditor = ({
     );
   }
 
-  const label = formatFieldLabel(fieldName);
+  const label =
+    path[0] === "tabs" && typeof path[1] === "number"
+      ? `Tab heading Item ${Number(path[1]) + 1}`
+      : formatFieldLabel(fieldName);
   const mediaKind =
     typeof value === "string" ? getMediaKindFromKey(fieldName) : null;
 
@@ -1738,7 +1763,7 @@ const GenericFieldEditor = ({
                 className="sr-only"
               />
             </label>
-            {hasMedia && (
+            {hasMedia && fieldName === "backgroundImage" && (
               <button
                 type="button"
                 onClick={() => onChange(path, "")}
@@ -1751,16 +1776,6 @@ const GenericFieldEditor = ({
           </div>
           <div className="relative">
             <MediaUploadPreview src={stringValue} type={mediaKind} />
-            {hasMedia && (
-              <button
-                type="button"
-                onClick={() => onChange(path, "")}
-                className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-white text-red-600 shadow hover:bg-red-50"
-                aria-label={`Remove ${mediaKind}`}
-              >
-                <Trash size={12} />
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -2188,7 +2203,10 @@ export default function EditSectionModal({
 
       return {
         ...editorData,
-        tabs: Array.isArray(editorData.tabs)
+        tabs: Array.isArray(editorData.tabs) &&
+          editorData.tabs.some(
+            (item) => typeof item === "string" && item.trim(),
+          )
           ? editorData.tabs.filter(
             (item): item is string => typeof item === "string",
           )
@@ -2278,6 +2296,24 @@ export default function EditSectionModal({
 
     return editorData;
   })();
+  const popularEventTabItems =
+    activeSectionType === "PopularEvents"
+      ? (() => {
+          const fromTabs = Array.isArray(activeGenericEditorData?.tabs)
+            ? activeGenericEditorData.tabs.filter(
+                (item): item is string =>
+                  typeof item === "string" && Boolean(item.trim()),
+              )
+            : [];
+          if (fromTabs.length) return fromTabs;
+          return Array.isArray(activeGenericData?.categories)
+            ? activeGenericData.categories.filter(
+                (item): item is string =>
+                  typeof item === "string" && Boolean(item.trim()),
+              )
+            : [];
+        })()
+      : [];
   const [scopedContentFields] = useState<Set<string> | null>(() => {
     if (!subsectionScope) return null;
 
@@ -2803,6 +2839,16 @@ export default function EditSectionModal({
     "detailCtaButton",
   ];
   const eventsEventDetailCardFields = ["icon", "title", "description", "desc"];
+  const eventsPopularEventsContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "description",
+    "tabs",
+    "buttonLabel",
+    "buttonIcon",
+    "events",
+  ];
   const subsectionLabel = subsectionScope?.label.trim().toLowerCase() ?? "";
   const isBreadcrumbSubsection =
     subsectionLabel === "breadcrumb" || subsectionLabel === "page banner";
@@ -2939,6 +2985,9 @@ export default function EditSectionModal({
                                 : category === "Events" &&
                                     activeSectionType === "EventDetail"
                                   ? eventsEventDetailContentFields
+                                  : category === "Events" &&
+                                      activeSectionType === "PopularEvents"
+                                    ? eventsPopularEventsContentFields
       : isPageSection &&
           (mappedComponentContentFields || defaultInnerPageFields.length)
         ? Array.from(
@@ -3094,7 +3143,10 @@ export default function EditSectionModal({
       activeVariant === "RealEstateProject1"
     ) {
       if (activeTab === "Tabs") return field === "tabs";
-      if (field === "tabs" || field === "categories") return false;
+      if (field === "categories") return false;
+      if (field === "tabs" && activeSectionType !== "PopularEvents") {
+        return false;
+      }
     }
 
     if (
@@ -3168,11 +3220,16 @@ export default function EditSectionModal({
 
     return [field, value] as const;
   })
-    .filter(([field]) => isContentFieldVisible(field))
+    .filter(([field]) =>
+      activeSectionType === "PopularEvents" && field === "tabs"
+        ? false
+        : isContentFieldVisible(field),
+    )
     .sort(([leftField, leftValue], [rightField, rightValue]) => {
       const getGroup = (field: string, value: unknown) => {
         const headingIndex = headingContentFieldOrder.indexOf(field);
         if (headingIndex >= 0) return headingIndex;
+        if (field === "tabs") return 50;
         if (Array.isArray(value)) return 200;
         return 100;
       };
@@ -4016,7 +4073,7 @@ export default function EditSectionModal({
 
     // Nested string lists inside a card (e.g. sections[0].content)
     if (
-      path.length > 1 &&
+      (path.length > 1 || field === "tabs") &&
       (visibleItems.length === 0 ||
         visibleItems.every((item) => typeof item === "string"))
     ) {
@@ -4487,7 +4544,7 @@ export default function EditSectionModal({
 
     // Nested string lists inside a card (e.g. sections[0].content)
     if (
-      path.length > 1 &&
+      (path.length > 1 || field === "tabs") &&
       (visibleItems.length === 0 ||
         visibleItems.every((item) => typeof item === "string"))
     ) {
@@ -7405,6 +7462,20 @@ export default function EditSectionModal({
                 (activeSectionType === "CareerPage" &&
                   activeTab === "CareerPage Form")) && (
                 <div className="space-y-5">
+                  {activeSectionType === "PopularEvents" &&
+                    (activeTab.endsWith("Content") || activeTab === "Tabs") && (
+                      <GenericFieldEditor
+                        fieldName="tabs"
+                        value={popularEventTabItems}
+                        path={["tabs"]}
+                        sectionType={activeSectionType}
+                        onChange={updateGenericField}
+                        onMediaChange={updateGenericMedia}
+                        onAddArrayItem={addGenericCollectionItem}
+                        onDeleteArrayItem={deleteGenericCollectionItem}
+                        availablePageNames={availablePageNames}
+                      />
+                    )}
                   {visibleGenericContentEntries.map(([key, value]) => (
                     <GenericFieldEditor
                       key={key}

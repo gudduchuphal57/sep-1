@@ -107,6 +107,8 @@ export default function EventsTestimonial1({ data = {} }: SectionProps) {
 
           <div
             ref={scrollRef}
+            data-box-layout-grid="carousel"
+            data-box-layout-gap="wide"
             className="flex touch-pan-x snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth px-2 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {items.map((item, idx) => {

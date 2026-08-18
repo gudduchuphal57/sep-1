@@ -1,0 +1,621 @@
+EVENTS TEMPLATE-1 FLOW
+Category: Events
+Template: template-1
+Prefix: Events
+
+================================================================
+CORE FILES (upload these for builder + data)
+================================================================
+JSON
+  app/editor/layout/src/data/categoryContent.json
+    -> categories.Events.templateComponents.template-1
+    -> categories.Events.sections
+
+TS
+  app/editor/layout/src/data/templateFlow.ts
+  app/editor/layout/src/data/selectedConfig.ts
+  app/editor/layout/src/types/section.ts
+  app/editor/layout/src/lib/sectionRegistry.ts
+  app/editor/layout/src/lib/categorySectionVariant.ts
+  app/editor/layout/src/lib/pageVariantRouting.ts
+  app/editor/layout/src/lib/pageComponentAdapters.ts
+  app/editor/layout/src/lib/subsectionOrder.ts
+  app/editor/layout/src/lib/media.ts
+
+EDITOR UI
+  app/editor/layout/page.tsx
+  app/editor/layout/src/components/builder/EditSectionModal.tsx
+  app/editor/layout/src/components/builder/EditableSection.tsx
+
+PUBLIC MEDIA
+  public/categories/events/template1/
+
+COMPONENT ROOT
+  app/editor/layout/src/components/sections/
+
+================================================================
+SHARED (all pages)
+================================================================
+Header
+  JSON key: Header
+  Variant: EventsHeader1
+  Folder: header
+  File: EventsHeader1.tsx
+  Path: app/editor/layout/src/components/sections/header/EventsHeader1.tsx
+
+Footer
+  JSON key: Footer
+  Variant: EventsFooter1
+  Folder: footer
+  File: EventsFooter1.tsx
+  Path: app/editor/layout/src/components/sections/footer/EventsFooter1.tsx
+
+Breadcrumb (used on every inner page, not a registered page section)
+  Folder: breadcrumb
+  File: EventsPageBanner1.tsx
+  Path: app/editor/layout/src/components/sections/breadcrumb/EventsPageBanner1.tsx
+
+Topbar (JSON exists, not in template-1 shared)
+  JSON key: Topbar
+  Variant: EventsTopbar1
+
+================================================================
+PAGE: home   route: /
+JSON page key: home
+================================================================
+Banner
+  JSON key: Banner
+  Variant: EventsBanner1
+  Folder: banner
+  File: EventsBanner1.tsx
+
+About
+  JSON key: About
+  Variant: EventsAbout1
+  Folder: about
+  File: EventsAbout1.tsx
+
+WhyChooseUs
+  JSON key: WhyChooseUs
+  Variant: EventsWhyChooseUs1
+  Folder: whychooseus
+  File: EventsWhyChooseUs1.tsx
+
+EventCategories
+  JSON key: EventCategories
+  JSON component: EventCategories1
+  Actual page composer: EventsEventPage1.tsx (inner /events page)
+  Home listing file: EventsEventCategories1.tsx
+  Folder: event
+
+PopularEvents
+  JSON key: PopularEvents
+  Variant: EventsPopularEvents1
+  Folder: popularevents
+  File: EventsPopularEvents1.tsx
+
+Gallery
+  JSON key: Gallery
+  Variant: EventsGallery1
+  Folder: gallery
+  File: EventsGallery1.tsx
+
+Awards
+  JSON key: Awards
+  Variant: EventsAwards1
+  Folder: awards
+  File: EventsAwards1.tsx
+
+Team
+  JSON key: Team
+  Variant: EventsTeam1
+  Folder: team
+  File: EventsTeam1.tsx
+
+Testimonial
+  JSON key: Testimonial
+  Variant: EventsTestimonial1
+  Folder: testimonial
+  File: EventsTestimonial1.tsx
+
+Blog
+  JSON key: Blog
+  Variant: EventsBlog1
+  Folder: blog
+  File: EventsBlog1.tsx
+
+FAQ
+  JSON key: FAQ
+  Variant: EventsFAQ1
+  Folder: faq
+  File: EventsFAQ1.tsx
+
+Contact
+  JSON key: Contact
+  Variant: EventsContact1
+  Folder: contact
+  File: EventsContact1.tsx
+
+================================================================
+PAGE: about   route: /about
+JSON page key: about
+JSON section: AboutPage
+Variant: EventsAboutPage1
+Folder: about
+File: EventsAboutPage1.tsx
+JSON: categories.Events.sections.AboutPage.variants.EventsAboutPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  About Content       about/EventsAboutContent1.tsx
+  About Stats         about/EventsAboutStats1.tsx
+  About Values        about/EventsAboutValues1.tsx
+  About CTA           about/EventsAboutCta1.tsx
+
+================================================================
+PAGE: our-story   route: /our-story
+JSON page key: our-story
+JSON section: OurStory
+Variant: EventsOurStoryPage1
+Folder: our-story
+File: EventsOurStoryPage1.tsx
+JSON: categories.Events.sections.OurStory.variants.EventsOurStoryPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Story Content       our-story/EventsOurStoryContent1.tsx
+  Story Stats         our-story/EventsOurStoryStats1.tsx
+  Milestones          our-story/EventsOurStoryMilestones1.tsx
+
+================================================================
+PAGE: vision   route: /vision
+JSON page key: vision
+JSON section: VisionMission
+Variant: EventsVisionPage1
+Folder: mission-vision
+File: EventsVisionPage1.tsx
+JSON: categories.Events.sections.VisionMission.variants.EventsVisionPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Vision Block        mission-vision/EventsVisionBlock1.tsx
+  Mission Block       mission-vision/EventsMissionBlock1.tsx
+  Core Beliefs        mission-vision/EventsCoreBeliefs1.tsx
+
+================================================================
+PAGE: teams   route: /teams
+JSON page key: teams
+JSON section: Teams
+Variant: EventsTeamsPage1
+Folder: team
+File: EventsTeamsPage1.tsx
+JSON: categories.Events.sections.Teams.variants.EventsTeamsPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Team Members        team/EventsTeamMembers1.tsx
+  Join CTA            team/EventsTeamJoinCta1.tsx
+
+================================================================
+PAGE: team-detail   route: /teams/{id}
+JSON page key: team-detail
+Expand: members from Teams / EventsTeamsPage1
+JSON section: TeamDetail
+Variant: EventsTeamDetailPage1
+Folder: team
+File: EventsTeamDetailPage1.tsx
+JSON: categories.Events.sections.TeamDetail.variants.EventsTeamDetailPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Member Content      team/EventsTeamDetailContent1.tsx
+
+================================================================
+PAGE: awards   route: /awards
+JSON page key: awards
+JSON section: AwardsPage
+Variant: EventsAwardsPage1
+Folder: awards
+File: EventsAwardsPage1.tsx
+JSON: categories.Events.sections.AwardsPage.variants.EventsAwardsPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Featured Award      awards/EventsFeaturedAward1.tsx
+  Trophy Wall         awards/EventsTrophyWall1.tsx
+  Awards Stats        awards/EventsAwardsStats1.tsx
+
+================================================================
+PAGE: gallery   route: /gallery
+JSON page key: gallery
+JSON section: Gallery
+Variant: EventsGalleryPage1
+Folder: gallery
+File: EventsGalleryPage1.tsx
+JSON: categories.Events.sections.Gallery.variants.EventsGalleryPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Gallery Grid        gallery/EventsGalleryGrid1.tsx
+  Gallery Preview     gallery/EventsGalleryPreview.tsx
+
+================================================================
+PAGE: blog   route: /blog
+JSON page key: blog
+JSON section: Blog
+Variant: EventsBlogPage1
+Folder: blog
+File: EventsBlogPage1.tsx
+JSON: categories.Events.sections.Blog.variants.EventsBlogPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Blog Grid           blog/EventsBlogGrid1.tsx
+  Pagination          blog/EventsPagination1.tsx
+
+================================================================
+PAGE: blog-detail   route: /blog/{id}
+JSON page key: blog-detail
+Expand: blogItems from Blog / EventsBlogPage1
+JSON section: BlogDetails
+Variant: EventsBlogDetailsPage1
+Folder: blog
+File: EventsBlogDetailsPage1.tsx
+JSON: categories.Events.sections.BlogDetails.variants.EventsBlogDetailsPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Article Content     blog/EventsBlogDetailsContent1.tsx
+  Recent Posts        blog/EventsBlogRecentPosts1.tsx
+
+================================================================
+PAGE: contact   route: /contact
+JSON page key: contact
+JSON section: Contact
+Variant: EventsContactPage1
+Folder: contact
+File: EventsContactPage1.tsx
+JSON: categories.Events.sections.Contact.variants.EventsContactPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Contact Overview    contact/EventsContactOverview1.tsx
+  Contact Map         contact/EventsContactMap1.tsx
+  Extra (home form)   contact/EventsContactForm1.tsx
+  Extra               contact/EventsContactDetails1.tsx
+
+================================================================
+PAGE: careers   route: /careers
+JSON page key: careers
+JSON section: Careers
+Variant: EventsCareersPage1
+Folder: career
+File: EventsCareersPage1.tsx
+JSON: categories.Events.sections.Careers.variants.EventsCareersPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Careers Overview    career/EventsCareersOverview1.tsx
+  Open Roles          career/EventsCareersRoles1.tsx
+  Quote CTA           career/EventsCareersQuoteCta1.tsx
+
+================================================================
+PAGE: careers-apply   route: /careers/apply/{id}
+JSON page key: careers-apply
+Expand: roles from Careers / EventsCareersPage1
+JSON section: CareersApply
+Variant: EventsCareersApplyPage1
+Folder: career
+File: EventsCareersApplyPage1.tsx
+JSON: categories.Events.sections.CareersApply.variants.EventsCareersApplyPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Application Form    career/EventsCareersApplyForm1.tsx
+  Job Details         career/EventsCareersApplyJobDetails1.tsx
+  Why Join Us         career/EventsCareersApplyWhyJoinUs1.tsx
+
+================================================================
+PAGE: support   route: /support
+JSON page key: support
+JSON section: Support
+Variant: EventsSupportPage1
+Folder: support
+File: EventsSupportPage1.tsx
+JSON: categories.Events.sections.Support.variants.EventsSupportPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Support Overview    support/EventsSupportOverview1.tsx
+  Extra               support/EventsSupportContact1.tsx
+  Extra               support/EventsSupportFaq1.tsx
+
+================================================================
+PAGE: privacy   route: /privacy
+JSON page key: privacy
+JSON section: PrivacyPolicy
+Variant: EventsPrivacyPolicyPage1
+Folder: privacy-policy
+File: EventsPrivacyPolicyPage1.tsx
+JSON: categories.Events.sections.PrivacyPolicy.variants.EventsPrivacyPolicyPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Legal Sections      privacy-policy/EventsLegalSections1.tsx
+
+================================================================
+PAGE: terms   route: /terms
+JSON page key: terms
+JSON section: TermsCondition
+Variant: EventsTermsConditionPage1
+Folder: terms-conditions
+File: EventsTermsConditionPage1.tsx
+JSON: categories.Events.sections.TermsCondition.variants.EventsTermsConditionPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Legal Sections      privacy-policy/EventsLegalSections1.tsx  (shared)
+
+================================================================
+PAGE: global-presence   route: /global-presence
+JSON page key: global-presence
+JSON section: GlobalPresence
+Variant: EventsGlobalPresencePage1
+Folder: global-presence
+File: EventsGlobalPresencePage1.tsx
+JSON: categories.Events.sections.GlobalPresence.variants.EventsGlobalPresencePage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Presence            global-presence/EventsPresence1.tsx
+
+================================================================
+PAGE: events   route: /events
+JSON page key: events
+JSON section: EventCategories
+Variant: EventsEventPage1
+Folder: event
+File: EventsEventPage1.tsx
+JSON: categories.Events.sections.EventCategories.variants.EventsEventPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Event Categories    event/EventsEventCategories1.tsx
+  Event CTA           event/EventsEventCta1.tsx
+
+================================================================
+PAGE: event-detail   route: /events/{id}
+JSON page key: event-detail
+Expand: items from EventCategories
+JSON section: EventDetail
+Variant: EventsEventDetailPage1
+Folder: event
+File: EventsEventDetailPage1.tsx
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Event Content       event/EventsEventDetailContent1.tsx
+  Event CTA           event/EventsEventDetailCta1.tsx
+
+================================================================
+PAGE: case-study   route: /case-study
+JSON page key: case-study
+JSON section: CaseStudy
+Variant: EventsCaseStudyPage1
+Folder: casestudy
+File: EventsCaseStudyPage1.tsx
+JSON: categories.Events.sections.CaseStudy.variants.EventsCaseStudyPage1
+----------------------------------------------------------------
+Child sections
+  Breadcrumb          breadcrumb/EventsPageBanner1.tsx
+  Overview            casestudy/EventsCaseStudyOverview1.tsx
+  Project             casestudy/EventsCaseStudyProject1.tsx
+  CTA                 casestudy/EventsCaseStudyCta1.tsx
+  Extra               casestudy/EventsCaseStudyFeatured1.tsx
+  Extra               casestudy/EventsCaseStudyHighlights1.tsx
+
+================================================================
+JSON SECTION KEYS (categories.Events.sections)
+================================================================
+Topbar
+Header
+Banner
+About
+WhyChooseUs
+Footer
+PopularEvents
+Gallery
+Awards
+Team
+Testimonial
+Blog
+FAQ
+Contact
+CaseStudy
+Support
+PrivacyPolicy
+TermsCondition
+AboutPage
+OurStory
+VisionMission
+TeamDetail
+Teams
+AwardsPage
+GlobalPresence
+EventCategories
+Careers
+CareersApply
+BlogDetails
+
+================================================================
+FOLDER -> FILES (all Events TSX)
+================================================================
+about/
+  EventsAbout1.tsx
+  EventsAboutPage1.tsx
+  EventsAboutContent1.tsx
+  EventsAboutStats1.tsx
+  EventsAboutValues1.tsx
+  EventsAboutCta1.tsx
+
+awards/
+  EventsAwards1.tsx
+  EventsAwardsPage1.tsx
+  EventsFeaturedAward1.tsx
+  EventsTrophyWall1.tsx
+  EventsAwardsStats1.tsx
+
+banner/
+  EventsBanner1.tsx
+
+blog/
+  EventsBlog1.tsx
+  EventsBlogPage1.tsx
+  EventsBlogGrid1.tsx
+  EventsBlogDetailsPage1.tsx
+  EventsBlogDetailsContent1.tsx
+  EventsBlogRecentPosts1.tsx
+  EventsPagination1.tsx
+
+breadcrumb/
+  EventsPageBanner1.tsx
+
+career/
+  EventsCareersPage1.tsx
+  EventsCareersOverview1.tsx
+  EventsCareersRoles1.tsx
+  EventsCareersQuoteCta1.tsx
+  EventsCareersApplyPage1.tsx
+  EventsCareersApplyForm1.tsx
+  EventsCareersApplyJobDetails1.tsx
+  EventsCareersApplyWhyJoinUs1.tsx
+
+casestudy/
+  EventsCaseStudyPage1.tsx
+  EventsCaseStudyOverview1.tsx
+  EventsCaseStudyProject1.tsx
+  EventsCaseStudyCta1.tsx
+  EventsCaseStudyFeatured1.tsx
+  EventsCaseStudyHighlights1.tsx
+
+contact/
+  EventsContact1.tsx
+  EventsContactPage1.tsx
+  EventsContactOverview1.tsx
+  EventsContactMap1.tsx
+  EventsContactForm1.tsx
+  EventsContactDetails1.tsx
+
+event/
+  EventsEventPage1.tsx
+  EventsEventCategories1.tsx
+  EventsEventCta1.tsx
+  EventsEventDetailPage1.tsx
+  EventsEventDetailContent1.tsx
+  EventsEventDetailCta1.tsx
+
+faq/
+  EventsFAQ1.tsx
+
+footer/
+  EventsFooter1.tsx
+
+gallery/
+  EventsGallery1.tsx
+  EventsGalleryPage1.tsx
+  EventsGalleryGrid1.tsx
+  EventsGalleryPreview.tsx
+
+global-presence/
+  EventsGlobalPresencePage1.tsx
+  EventsPresence1.tsx
+
+header/
+  EventsHeader1.tsx
+
+mission-vision/
+  EventsVisionPage1.tsx
+  EventsVisionBlock1.tsx
+  EventsMissionBlock1.tsx
+  EventsCoreBeliefs1.tsx
+
+our-story/
+  EventsOurStoryPage1.tsx
+  EventsOurStoryContent1.tsx
+  EventsOurStoryStats1.tsx
+  EventsOurStoryMilestones1.tsx
+
+popularevents/
+  EventsPopularEvents1.tsx
+
+privacy-policy/
+  EventsPrivacyPolicyPage1.tsx
+  EventsLegalSections1.tsx
+
+support/
+  EventsSupportPage1.tsx
+  EventsSupportOverview1.tsx
+  EventsSupportContact1.tsx
+  EventsSupportFaq1.tsx
+
+team/
+  EventsTeam1.tsx
+  EventsTeamsPage1.tsx
+  EventsTeamMembers1.tsx
+  EventsTeamJoinCta1.tsx
+  EventsTeamDetailPage1.tsx
+  EventsTeamDetailContent1.tsx
+
+terms-conditions/
+  EventsTermsConditionPage1.tsx
+
+testimonial/
+  EventsTestimonial1.tsx
+
+whychooseus/
+  EventsWhyChooseUs1.tsx
+
+================================================================
+REGISTRY (sectionRegistry.ts) — registered page/home variants
+================================================================
+EventsHeader1
+EventsBanner1
+EventsAbout1
+EventsAboutPage1
+EventsOurStoryPage1
+EventsVisionPage1
+EventsWhyChooseUs1
+EventsPopularEvents1
+EventsGallery1
+EventsGalleryPage1
+EventsAwards1
+EventsAwardsPage1
+EventsGlobalPresencePage1
+EventsEventPage1
+EventsEventDetailPage1
+EventsTeam1
+EventsTeamsPage1
+EventsTeamDetailPage1
+EventsTestimonial1
+EventsBlog1
+EventsBlogPage1
+EventsBlogDetailsPage1
+EventsCareersPage1
+EventsCareersApplyPage1
+EventsFAQ1
+EventsContact1
+EventsContactPage1
+EventsCaseStudyPage1
+EventsSupportPage1
+EventsPrivacyPolicyPage1
+EventsTermsConditionPage1
+EventsFooter1
+
+
+================================================================
+EXPAND / DYNAMIC PAGES
+================================================================
+team-detail     expand members     source Teams / EventsTeamsPage1
+blog-detail     expand blogItems   source Blog / EventsBlogPage1
+careers-apply   expand roles       source Careers / EventsCareersPage1
+event-detail    expand items       source EventCategories

@@ -33,7 +33,7 @@ export default function EventsOurStoryMilestones1({ data = {} }: SectionProps) {
             <div className="relative">
               <div className="absolute left-0 right-0 top-16 hidden h-0.5 bg-gradient-to-r from-transparent via-[#f4d4e1] to-transparent lg:block" />
 
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+              <div data-box-layout-grid="grid" className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
                 {milestones.map((milestone, index) => (
                   <div
                     key={`${milestone.year}-${index}`}
