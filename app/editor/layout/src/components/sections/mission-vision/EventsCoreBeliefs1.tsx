@@ -1,34 +1,5 @@
-import {
-  Award,
-  Globe,
-  Heart,
-  Lightbulb,
-  ShieldCheck,
-  Sparkles,
-  Star,
-  Target,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
-
 import type { SectionProps, WhyChooseUsItemData } from "../../../types/section";
-
-const iconMap: Record<string, LucideIcon> = {
-  IconTarget: Target,
-  IconStar: Star,
-  IconWorld: Globe,
-  IconHeart: Heart,
-  IconShieldCheck: ShieldCheck,
-  IconSparkles: Sparkles,
-  IconBulb: Lightbulb,
-  IconAward: Award,
-  IconUsers: Users,
-};
-
-const renderIcon = (iconName: string | undefined, className: string) => {
-  const IconComp = (iconName && iconMap[iconName]) || Sparkles;
-  return <IconComp className={className} aria-hidden />;
-};
+import { renderEventsIcon as renderIcon } from "../../../lib/eventsIcons";
 
 export default function EventsCoreBeliefs1({ data = {} }: SectionProps) {
   const coreBeliefs = (data.coreBeliefs ?? []) as WhyChooseUsItemData[];

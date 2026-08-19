@@ -1,4 +1,5 @@
 import type { SectionProps } from "../../../types/section";
+import { collectionBoxesPerRow } from "../../../lib/boxLayout";
 
 export default function EventsAboutStats1({ data = {} }: SectionProps) {
   const stats = data.stats ?? [];
@@ -9,6 +10,7 @@ export default function EventsAboutStats1({ data = {} }: SectionProps) {
         <section
           data-editor-section-label="Stats"
           data-editor-fields="stats"
+          data-boxes-per-row={collectionBoxesPerRow(data, "stats")}
           className="mt-8 md:mt-10 lg:mt-14"
         >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

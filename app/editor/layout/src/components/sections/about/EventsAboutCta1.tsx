@@ -1,27 +1,7 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  Calendar,
-  HeartHandshake,
-  Sparkles,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
 
 import type { SectionProps } from "../../../types/section";
-
-const iconMap: Record<string, LucideIcon> = {
-  IconSparkles: Sparkles,
-  IconUsers: Users,
-  IconHeartHandshake: HeartHandshake,
-  IconCalendar: Calendar,
-  IconArrowRight: ArrowRight,
-};
-
-const renderIcon = (iconName: string | undefined, className: string) => {
-  const IconComp = (iconName && iconMap[iconName]) || Sparkles;
-  return <IconComp className={className} aria-hidden />;
-};
+import { renderEventsIcon as renderIcon } from "../../../lib/eventsIcons";
 
 export default function EventsAboutCta1({ data = {} }: SectionProps) {
   const cta = data.cta ?? {};

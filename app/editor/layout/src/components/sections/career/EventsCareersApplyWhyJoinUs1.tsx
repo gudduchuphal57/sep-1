@@ -1,31 +1,11 @@
 "use client";
 
-import {
-  Coins,
-  HeartHandshake,
-  Sparkles,
-  TrendingUp,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
-
 import type {
   EventsCareersApplyFormData,
   EventsWhyJoinUsItemData,
   SectionProps,
 } from "../../../types/section";
-
-const iconMap: Record<string, LucideIcon> = {
-  IconTrendingUp: TrendingUp,
-  IconUsers: Users,
-  IconCoin: Coins,
-  IconHeartHandshake: HeartHandshake,
-};
-
-const renderIcon = (iconName: string | undefined, className: string) => {
-  const IconComp = (iconName && iconMap[iconName]) || Sparkles;
-  return <IconComp className={className} aria-hidden />;
-};
+import { renderEventsIcon as renderIcon } from "../../../lib/eventsIcons";
 
 export default function EventsCareersApplyWhyJoinUs1({ data = {} }: SectionProps) {
   const items = (data.whyJoinUs ?? []) as EventsWhyJoinUsItemData[];

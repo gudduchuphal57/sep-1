@@ -17,6 +17,7 @@ import {
 } from "./src/lib/pageVariantRouting";
 import { getSectionComponent } from "./src/lib/sectionRegistry";
 import { toSubsectionOrder } from "./src/lib/subsectionOrder";
+import { sectionWrapperBoxesPerRow } from "./src/lib/boxLayout";
 
 import EditableSection from "./src/components/builder/EditableSection";
 import type { EditorSubsectionScope } from "./src/components/builder/EditableSection";
@@ -994,11 +995,9 @@ function EditorPage({
             onAddSection={(sectionType) => addSectionAfter(sectionId, sectionType)}
             stickyMode={stickyMode}
             boxesPerRow={
-              typeof sectionData.boxesPerRow === "number"
-                ? section.type === "Features"
-                  ? Math.min(4, sectionData.boxesPerRow)
-                  : sectionData.boxesPerRow
-                : undefined
+              section.type === "Features"
+                ? sectionWrapperBoxesPerRow(sectionData, 4)
+                : sectionWrapperBoxesPerRow(sectionData)
             }
             hiddenSubsections={
               Array.isArray(sectionData.hiddenSubsections)

@@ -76,7 +76,7 @@ export default function EventsBlog1({ data = {} }: SectionProps) {
             return (
               <article
                 key={`${title}-${idx}`}
-                className={`w-full overflow-hidden rounded-[1.5rem] border border-[#f4d4e1] bg-white shadow-[0_20px_60px_-40px_rgba(214,27,88,0.25)] transition duration-700 ${
+                className={`w-full overflow-hidden rounded-2xl border border-[#f4d4e1] bg-white shadow-[0_20px_60px_-40px_rgba(214,27,88,0.25)] transition duration-700 ${
                   isVisible
                     ? "translate-y-0 opacity-100"
                     : "translate-y-10 opacity-0"
@@ -99,7 +99,7 @@ export default function EventsBlog1({ data = {} }: SectionProps) {
                 <div className="space-y-2 p-4 sm:p-6">
                   <div className="flex flex-col gap-3 text-xs font-semibold text-slate-500 sm:flex-row sm:items-center sm:justify-between">
                     {post.label && (
-                      <span className="h-6 w-20 rounded-full bg-[#fee4ee] px-3 py-1 text-[#d61b58]">
+                      <span className="h-6  rounded-full bg-[#fee4ee] px-3 py-1 text-[#d61b58]">
                         {post.label}
                       </span>
                     )}

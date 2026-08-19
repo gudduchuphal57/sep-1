@@ -1,26 +1,6 @@
-import {
-  ArrowRight,
-  Calendar,
-  HeartHandshake,
-  Sparkles,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
-
 import type { SectionProps } from "../../../types/section";
-
-const iconMap: Record<string, LucideIcon> = {
-  IconSparkles: Sparkles,
-  IconUsers: Users,
-  IconHeartHandshake: HeartHandshake,
-  IconCalendar: Calendar,
-  IconArrowRight: ArrowRight,
-};
-
-const renderIcon = (iconName: string | undefined, className: string) => {
-  const IconComp = (iconName && iconMap[iconName]) || Sparkles;
-  return <IconComp className={className} aria-hidden />;
-};
+import { collectionBoxesPerRow } from "../../../lib/boxLayout";
+import { renderEventsIcon as renderIcon } from "../../../lib/eventsIcons";
 
 export default function EventsAboutValues1({ data = {} }: SectionProps) {
   const values = data.values ?? [];
@@ -31,6 +11,7 @@ export default function EventsAboutValues1({ data = {} }: SectionProps) {
         <section
           data-editor-section-label="Values"
           data-editor-fields="values"
+          data-boxes-per-row={collectionBoxesPerRow(data, "values")}
           className="mt-8 bg-white md:mt-10 lg:mt-14"
         >
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

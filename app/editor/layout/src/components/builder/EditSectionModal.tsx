@@ -205,6 +205,54 @@ const socialLinkLabels: SocialLinkData["label"][] = [
 
 const MAX_FOOTER_SOCIAL_LINKS = 6;
 
+const iconFieldOptions = [
+  { value: "IconAward", label: "Award" },
+  { value: "IconArrowRight", label: "Arrow Right" },
+  { value: "IconBriefcase", label: "Briefcase" },
+  { value: "IconBuildingStore", label: "Building / Store" },
+  { value: "IconBulb", label: "Bulb" },
+  { value: "IconCalendar", label: "Calendar" },
+  { value: "IconCamera", label: "Camera" },
+  { value: "IconCoin", label: "Coin" },
+  { value: "IconFileText", label: "File" },
+  { value: "IconHeart", label: "Heart" },
+  { value: "IconHeartHandshake", label: "Heart Handshake" },
+  { value: "IconMusic", label: "Music" },
+  { value: "IconRibbon", label: "Ribbon / Medal" },
+  { value: "IconRings", label: "Rings" },
+  { value: "IconRocket", label: "Rocket" },
+  { value: "IconShieldCheck", label: "Shield Check" },
+  { value: "IconSparkles", label: "Sparkles" },
+  { value: "IconStar", label: "Star" },
+  { value: "IconTarget", label: "Target" },
+  { value: "IconTrendingUp", label: "Trending Up" },
+  { value: "IconTrophy", label: "Trophy" },
+  { value: "IconUsers", label: "Users" },
+  { value: "IconWorld", label: "World" },
+  { value: "Award", label: "Award (event)" },
+  { value: "Calendar", label: "Calendar (event)" },
+  { value: "ChefHat", label: "Chef Hat" },
+  { value: "Heart", label: "Heart (event)" },
+  { value: "MapPin", label: "Map Pin" },
+  { value: "Music", label: "Music (event)" },
+  { value: "Presentation", label: "Presentation" },
+  { value: "Shield", label: "Shield" },
+  { value: "Smile", label: "Smile" },
+  { value: "Sparkles", label: "Sparkles (event)" },
+  { value: "Ticket", label: "Ticket" },
+  { value: "Users", label: "Users (event)" },
+  { value: "delivery", label: "Delivery" },
+  { value: "email", label: "Email" },
+  { value: "location", label: "Location" },
+  { value: "phone", label: "Phone" },
+  { value: "send", label: "Send" },
+  { value: "shield", label: "Shield (contact)" },
+  { value: "support", label: "Support" },
+  { value: "users", label: "Users (contact)" },
+  { value: "verified", label: "Verified" },
+  { value: "→", label: "Arrow" },
+];
+
 
 const sidebarItemsBySection: Record<string, string[]> = {
   Topbar: ["Topbar Layout", "Topbar Content"],
@@ -1489,7 +1537,12 @@ const GenericFieldEditor = ({
           <h4 className="text-sm font-bold text-slate-900">
             {formatFieldLabel(fieldName)}
           </h4>
-          {canAddItems && (
+          {canAddItems &&
+            !(
+              sectionType === "About" &&
+              fieldName === "stats" &&
+              collectionLimitReached
+            ) && (
             <button
               type="button"
               disabled={collectionLimitReached}
@@ -1821,39 +1874,28 @@ const GenericFieldEditor = ({
     fieldName === "link" &&
     path.length === 3 &&
     (path[0] === "productItems" || path[0] === "productSlides");
-  const isAwardsIcon =
-    fieldName === "icon" &&
-    sectionType === "Awards" &&
-    path[0] === "items";
-  const awardsIconOptions = [
-    { value: "IconAward", label: "Award" },
-    { value: "IconRibbon", label: "Ribbon / Medal" },
-    { value: "IconStar", label: "Star" },
-    { value: "IconUsers", label: "Users" },
-    { value: "IconHeartHandshake", label: "Heart Handshake" },
-    { value: "IconSparkles", label: "Sparkles" },
-  ];
+  const isIconField = fieldName === "icon" || fieldName === "buttonIcon";
   const pageExists = availablePageNames.some(
     (pageName) =>
       pageName.trim().toLowerCase() === stringValue.trim().toLowerCase(),
   );
 
-  if (isAwardsIcon) {
+  if (isIconField) {
     return (
       <label className="block">
         <span className="mb-1 block text-xs font-semibold text-slate-600">
-          Icon
+          {label}
         </span>
         <select
           value={stringValue}
           onChange={(event) => onChange(path, event.target.value)}
           className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
         >
-          {!awardsIconOptions.some((option) => option.value === stringValue) &&
+          {!iconFieldOptions.some((option) => option.value === stringValue) &&
             stringValue && (
               <option value={stringValue}>{stringValue}</option>
             )}
-          {awardsIconOptions.map((option) => (
+          {iconFieldOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -2040,7 +2082,12 @@ export default function EditSectionModal({
       }
 
       if (subsectionScope) {
-        if (!subsectionScope.hasCardLayout) return false;
+        const scopedCardFields = subsectionScope.fields?.filter((fieldName) =>
+          cardCollectionFields.has(fieldName),
+        );
+        if (!subsectionScope.hasCardLayout && !scopedCardFields?.length) {
+          return false;
+        }
 
         if (subsectionScope.fields?.length) {
           if (!subsectionScope.fields.includes(field)) return false;
@@ -2064,6 +2111,12 @@ export default function EditSectionModal({
     })
     : [];
   const hasCardCollection = layoutCardCollections.length > 0;
+  const boxLayoutCollectionField =
+    layoutCardCollections.length === 1
+      ? String(layoutCardCollections[0][0])
+      : undefined;
+  const showBoxLayoutTab =
+    hasCardCollection && Boolean(subsectionScope || boxLayoutCollectionField);
   const availableCardCount = hasCardCollection
     ? Math.min(...layoutCardCollections.map(([, value]) => (value as unknown[]).length))
     : 0;
@@ -2084,9 +2137,9 @@ export default function EditSectionModal({
           subsectionScope.label.trim().toLowerCase() === "project categories"
           ? "Tabs"
           : `${activeSectionType} Content`,
-        ...(hasCardCollection ? ["Box Layout"] : []),
+        ...(showBoxLayoutTab ? ["Box Layout"] : []),
       ]
-    : hasCardCollection
+    : showBoxLayoutTab
       ? [...baseSidebarItems, ...editableTabsItem, "Box Layout"]
       : [...baseSidebarItems, ...editableTabsItem];
 
@@ -2159,6 +2212,16 @@ export default function EditSectionModal({
   const activeGenericData = currentSection?.data?.[activeVariant] as
     | SectionData
     | undefined;
+  const boxLayoutByField =
+    activeGenericData?.boxLayoutByField &&
+    typeof activeGenericData.boxLayoutByField === "object" &&
+    !Array.isArray(activeGenericData.boxLayoutByField)
+      ? (activeGenericData.boxLayoutByField as Record<string, unknown>)
+      : {};
+  const configuredBoxLayout =
+    boxLayoutCollectionField
+      ? boxLayoutByField[boxLayoutCollectionField]
+      : activeGenericData?.boxesPerRow;
   const activeGenericEditorData = (() => {
     if (!activeGenericData) {
       return subsectionScope?.fieldValues as SectionData | undefined;
@@ -2398,6 +2461,13 @@ export default function EditSectionModal({
     "quote",
     "rating",
     "address",
+  ];
+  const eventsWhyChooseUsCardFields = [
+    "image",
+    "icon",
+    "title",
+    "desc",
+    "description",
   ];
   const eventsBlogContentFields = [
     "pretitle",
@@ -3017,6 +3087,8 @@ export default function EditSectionModal({
       ? eventsAboutCardFields
       : category === "Events" && activeSectionType === "Testimonial"
       ? eventsTestimonialCardFields
+      : category === "Events" && activeSectionType === "WhyChooseUs"
+        ? eventsWhyChooseUsCardFields
       : category === "Events" && activeSectionType === "Blog"
         ? eventsBlogCardFields
         : category === "Events" &&
@@ -3113,6 +3185,7 @@ export default function EditSectionModal({
     if (
       (nonVisualContentFields.has(field) && !allowEventsBreadcrumb) ||
       field === "boxesPerRow" ||
+      field === "boxLayoutByField" ||
       field === "hiddenSubsections" ||
       field === "subsectionOrder" ||
       field === "type" ||
@@ -7370,7 +7443,7 @@ export default function EditSectionModal({
                 </div>
               )}
 
-            {hasCardCollection && activeTab === "Box Layout" && (
+            {showBoxLayoutTab && activeTab === "Box Layout" && (
               <div className="space-y-5">
                 <div>
                   <h3 className="text-base font-semibold text-slate-950">
@@ -7389,25 +7462,29 @@ export default function EditSectionModal({
                         count <= MAX_FEATURE_CARDS,
                     )
                     .map((count) => {
-                      const configuredBoxes = activeGenericData?.boxesPerRow;
                       const isSelected =
-                        configuredBoxes === count ||
+                        configuredBoxLayout === count ||
                         (activeSectionType === "Features" &&
                           count === MAX_FEATURE_CARDS &&
-                          typeof configuredBoxes === "number" &&
-                          configuredBoxes > MAX_FEATURE_CARDS);
+                          typeof configuredBoxLayout === "number" &&
+                          configuredBoxLayout > MAX_FEATURE_CARDS);
 
                       return (
                         <button
                           key={count}
                           type="button"
                           onClick={() => {
-                            if (availableCardCount < count) {
-                              setBoxLayoutMessage("There are no other cards present.");
+                            setBoxLayoutMessage("");
+                            if (boxLayoutCollectionField) {
+                              updateActiveGenericData({
+                                boxLayoutByField: {
+                                  ...boxLayoutByField,
+                                  [boxLayoutCollectionField]: count,
+                                },
+                              });
                               return;
                             }
 
-                            setBoxLayoutMessage("");
                             updateActiveGenericData({ boxesPerRow: count });
                           }}
                           className={`rounded-xl border p-4 text-left transition ${isSelected
@@ -7436,7 +7513,7 @@ export default function EditSectionModal({
                     })}
                 </div>
 
-                {!activeGenericData?.boxesPerRow && (
+                {!configuredBoxLayout && (
                   <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
                     The component&apos;s original card layout is currently active.
                   </p>

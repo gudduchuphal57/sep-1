@@ -3,22 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Sparkles, type LucideIcon } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import type { GalleryImageData, SectionProps } from "../../../types/section";
 import { isUnoptimizedImageSrc } from "../../../lib/media";
+import { renderEventsIcon } from "../../../lib/eventsIcons";
 import { useOptionalPreview } from "../../context/PreviewContext";
 import EventsGalleryPreview from "./EventsGalleryPreview";
-
-const iconMap: Record<string, LucideIcon> = {
-  IconArrowRight: ArrowRight,
-  IconSparkles: Sparkles,
-};
-
-const renderIcon = (iconName: string | undefined, className: string) => {
-  const IconComp = (iconName && iconMap[iconName]) || ArrowRight;
-  return <IconComp className={className} aria-hidden />;
-};
 
 export default function EventsGallery1({ data = {} }: SectionProps) {
   const description = data.desc ?? data.description;
@@ -128,7 +119,7 @@ export default function EventsGallery1({ data = {} }: SectionProps) {
             >
               {cta.label}
               <span className="ml-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 transition-transform duration-300 group-hover:translate-x-3">
-                {renderIcon(cta.icon, "h-4 w-4")}
+                {renderEventsIcon(cta.icon, "h-4 w-4", ArrowRight)}
               </span>
             </Link>
           </div>

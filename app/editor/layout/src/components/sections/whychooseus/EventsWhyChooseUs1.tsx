@@ -2,27 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import {
-  FileText,
-  Heart,
-  ShieldCheck,
-  Sparkles,
-  type LucideIcon,
-} from "lucide-react";
-
 import type { SectionProps } from "../../../types/section";
 import { isUnoptimizedImageSrc } from "../../../lib/media";
-
-const iconMap: Record<string, LucideIcon> = {
-  IconHeart: Heart,
-  IconFileText: FileText,
-  IconShieldCheck: ShieldCheck,
-};
-
-const renderIcon = (iconName: string | undefined, className: string) => {
-  const IconComp = (iconName && iconMap[iconName]) || Sparkles;
-  return <IconComp className={className} aria-hidden />;
-};
+import { renderEventsIcon as renderIcon } from "../../../lib/eventsIcons";
 
 export default function EventsWhyChooseUs1({ data = {} }: SectionProps) {
   const description = data.desc ?? data.description;

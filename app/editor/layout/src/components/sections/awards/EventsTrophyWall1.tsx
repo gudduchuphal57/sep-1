@@ -1,36 +1,10 @@
-import {
-  Briefcase,
-  Gem,
-  HeartHandshake,
-  Lightbulb,
-  Music,
-  Rocket,
-  Star,
-  Trophy,
-  type LucideIcon,
-} from "lucide-react";
+import { Trophy } from "lucide-react";
 
 import type {
   EventsAwardItemData,
   SectionProps,
 } from "../../../types/section";
-
-const iconMap: Record<string, LucideIcon> = {
-  IconTrophy: Trophy,
-  IconBulb: Lightbulb,
-  IconHeartHandshake: HeartHandshake,
-  IconBriefcase: Briefcase,
-  IconRings: Gem,
-  IconStar: Star,
-  IconRocket: Rocket,
-  IconMusic: Music,
-  IconAward: Trophy,
-};
-
-const renderIcon = (iconName: string | undefined, className: string) => {
-  const IconComp = (iconName && iconMap[iconName]) || Trophy;
-  return <IconComp className={className} aria-hidden />;
-};
+import { renderEventsIcon } from "../../../lib/eventsIcons";
 
 export default function EventsTrophyWall1({ data = {} }: SectionProps) {
   const awards = (data.awards ?? []) as EventsAwardItemData[];
@@ -66,7 +40,7 @@ export default function EventsTrophyWall1({ data = {} }: SectionProps) {
               <div className="flex items-center justify-between border-b border-[#f4d4e1] bg-[#fff1f5] px-5 py-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#d61b58] text-white shadow-md shadow-[#d61b58]/30 transition-transform duration-300 group-hover:scale-110">
-                    {renderIcon(award.icon, "h-5 w-5")}
+                    {renderEventsIcon(award.icon, "h-5 w-5", Trophy)}
                   </div>
                   {award.category && (
                     <span className="text-xs font-bold uppercase tracking-widest text-[#d61b58]">

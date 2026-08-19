@@ -1,35 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Award,
-  HeartHandshake,
-  Medal,
-  Sparkles,
-  Star,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
-
 import type { AwardStatItemData, SectionProps } from "../../../types/section";
+import { renderEventsIcon } from "../../../lib/eventsIcons";
 
 type ParsedAward = AwardStatItemData & {
   target: number;
   suffix: string;
-};
-
-const iconMap: Record<string, LucideIcon> = {
-  IconAward: Award,
-  IconRibbon: Medal,
-  IconStar: Star,
-  IconUsers: Users,
-  IconHeartHandshake: HeartHandshake,
-  IconSparkles: Sparkles,
-};
-
-const renderIcon = (iconName?: string) => {
-  const IconComp = (iconName && iconMap[iconName]) || Sparkles;
-  return <IconComp className="h-6 w-6 text-[#d61b58] sm:h-7 sm:w-7" aria-hidden />;
 };
 
 const parseAwardValue = (value?: string) => {
@@ -138,7 +115,7 @@ export default function EventsAwards1({ data = {} }: SectionProps) {
               className="group flex flex-col items-center justify-between overflow-hidden rounded-4xl border border-[#f7d9e4] bg-white px-5 py-8 text-center shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="mb-5 flex h-8 w-8 items-center justify-center rounded-full bg-[#fde8ef] text-[#d61b58] shadow-sm sm:h-14 sm:w-14">
-                {renderIcon(item.icon)}
+                {renderEventsIcon(item.icon, "h-6 w-6 text-[#d61b58] sm:h-7 sm:w-7")}
               </div>
               <div className="text-3xl font-extrabold text-slate-900 sm:text-4xl md:text-3xl">
                 {counts[idx]?.toString().padStart(1, "0")}

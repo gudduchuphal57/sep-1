@@ -12,6 +12,7 @@ import {
   sectionMatchesPageRoute,
 } from "@/app/editor/layout/src/lib/pageVariantRouting";
 import { getSectionComponent } from "@/app/editor/layout/src/lib/sectionRegistry";
+import { sectionWrapperBoxesPerRow } from "@/app/editor/layout/src/lib/boxLayout";
 import {
   buildSubsectionOrderCss,
   buildSubsectionScopeId,
@@ -92,11 +93,9 @@ function TemplatePreviewContent({
             key={`${section.type}-${activeVariant}`}
             id={scopeId}
             data-boxes-per-row={
-              typeof sectionData.boxesPerRow === "number"
-                ? section.type === "Features"
-                  ? Math.min(4, sectionData.boxesPerRow)
-                  : sectionData.boxesPerRow
-                : undefined
+              section.type === "Features"
+                ? sectionWrapperBoxesPerRow(sectionData, 4)
+                : sectionWrapperBoxesPerRow(sectionData)
             }
             data-hidden-subsections={
               Array.isArray(sectionData.hiddenSubsections)

@@ -1,48 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import {
-  Award,
-  Calendar,
-  ChefHat,
-  Heart,
-  MapPin,
-  Music,
-  Presentation,
-  Shield,
-  Smile,
-  Sparkles,
-  Ticket,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
-
 import type {
   EventsEventCategoryItemData,
   EventsFeatureItemData,
   SectionProps,
 } from "../../../types/section";
 import { isUnoptimizedImageSrc } from "../../../lib/media";
-
-const iconMap: Record<string, LucideIcon> = {
-  Heart,
-  Calendar,
-  MapPin,
-  Presentation,
-  Users,
-  Award,
-  Smile,
-  Music,
-  ChefHat,
-  Sparkles,
-  Shield,
-  Ticket,
-};
-
-const renderIcon = (iconName: string | undefined, className: string) => {
-  const IconComp = (iconName && iconMap[iconName]) || Sparkles;
-  return <IconComp className={className} aria-hidden />;
-};
+import { renderEventsIcon as renderIcon } from "../../../lib/eventsIcons";
 
 export default function EventsEventDetailContent1({ data = {} }: SectionProps) {
   const item = data as EventsEventCategoryItemData;

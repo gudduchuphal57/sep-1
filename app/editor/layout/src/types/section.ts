@@ -472,6 +472,7 @@ export type SectionData = {
   hiddenSubsections?: number[];
   subsectionOrder?: number[];
   boxesPerRow?: 1 | 2 | 3 | 4 | 5 | 6;
+  boxLayoutByField?: Record<string, 1 | 2 | 3 | 4 | 5 | 6>;
   topbarType?: "scroll" | "sticky";
   topbarBackgroundType?: "solid" | "gradient";
   topbarBackgroundColor?: string;
