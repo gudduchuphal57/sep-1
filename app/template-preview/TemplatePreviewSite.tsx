@@ -93,9 +93,11 @@ function TemplatePreviewContent({
             key={`${section.type}-${activeVariant}`}
             id={scopeId}
             data-boxes-per-row={
-              section.type === "Features"
-                ? sectionWrapperBoxesPerRow(sectionData, 4)
-                : sectionWrapperBoxesPerRow(sectionData)
+              sectionWrapperBoxesPerRow(
+                sectionData,
+                section.type === "Features" ? 4 : undefined,
+                Boolean(section.page),
+              )
             }
             data-hidden-subsections={
               Array.isArray(sectionData.hiddenSubsections)

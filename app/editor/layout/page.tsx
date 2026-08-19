@@ -995,9 +995,11 @@ function EditorPage({
             onAddSection={(sectionType) => addSectionAfter(sectionId, sectionType)}
             stickyMode={stickyMode}
             boxesPerRow={
-              section.type === "Features"
-                ? sectionWrapperBoxesPerRow(sectionData, 4)
-                : sectionWrapperBoxesPerRow(sectionData)
+              sectionWrapperBoxesPerRow(
+                sectionData,
+                section.type === "Features" ? 4 : undefined,
+                Boolean(section.page),
+              )
             }
             hiddenSubsections={
               Array.isArray(sectionData.hiddenSubsections)

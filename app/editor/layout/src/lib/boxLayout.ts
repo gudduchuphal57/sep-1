@@ -37,14 +37,24 @@ export const sectionWrapperBoxesPerRow = (
       }
     | undefined,
   max?: number,
+  isInnerPage = false,
 ) => {
   const map = data?.boxLayoutByField;
-  if (map && typeof map === "object" && !Array.isArray(map) && Object.keys(map).length) {
+  const fieldLayout =
+    map && typeof map === "object" && !Array.isArray(map)
+      ? (map as Record<string, unknown>)
+      : {};
+  const fieldKeys = Object.keys(fieldLayout);
+
+  if (isInnerPage && fieldKeys.length > 0) {
     return undefined;
   }
 
-  const count = toBoxesPerRow(data?.boxesPerRow);
+  const fromField =
+    fieldKeys.length === 1 ? toBoxesPerRow(fieldLayout[fieldKeys[0]]) : undefined;
+  const count = toBoxesPerRow(data?.boxesPerRow) ?? fromField;
   if (!count) return undefined;
   return typeof max === "number" ? Math.min(max, count) : count;
 };
+
 

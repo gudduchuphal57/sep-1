@@ -2116,7 +2116,8 @@ export default function EditSectionModal({
       ? String(layoutCardCollections[0][0])
       : undefined;
   const showBoxLayoutTab =
-    hasCardCollection && Boolean(subsectionScope || boxLayoutCollectionField);
+    hasCardCollection &&
+    (!isPageSection || Boolean(subsectionScope) || Boolean(boxLayoutCollectionField));
   const availableCardCount = hasCardCollection
     ? Math.min(...layoutCardCollections.map(([, value]) => (value as unknown[]).length))
     : 0;
@@ -2219,9 +2220,12 @@ export default function EditSectionModal({
       ? (activeGenericData.boxLayoutByField as Record<string, unknown>)
       : {};
   const configuredBoxLayout =
-    boxLayoutCollectionField
+    subsectionScope && boxLayoutCollectionField
       ? boxLayoutByField[boxLayoutCollectionField]
-      : activeGenericData?.boxesPerRow;
+      : activeGenericData?.boxesPerRow ??
+        (boxLayoutCollectionField
+          ? boxLayoutByField[boxLayoutCollectionField]
+          : undefined);
   const activeGenericEditorData = (() => {
     if (!activeGenericData) {
       return subsectionScope?.fieldValues as SectionData | undefined;
@@ -7475,7 +7479,7 @@ export default function EditSectionModal({
                           type="button"
                           onClick={() => {
                             setBoxLayoutMessage("");
-                            if (boxLayoutCollectionField) {
+                            if (subsectionScope && boxLayoutCollectionField) {
                               updateActiveGenericData({
                                 boxLayoutByField: {
                                   ...boxLayoutByField,
