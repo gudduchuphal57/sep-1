@@ -1287,7 +1287,6 @@ const visibleCardFieldsByCollection: Record<string, string[]> = {
   stats: ["stat", "value", "number", "label", "desc", "icon"],
   statistics: ["icon", "value", "label"],
   trustBadges: ["icon", "text", "desc"],
-  steps: ["image", "title", "desc", "description"],
   teamItems: ["image", "name", "role", "title", "desc"],
   testimonials: ["image", "name", "designation", "rating", "message"],
   articles: ["image", "category", "date", "title", "description", "href"],
