@@ -1272,7 +1272,7 @@ const visibleCardFieldsByCollection: Record<string, string[]> = {
   brochures: ["image", "name", "description", "downloadlabel", "downloadUrl"],
   ctaStats: ["icon", "value", "label"],
   popularPosts: ["image", "date", "category", "title", "slug"],
-  steps: ["icon", "title", "description"],
+  steps: ["icon", "title", "description" , "image", "desc"],
   sections: ["title", "content"],
   conditions: ["title", "content"],
   sectors: ["image", "icon", "title", "description"],
