@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { ArrowUp, MessageCircle, Phone } from "lucide-react";
 import { generalSansMedium } from "@/app/fonts";
@@ -14,6 +14,11 @@ import {
 } from "../../editor/layout/src/lib/pageVariantRouting";
 import { getSectionComponent } from "../../editor/layout/src/lib/sectionRegistry";
 import { sectionWrapperBoxesPerRow } from "../../editor/layout/src/lib/boxLayout";
+import {
+  getChromeSectionData,
+  getChromeStickyMode,
+  getChromeStickyOffset,
+} from "../../editor/layout/src/lib/chromeSticky";
 import {
   buildSubsectionOrderCss,
   buildSubsectionScopeId,
@@ -46,6 +51,7 @@ function PublishedSiteContent() {
   const { currentPage, setCurrentPage } = usePreview();
   const [payload, setPayload] = useState<PublishedSitePayload | null>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const [stickyTopbarHeight, setStickyTopbarHeight] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -120,6 +126,46 @@ function PublishedSiteContent() {
       : payload.sections.filter((section) => !section.page);
   }, [currentPageSlug, payload]);
 
+  const chromeStickyFallback =
+    payload?.category === "NGO" ? "sticky" : "scroll";
+  const topbarIsSticky = visibleSections.some((section) => {
+    if (section.type !== "Topbar") return false;
+    const activeVariant =
+      getPageVariantForSlug(section, currentPageSlug) ?? section.variant;
+    return (
+      getChromeStickyMode(
+        section,
+        getChromeSectionData(section, activeVariant),
+        chromeStickyFallback,
+      ) === "sticky"
+    );
+  });
+
+  useLayoutEffect(() => {
+    if (!topbarIsSticky) {
+      setStickyTopbarHeight(0);
+      return;
+    }
+
+    const topbar = document.querySelector<HTMLElement>(
+      '[data-chrome-section="Topbar"]',
+    );
+    if (!topbar) {
+      setStickyTopbarHeight(0);
+      return;
+    }
+
+    const updateHeight = () => {
+      setStickyTopbarHeight(topbar.getBoundingClientRect().height);
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(topbar);
+
+    return () => observer.disconnect();
+  }, [topbarIsSticky, visibleSections]);
+
   const footerSection = payload?.sections.find(
     (section) => section.type === "Footer",
   );
@@ -163,7 +209,7 @@ function PublishedSiteContent() {
         payload.category === "Realestate" && payload.templateId === "template-1"
           ? generalSansMedium.className
           : ""
-      } min-h-screen w-full overflow-x-hidden [overflow-wrap:anywhere]`}
+      } min-h-screen w-full overflow-x-clip [overflow-wrap:anywhere]`}
     >
       {visibleSections.map((section) => {
         const activeVariant =
@@ -179,17 +225,22 @@ function PublishedSiteContent() {
         const sectionData = (
           isRecord(variantData) ? variantData : section.data
         ) as SectionData;
-        const stickyMode =
-          section.type === "Header"
-            ? (sectionData.headerType ?? "scroll")
-            : section.type === "Topbar"
-              ? (sectionData.topbarType ?? "scroll")
-              : "scroll";
+        const stickyMode = getChromeStickyMode(
+          section,
+          sectionData,
+          chromeStickyFallback,
+        );
+        const stickyOffset = getChromeStickyOffset(
+          section.type,
+          stickyMode,
+          topbarIsSticky,
+          stickyTopbarHeight,
+        );
         const sectionStackClass =
           section.type === "Topbar"
-            ? "z-[130]"
+            ? "z-[120]"
             : section.type === "Header"
-              ? "z-[120]"
+              ? "z-[130]"
               : "z-0";
 
         if (!Component) return null;
@@ -216,7 +267,9 @@ function PublishedSiteContent() {
                 ? sectionData.hiddenSubsections.join(" ")
                 : undefined
             }
-            className={`${stickyMode === "sticky" ? "sticky top-0" : "relative"} ${sectionStackClass}`}
+            data-chrome-section={section.type}
+            className={`${stickyMode === "sticky" ? "sticky" : "relative"} ${sectionStackClass}`}
+            style={stickyMode === "sticky" ? { top: stickyOffset } : undefined}
           >
             {subsectionOrderCss && <style>{subsectionOrderCss}</style>}
             <Component data={sectionData} />

@@ -1,5 +1,7 @@
 import type { EventsCareersRoleData, SectionProps } from "../../../types/section";
-import EventsPageBanner1 from "../breadcrumb/EventsPageBanner1";
+import EventsPageBanner1, {
+  getEventsPageBannerProps,
+} from "../breadcrumb/EventsPageBanner1";
 import EventsCareersApplyForm1 from "./EventsCareersApplyForm1";
 import EventsCareersApplyJobDetails1 from "./EventsCareersApplyJobDetails1";
 import EventsCareersApplyWhyJoinUs1 from "./EventsCareersApplyWhyJoinUs1";
@@ -25,12 +27,11 @@ export default function EventsCareersApplyPage1({ data = {} }: SectionProps) {
   return (
     <main className="min-h-screen font-sans">
       <EventsPageBanner1
-        title={bannerTitle}
-        subtitle={bannerSubtitle}
-        backgroundImage={data.backgroundImage}
-        breadcrumb={breadcrumb}
-        textColor={data.textColor}
-        backgroundColor={data.backgroundColor}
+        {...getEventsPageBannerProps(data, {
+          title: bannerTitle,
+          subtitle: bannerSubtitle,
+          breadcrumb,
+        })}
       />
 
       <div className="mx-auto mt-8 max-w-7xl px-4 sm:px-6 md:mt-10 lg:mt-14 lg:px-8">

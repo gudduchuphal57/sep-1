@@ -27,7 +27,7 @@ type MenuItem = {
 };
 
 export type SocialLinkData = {
-  label: "facebook" | "instagram" | "twitter" | "linkedin";
+  label: "facebook" | "instagram" | "twitter" | "linkedin" | "youtube" | "pinterest";
   href: string;
 };
 
@@ -44,6 +44,7 @@ export type BannerSlideData = {
   title: string;
   desc?: string;
   button?: ButtonData;
+  secondButton?: ButtonData;
 
   pretitle?: string;
 
@@ -153,6 +154,7 @@ export type GalleryCardData = {
   subtitle?: string;
   badge?: string;
   image?: string;
+  imageAlt?: string;
 };
 
 export type GalleryImageData = {
@@ -216,6 +218,9 @@ export type EventsEventCategoryItemData = {
   breadcrumb?: BreadcrumbItem[];
   textColor?: string;
   backgroundColor?: string;
+  breadcrumbBackgroundType?: "image" | "color";
+  breadcrumbColorBackgroundType?: "solid" | "gradient";
+  breadcrumbGradientColor?: string;
   features?: EventsFeatureItemData[];
   detailCtaTitle?: string;
   detailCtaDescription?: string;
@@ -250,6 +255,9 @@ export type TeamMemberData = {
   backgroundImage?: string;
   textColor?: string;
   backgroundColor?: string;
+  breadcrumbBackgroundType?: "image" | "color";
+  breadcrumbColorBackgroundType?: "solid" | "gradient";
+  breadcrumbGradientColor?: string;
   social?: TeamMemberSocialData;
 };
 
@@ -306,6 +314,9 @@ export type EventsBlogPostData = {
   breadcrumb?: BreadcrumbItem[];
   textColor?: string;
   backgroundColor?: string;
+  breadcrumbBackgroundType?: "image" | "color";
+  breadcrumbColorBackgroundType?: "solid" | "gradient";
+  breadcrumbGradientColor?: string;
   content?: EventsBlogContentBlockData[];
   relatedTitle?: string;
   relatedPosts?: EventsBlogPostData[];
@@ -332,9 +343,21 @@ export type EventsCareersRoleData = {
   slug?: string;
 };
 
+export type EventsCareersApplyFormFieldData = {
+  name?: string;
+  label?: string;
+  placeholder?: string;
+  type?: "text" | "email" | "tel" | "url" | "textarea" | "select" | "file";
+  required?: boolean;
+  width?: "half" | "full";
+  optionsSource?: "locations" | "noticePeriods";
+  options?: string[];
+};
+
 export type EventsCareersApplyFormData = {
   title?: string;
   subtitle?: string;
+  fields?: EventsCareersApplyFormFieldData[];
   locations?: string[];
   noticePeriods?: string[];
   submitLabel?: string;
@@ -399,7 +422,14 @@ export type EventsContactLeftContentData = {
   cta?: LinkActionData;
 };
 
+export type EventsContactFormFieldData = {
+  placeholder?: string;
+  type?: "text" | "email" | "tel" | "textarea";
+  width?: "half" | "full";
+};
+
 export type EventsContactFormData = {
+  fields?: EventsContactFormFieldData[];
   namePlaceholder?: string;
   emailPlaceholder?: string;
   subjectPlaceholder?: string;
@@ -412,6 +442,7 @@ export type EventsContactItemData = {
   icon?: string;
   label?: string;
   value?: string;
+  value2?: string;
 };
 
 export type EventsCaseStudyHighlightData = {
@@ -487,6 +518,7 @@ export type SectionData = {
   logo?: string;
   logoImage?: string;
   logoImageTitle?: string;
+  logoType?: "image" | "text" | "image-text";
   menu?: MenuItem[];
   buttons?: ButtonData[];
 
@@ -514,6 +546,9 @@ export type SectionData = {
   subtitleColor?: string;
   textColor?: string;
   backgroundColor?: string;
+  breadcrumbBackgroundType?: "image" | "color";
+  breadcrumbColorBackgroundType?: "solid" | "gradient";
+  breadcrumbGradientColor?: string;
   overlayColor?: string;
   collectionItems?: CollectionItemData[];
   contactInfo?: ContactInfoData;
@@ -663,8 +698,16 @@ export type SectionData = {
   contactLabel?: string;
   legalTitle?: string;
   newsletterTitle?: string;
+  newsletterDesc?: string;
   newsletterPlaceholder?: string;
   newsletterButtonLabel?: string;
+  recentNewsTitle?: string;
+  recentNews?: Array<{
+    title?: string;
+    date?: string;
+    image?: string;
+    href?: string;
+  }>;
   disclaimerTitle?: string;
   disclaimerText?: string;
   sections?: EventsLegalSectionData[];

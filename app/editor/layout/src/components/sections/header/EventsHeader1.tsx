@@ -64,6 +64,22 @@ export default function EventsHeader1({ data = {} }: SectionProps) {
   const menuItems = data.menu ?? [];
   const logoText = toText(data.logo);
   const logoImage = toText(data.logoImage);
+  const logoType =
+    data.logoType === "image" ||
+    data.logoType === "text" ||
+    data.logoType === "image-text"
+      ? data.logoType
+      : logoImage && logoText
+        ? "image-text"
+        : logoImage
+          ? "image"
+          : "text";
+  const showLogoImage =
+    Boolean(logoImage) &&
+    (logoType === "image" || logoType === "image-text");
+  const showLogoText =
+    Boolean(logoText) &&
+    (logoType === "text" || logoType === "image-text");
   const buttonValue: unknown = data.button;
   const cta: EventsHeaderButton | undefined = isRecord(buttonValue)
     ? (buttonValue as EventsHeaderButton)
@@ -127,62 +143,45 @@ export default function EventsHeader1({ data = {} }: SectionProps) {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:h-17 lg:px-8 xl:px-10">
         {/* Logo Area */}
         <div className="flex cursor-pointer items-center gap-3">
-          {logoImage ? (
-            <Link
-              href="/"
-              data-editor-no-inline
-              onClick={(event) => handleNavigate(event, "/", "Home")}
-              className="flex items-center"
-            >
+          <Link
+            href="/"
+            data-editor-no-inline
+            onClick={(event) => handleNavigate(event, "/", "Home")}
+            className="flex min-w-0 items-center gap-2.5"
+          >
+            {showLogoImage ? (
               <Image
-                src={logoImage}
+                src={logoImage!}
                 alt={data.logoImageTitle ?? logoText ?? "Logo"}
-                width={55}
-                height={80}
-                unoptimized={isUnoptimizedImageSrc(logoImage)}
-                className="object-contain"
+                width={logoType === "image" ? 180 : 56}
+                height={logoType === "image" ? 56 : 56}
+                unoptimized={isUnoptimizedImageSrc(logoImage!)}
+                className={
+                  logoType === "image"
+                    ? "h-11 w-auto max-w-[180px] object-contain object-left sm:h-12 sm:max-w-[200px]"
+                    : "h-10 w-auto max-h-11 max-w-[56px] object-contain"
+                }
               />
-              {logoText && (
-                <span className="text-sm font-bold uppercase tracking-widest text-[#d61b58]">
-                  {logoText}
-                </span>
-              )}
-            </Link>
-          ) : (
-            <div className="flex items-center gap-1">
-              <svg
-                viewBox="0 0 100 100"
-                width="40"
-                height="60"
-                className="text-[#d61b58]"
-                aria-hidden
+            ) : null}
+
+            {showLogoText ? (
+              <span
+                className={
+                  logoType === "text"
+                    ? "truncate text-2xl font-black tracking-tight text-[#d61b58] sm:text-3xl"
+                    : "truncate text-sm font-bold uppercase tracking-widest text-[#d61b58]"
+                }
               >
-                <path
-                  d="M50 15 L65 30 L85 30 L70 50 L85 70 L65 70 L50 85 L35 70 L15 70 L30 50 L15 30 L35 30 Z"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="5"
-                  strokeLinejoin="round"
-                />
-                <path
-                  d="M50 28 L62 40 L50 52 L38 40 Z"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  fill="none"
-                />
-                <path
-                  d="M50 48 L62 60 L50 72 L38 60 Z"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  fill="none"
-                />
-                <circle cx="50" cy="50" r="3" fill="currentColor" />
-              </svg>
-              <div className="text-3xl font-black tracking-tight">
-                <span className="text-[#d61b58]">{logoText}</span>
-              </div>
-            </div>
-          )}
+                {logoText}
+              </span>
+            ) : null}
+
+            {!showLogoImage && !showLogoText ? (
+              <span className="text-2xl font-black tracking-tight text-[#d61b58]">
+                Events
+              </span>
+            ) : null}
+          </Link>
         </div>
 
         {/* Desktop Nav */}

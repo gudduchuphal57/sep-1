@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import type { SectionProps, EventsBlogPostData } from "../../../types/section";
 import { isUnoptimizedImageSrc } from "../../../lib/media";
+import { eventsIconMap, renderEventsIcon } from "../../../lib/eventsIcons";
 
 export default function EventsBlog1({ data = {} }: SectionProps) {
   const description = data.desc ?? data.description;
@@ -135,7 +136,11 @@ export default function EventsBlog1({ data = {} }: SectionProps) {
                       aria-hidden="true"
                       className="transition-transform duration-200 group-hover:translate-x-1.5"
                     >
-                      {buttonIcon}
+                      {buttonIcon &&
+                      (eventsIconMap[buttonIcon] ||
+                        buttonIcon.startsWith("Icon"))
+                        ? renderEventsIcon(buttonIcon, "h-4 w-4")
+                        : buttonIcon}
                     </span>
                   </Link>
                 </div>

@@ -54,6 +54,7 @@ export default function EventsTeamMembers1({ data = {} }: SectionProps) {
       ref={sectionRef}
       data-editor-section-label="Team Members"
       data-editor-fields="departments members"
+      data-editor-card-fields="image name role department bio social"
       className="mt-8 md:mt-10 lg:mt-14"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -2,15 +2,18 @@
 
 import Link from "next/link";
 
-import type { BreadcrumbItem } from "../../../types/section";
+import type { BreadcrumbItem, SectionData } from "../../../types/section";
 
 export const eventsBreadcrumbEditorFields = [
+  "breadcrumbBackgroundType",
+  "breadcrumbColorBackgroundType",
   "backgroundImage",
   "title",
   "subtitle",
   "breadcrumb",
   "textColor",
   "backgroundColor",
+  "breadcrumbGradientColor",
 ];
 
 export type EventsPageBanner1Props = {
@@ -20,8 +23,29 @@ export type EventsPageBanner1Props = {
   breadcrumb?: BreadcrumbItem[];
   textColor?: string;
   backgroundColor?: string;
+  breadcrumbBackgroundType?: "image" | "color";
+  breadcrumbColorBackgroundType?: "solid" | "gradient";
+  breadcrumbGradientColor?: string;
   editorFields?: string[];
 };
+
+export function getEventsPageBannerProps(
+  data: SectionData = {},
+  overrides: Partial<EventsPageBanner1Props> = {},
+): EventsPageBanner1Props {
+  return {
+    title: data.title,
+    subtitle: data.subtitle ?? data.desc ?? data.description,
+    backgroundImage: data.backgroundImage,
+    breadcrumb: data.breadcrumb,
+    textColor: data.textColor,
+    backgroundColor: data.backgroundColor,
+    breadcrumbBackgroundType: data.breadcrumbBackgroundType,
+    breadcrumbColorBackgroundType: data.breadcrumbColorBackgroundType,
+    breadcrumbGradientColor: data.breadcrumbGradientColor,
+    ...overrides,
+  };
+}
 
 export default function EventsPageBanner1({
   title,
@@ -30,29 +54,47 @@ export default function EventsPageBanner1({
   breadcrumb = [],
   textColor,
   backgroundColor,
+  breadcrumbBackgroundType = "image",
+  breadcrumbColorBackgroundType = "solid",
+  breadcrumbGradientColor,
   editorFields = eventsBreadcrumbEditorFields,
 }: EventsPageBanner1Props) {
   const items = breadcrumb.filter((item) => item?.label);
-  const hasBackgroundImage = Boolean(backgroundImage?.trim());
+  const usesColorBackground = breadcrumbBackgroundType === "color";
+  const usesGradientBackground =
+    usesColorBackground && breadcrumbColorBackgroundType === "gradient";
+  const hasBackgroundImage =
+    !usesColorBackground && Boolean(backgroundImage?.trim());
   const resolvedTextColor = textColor || "#ffffff";
   const mutedTextColor = textColor || "#e2e8f0";
-  const resolvedBackgroundColor =
-    backgroundColor || (hasBackgroundImage ? undefined : "#111827");
+  const resolvedBackgroundColor = backgroundColor || "#111827";
+  const resolvedGradientColor = breadcrumbGradientColor || "#d61b58";
 
   return (
     <section
       data-editor-section-label="Breadcrumb"
       data-editor-fields={editorFields.join(" ")}
       className="relative w-full overflow-hidden py-[5.5rem]"
-      style={{
-        backgroundColor: resolvedBackgroundColor,
-        backgroundImage: hasBackgroundImage
-          ? `url(${backgroundImage})`
-          : undefined,
-        backgroundSize: hasBackgroundImage ? "cover" : undefined,
-        backgroundPosition: hasBackgroundImage ? "center center" : undefined,
-        backgroundRepeat: hasBackgroundImage ? "no-repeat" : undefined,
-      }}
+      style={
+        usesGradientBackground
+          ? {
+              backgroundImage: `linear-gradient(90deg, ${resolvedBackgroundColor}, ${resolvedGradientColor})`,
+            }
+          : usesColorBackground
+            ? {
+                backgroundColor: resolvedBackgroundColor,
+              }
+            : hasBackgroundImage
+            ? {
+                backgroundImage: `url(${backgroundImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center center",
+                backgroundRepeat: "no-repeat",
+              }
+            : {
+                backgroundColor: resolvedBackgroundColor,
+              }
+      }
     >
       <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
         <h1

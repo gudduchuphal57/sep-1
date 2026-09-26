@@ -17,6 +17,7 @@ export default function EventsCareersApplyWhyJoinUs1({ data = {} }: SectionProps
     <section
       data-editor-section-label="Why Join Us"
       data-editor-fields="whyJoinUs"
+      data-editor-card-fields="icon title description"
       className="rounded-[2rem] border border-[#f4d4e1]/60 bg-white p-6 shadow-sm shadow-[#d61b58]/5"
     >
       <h3 className="mb-2 text-lg font-extrabold tracking-tight text-slate-900">

@@ -1,0 +1,304 @@
+
+======================================================
+Category: NGO
+Template: template-2
+
+ONE DATA FILE (upload this JSON)
+--------------------------------
+app/editor/layout/src/data/categoryContent.json
+
+JSON paths:
+  categories.NGO.templateComponents.template-2
+    shared          chrome variants (Topbar, Header, Footer)
+    pages.{slug}    which component renders on that page
+    font-family     Inter
+
+categories.NGO.sections.{SectionType}.variants.{VariantName}
+    full payload passed as `data` into the React component
+
+Runtime:
+  Editor canvas     app/editor/layout/page.tsx
+  Published site    app/published/[siteId]/page.tsx
+  Component lookup  app/editor/layout/src/lib/sectionRegistry.ts
+  Page spawn        app/editor/layout/src/data/templateFlow.ts
+
+Images referenced in JSON:
+  public/categories/ngo/template2/NGO_Images/
+  public/logo.png
+
+Suggested DB record shape:
+  category, templateId, pageSlug (null for home/chrome),
+  sectionType, variant, data (the variant object)
+
+
+SHARED CHROME (every page)
+--------------------------
+SectionType  Variant       Data JSON path                                      Render file
+Topbar       NGOTopbar2    categories.NGO.sections.Topbar.variants.NGOTopbar2  app/editor/layout/src/components/sections/topbar/NGOTopbar2.tsx
+Header       NGOHeader2    .../Header.variants.NGOHeader2                      app/editor/layout/src/components/sections/header/NGOHeader2.tsx
+Footer       NGOFooter2    .../Footer.variants.NGOFooter2                      app/editor/layout/src/components/sections/footer/NGOFooter2.tsx
+
+
+HOME  (pages.home — section.page empty)
+---------------------------------------
+SectionType   Variant            Data: sections.{Type}.variants.{Variant}     Render file
+Banner        NGOBanner2         Banner.variants.NGOBanner2                   app/editor/layout/src/components/sections/banner/NGOBanner2.tsx
+About         NGOAbout2          About.variants.NGOAbout2                     app/editor/layout/src/components/sections/about/NGOAbout2.tsx
+Causes        NGOCauses2         Causes.variants.NGOCauses2                   app/editor/layout/src/components/sections/causes/NGOCauses2.tsx
+Cta           NGOCta2            Cta.variants.NGOCta2                         app/editor/layout/src/components/sections/cta/NGOCta2.tsx
+Projects      NGOProjects2       Projects.variants.NGOProjects2               app/editor/layout/src/components/sections/projects/NGOProjects2.tsx
+Events        NGOEvents2         Events.variants.NGOEvents2                   app/editor/layout/src/components/sections/event/NGOEvents2.tsx
+Testimonial   NGOTestimonial2    Testimonial.variants.NGOTestimonial2         app/editor/layout/src/components/sections/testimonial/NGOTestimonial2.tsx
+Blog          NGOBlog2           Blog.variants.NGOBlog2                       app/editor/layout/src/components/sections/blog/NGOBlog2.tsx
+
+
+INNER PAGES
+-----------
+Each inner page is ONE section. Page composer receives the full variant `data`
+and passes the same object into child sections.
+
+Banner on all inner pages:
+  app/editor/layout/src/components/sections/breadcrumb/NGOPageBanner2.tsx
+  reads: title, backgroundImage, banner, breadcrumb
+
+slug / href aliases
+  about
+  gallery
+  blog
+  blog-detail
+  contact
+  faq
+  teams
+  team-detail
+  careers
+  events
+  event-detail           
+  awards
+  testimonials           
+  projects
+  project-detail
+  services
+  service-detail         
+  support
+  partners
+  csr
+  brochure
+  case-study
+  case-details           
+  enquiry               
+  frenchise            
+  branches
+  industry
+  media
+  privacy               
+  terms                 
+  cookie                 
+  disclaimer
+  refund              
+
+
+PAGE COMPOSERS + CHILD RENDERERS + JSON VARIANT
+-----------------------------------------------
+about  | AboutPage | NGOAboutPage2 | sections.AboutPage.variants.NGOAboutPage2
+  app/editor/layout/src/components/sections/about/NGOAboutPage2.tsx
+  app/editor/layout/src/components/sections/about/NGOAbout2.tsx
+  app/editor/layout/src/components/sections/mission-vision/NGOMission2.tsx
+  app/editor/layout/src/components/sections/whychooseus/NGOWhyChooseUs2.tsx
+
+gallery  | Gallery | NGOGalleryPage2 | sections.Gallery.variants.NGOGalleryPage2
+  app/editor/layout/src/components/sections/gallery/NGOGalleryPage2.tsx
+  app/editor/layout/src/components/sections/gallery/NGOGallery2.tsx
+  app/editor/layout/src/components/sections/gallery/NGOGalleryGrid2.tsx
+
+blog  | Blog | NGOBlogPage2 | sections.Blog.variants.NGOBlogPage2
+  app/editor/layout/src/components/sections/blog/NGOBlogPage2.tsx
+  app/editor/layout/src/components/sections/blog/NGOBlog2.tsx
+  app/editor/layout/src/components/sections/blog/NGOBlogGrid2.tsx
+
+blog-detail  | BlogDetails | NGOBlogDetailsPage2 | sections.BlogDetails.variants.NGOBlogDetailsPage2
+  app/editor/layout/src/components/sections/blog/NGOBlogDetailsPage2.tsx
+  app/editor/layout/src/components/sections/blog/NGOBlogDetailsContent2.tsx
+  app/editor/layout/src/components/sections/blog/NGOBlogRecentPosts2.tsx
+
+contact  | Contact | NGOContactPage2 | sections.Contact.variants.NGOContactPage2
+  app/editor/layout/src/components/sections/contact/NGOContactPage2.tsx
+  app/editor/layout/src/components/sections/contact/NGOContact2.tsx
+  app/editor/layout/src/components/sections/contact/NGOContactOverview2.tsx
+  app/editor/layout/src/components/sections/contact/NGOContactFeatures2.tsx
+  app/editor/layout/src/components/sections/contact/NGOContactMap2.tsx
+
+faq  | FAQ | NGOFAQPage2 | sections.FAQ.variants.NGOFAQPage2
+  app/editor/layout/src/components/sections/faq/NGOFAQPage2.tsx
+  app/editor/layout/src/components/sections/faq/NGOFAQ2.tsx
+  app/editor/layout/src/components/sections/faq/NGOFAQContent2.tsx
+
+teams  | Teams | NGOTeamsPage2 | sections.Teams.variants.NGOTeamsPage2
+  app/editor/layout/src/components/sections/team/NGOTeamsPage2.tsx
+  app/editor/layout/src/components/sections/team/NGOTeam2.tsx
+  app/editor/layout/src/components/sections/team/NGOTeamMembers2.tsx
+  app/editor/layout/src/components/sections/team/NGOTeamCta2.tsx
+
+team-detail  | TeamDetail | NGOTeamDetailPage2 | sections.TeamDetail.variants.NGOTeamDetailPage2
+  app/editor/layout/src/components/sections/team/NGOTeamDetailPage2.tsx
+  app/editor/layout/src/components/sections/team/NGOTeamDetailContent2.tsx
+  app/editor/layout/src/components/sections/team/NGOTeamDetailProfile2.tsx
+  app/editor/layout/src/components/sections/team/NGOTeamDetailAbout2.tsx
+  app/editor/layout/src/components/sections/team/NGOTeamDetailExperience2.tsx
+  app/editor/layout/src/components/sections/team/NGOTeamDetailAchievements2.tsx
+
+careers  | Careers | NGOCareersPage2 | sections.Careers.variants.NGOCareersPage2
+  app/editor/layout/src/components/sections/career/NGOCareersPage2.tsx
+  app/editor/layout/src/components/sections/career/NGOCareersOverview2.tsx
+  app/editor/layout/src/components/sections/career/NGOCareersRoles2.tsx
+  app/editor/layout/src/components/sections/career/NGOCareersCta2.tsx
+
+careers-apply  | CareersApply | NGOCareersApplyPage2 | sections.CareersApply.variants.NGOCareersApplyPage2
+  app/editor/layout/src/components/sections/career/NGOCareersApplyPage2.tsx
+  app/editor/layout/src/components/sections/career/NGOCareersApplyJobDetails2.tsx
+  app/editor/layout/src/components/sections/career/NGOCareersApplyForm2.tsx
+
+events  | EventsPage | NGOEventsPage2 | sections.EventsPage.variants.NGOEventsPage2
+  app/editor/layout/src/components/sections/event/NGOEventsPage2.tsx
+  app/editor/layout/src/components/sections/event/NGOEvents2.tsx
+  app/editor/layout/src/components/sections/event/NGOEventsList2.tsx
+  app/editor/layout/src/components/sections/testimonial/NGOTestimonial2.tsx
+
+event-detail  | EventDetail | NGOEventDetailPage2 | sections.EventDetail.variants.NGOEventDetailPage2
+  app/editor/layout/src/components/sections/event/NGOEventDetailPage2.tsx
+  app/editor/layout/src/components/sections/event/NGOEventDetailContent2.tsx
+
+awards  | AwardsPage | NGOAwardsPage2 | sections.AwardsPage.variants.NGOAwardsPage2
+  app/editor/layout/src/components/sections/awards/NGOAwardsPage2.tsx
+  app/editor/layout/src/components/sections/awards/NGOAwardsContent2.tsx
+  app/editor/layout/src/components/sections/awards/NGOAwardsGrid2.tsx
+  app/editor/layout/src/components/sections/awards/NGOAwardsSupport2.tsx
+  app/editor/layout/src/components/sections/awards/NGOAwardsTransparency2.tsx
+
+testimonials  | TestimonialsPage | NGOTestimonialsPage2 | sections.TestimonialsPage.variants.NGOTestimonialsPage2
+  app/editor/layout/src/components/sections/testimonial/NGOTestimonialsPage2.tsx
+  app/editor/layout/src/components/sections/testimonial/NGOTestimonialsContent2.tsx
+  app/editor/layout/src/components/sections/testimonial/NGOTestimonial2.tsx
+
+projects  | ProjectsPage | NGOProjectsPage2 | sections.ProjectsPage.variants.NGOProjectsPage2
+  app/editor/layout/src/components/sections/projects/NGOProjectsPage2.tsx
+  app/editor/layout/src/components/sections/projects/NGOProjects2.tsx
+  app/editor/layout/src/components/sections/projects/NGOProjectsGrid2.tsx
+
+project-detail  | ProjectDetail | NGOProjectDetailPage2 | sections.ProjectDetail.variants.NGOProjectDetailPage2
+  app/editor/layout/src/components/sections/projects/NGOProjectDetailPage2.tsx
+  app/editor/layout/src/components/sections/projects/NGOProjectDetailContent2.tsx
+
+services  | Services | NGOServicesPage2 | sections.Services.variants.NGOServicesPage2
+  app/editor/layout/src/components/sections/service/NGOServicesPage2.tsx
+  app/editor/layout/src/components/sections/service/NGOServicesContent2.tsx
+  app/editor/layout/src/components/sections/service/NGOServicesCta2.tsx
+
+service-detail  | ServiceDetail | NGOServiceDetailPage2 | sections.ServiceDetail.variants.NGOServiceDetailPage2
+  app/editor/layout/src/components/sections/service/NGOServiceDetailPage2.tsx
+  app/editor/layout/src/components/sections/service/NGOServiceDetailContent2.tsx
+
+support  | Support | NGOSupportPage2 | sections.Support.variants.NGOSupportPage2
+  app/editor/layout/src/components/sections/support/NGOSupportPage2.tsx
+  app/editor/layout/src/components/sections/support/NGOSupportIntro2.tsx
+  app/editor/layout/src/components/sections/support/NGOSupportWays2.tsx
+  app/editor/layout/src/components/sections/support/NGOSupportImpact2.tsx
+  app/editor/layout/src/components/sections/support/NGOSupportCta2.tsx
+  app/editor/layout/src/components/sections/support/NGOSupportTransparency2.tsx
+  app/editor/layout/src/components/sections/support/NGOSupportOverview2.tsx
+
+partners  | Partners | NGOPartnersPage2 | sections.Partners.variants.NGOPartnersPage2
+  app/editor/layout/src/components/sections/partners/NGOPartnersPage2.tsx
+  app/editor/layout/src/components/sections/partners/NGOPartners2.tsx
+
+csr  | CSR | NGOCsrPage2 | sections.CSR.variants.NGOCsrPage2
+  app/editor/layout/src/components/sections/csr/NGOCsrPage2.tsx
+  app/editor/layout/src/components/sections/csr/NGOCsrIntro2.tsx
+  app/editor/layout/src/components/sections/csr/NGOCsrFocus2.tsx
+  app/editor/layout/src/components/sections/csr/NGOCsrImpact2.tsx
+  app/editor/layout/src/components/sections/csr/NGOCsrProjects2.tsx
+  app/editor/layout/src/components/sections/csr/NGOCsrCta2.tsx
+  app/editor/layout/src/components/sections/csr/NGOCsrValues2.tsx
+
+brochure  | Brochure | NGOBrochurePage2 | sections.Brochure.variants.NGOBrochurePage2
+  app/editor/layout/src/components/sections/brochure/NGOBrochurePage2.tsx
+  app/editor/layout/src/components/sections/brochure/NGOBrochureIntro2.tsx
+  app/editor/layout/src/components/sections/brochure/NGOBrochureList2.tsx
+  app/editor/layout/src/components/sections/brochure/NGOBrochureCta2.tsx
+
+case-study  | CaseStudy | NGOCaseStudyPage2 | sections.CaseStudy.variants.NGOCaseStudyPage2
+  app/editor/layout/src/components/sections/casestudy/NGOCaseStudyPage2.tsx
+  app/editor/layout/src/components/sections/casestudy/NGOCaseStudyContent2.tsx
+  app/editor/layout/src/components/sections/casestudy/NGOCaseStudyOverview2.tsx
+  app/editor/layout/src/components/sections/casestudy/NGOCaseStudyCta2.tsx
+
+case-details  | CaseDetails | NGOCaseDetailsPage2 | sections.CaseDetails.variants.NGOCaseDetailsPage2
+  app/editor/layout/src/components/sections/casestudy/NGOCaseDetailsPage2.tsx
+  app/editor/layout/src/components/sections/casestudy/NGOCaseDetailsContent2.tsx
+  app/editor/layout/src/components/sections/casestudy/NGOCaseDetailsArticle2.tsx
+  app/editor/layout/src/components/sections/casestudy/NGOCaseDetailsSidebar2.tsx
+
+enquiry  | Enquiry | NGOEnquiryPage2 | sections.Enquiry.variants.NGOEnquiryPage2
+  app/editor/layout/src/components/sections/enquiry/NGOEnquiryPage2.tsx
+  app/editor/layout/src/components/sections/enquiry/NGOEnquiryForm2.tsx
+  app/editor/layout/src/components/sections/enquiry/NGOEnquiryContact2.tsx
+  app/editor/layout/src/components/sections/enquiry/NGOEnquiryCta2.tsx
+  app/editor/layout/src/components/sections/enquiry/NGOEnquiryIntro2.tsx
+
+frenchise  | Frenchise | NGOFrenchisePage2 | sections.Frenchise.variants.NGOFrenchisePage2
+  app/editor/layout/src/components/sections/frenchise/NGOFrenchisePage2.tsx
+  app/editor/layout/src/components/sections/frenchise/NGOFrenchiseIntro2.tsx
+  app/editor/layout/src/components/sections/frenchise/NGOFrenchiseForm2.tsx
+  app/editor/layout/src/components/sections/frenchise/NGOFrenchiseProcess2.tsx
+  app/editor/layout/src/components/sections/frenchise/NGOFrenchiseCta2.tsx
+
+branches  | Branches | NGOBranchesPage2 | sections.Branches.variants.NGOBranchesPage2
+  app/editor/layout/src/components/sections/branches/NGOBranchesPage2.tsx
+  app/editor/layout/src/components/sections/branches/NGOBranchesContent2.tsx
+  app/editor/layout/src/components/sections/branches/NGOBranchesLocations2.tsx
+  app/editor/layout/src/components/sections/branches/NGOBranchesCta2.tsx
+  app/editor/layout/src/components/sections/branches/NGOBranchesContact2.tsx
+
+industry  | Industry | NGOIndustryPage2 | sections.Industry.variants.NGOIndustryPage2
+  app/editor/layout/src/components/sections/industry/NGOIndustryPage2.tsx
+  app/editor/layout/src/components/sections/industry/NGOIndustryContent2.tsx
+  app/editor/layout/src/components/sections/industry/NGOIndustryPartner2.tsx
+
+media  | Media | NGOMediaPage2 | sections.Media.variants.NGOMediaPage2
+  app/editor/layout/src/components/sections/media/NGOMediaPage2.tsx
+  app/editor/layout/src/components/sections/media/NGOMediaContent2.tsx
+
+privacy  | PrivacyPolicy | NGOPrivacyPolicyPage2 | sections.PrivacyPolicy.variants.NGOPrivacyPolicyPage2
+  app/editor/layout/src/components/sections/privacy-policy/NGOPrivacyPolicyPage2.tsx
+  app/editor/layout/src/components/sections/privacy-policy/NGOPrivacyContent2.tsx
+  app/editor/layout/src/components/sections/privacy-policy/NGOLegalContent2.tsx
+
+terms  | TermsCondition | NGOTermsConditionPage2 | sections.TermsCondition.variants.NGOTermsConditionPage2
+  app/editor/layout/src/components/sections/terms-conditions/NGOTermsConditionPage2.tsx
+  app/editor/layout/src/components/sections/terms-conditions/NGOTermsContent2.tsx
+  app/editor/layout/src/components/sections/privacy-policy/NGOLegalContent2.tsx
+
+cookie  | CookiePolicy | NGOCookiePolicyPage2 | sections.CookiePolicy.variants.NGOCookiePolicyPage2
+  app/editor/layout/src/components/sections/cookie-policy/NGOCookiePolicyPage2.tsx
+  app/editor/layout/src/components/sections/cookie-policy/NGOCookieContent2.tsx
+  app/editor/layout/src/components/sections/privacy-policy/NGOLegalContent2.tsx
+
+disclaimer  | Disclaimer | NGODisclaimerPage2 | sections.Disclaimer.variants.NGODisclaimerPage2
+  app/editor/layout/src/components/sections/disclaimer/NGODisclaimerPage2.tsx
+  app/editor/layout/src/components/sections/disclaimer/NGODisclaimerContent2.tsx
+  app/editor/layout/src/components/sections/privacy-policy/NGOLegalContent2.tsx
+
+refund  | RefundPolicy | NGORefundPolicyPage2 | sections.RefundPolicy.variants.NGORefundPolicyPage2
+  app/editor/layout/src/components/sections/refund-policy/NGORefundPolicyPage2.tsx
+  app/editor/layout/src/components/sections/refund-policy/NGORefundContent2.tsx
+
+
+HOW DATA IS PASSED
+------------------
+1. templateFlow reads template-2.pages and sections.*.variants
+2. Each visible section is { type, variant, page, data: { [variant]: payload } }
+3. getSectionComponent(category, type, variant) returns the TSX file from sectionRegistry
+4. Component render: <Component data={payload} />
+5. Page2 composers spread the same payload into child sections
+
+Nav / footer hrefs live in Header.menu and Footer.footerColumns / footerLegalLinks
+inside those variant objects in categoryContent.json.

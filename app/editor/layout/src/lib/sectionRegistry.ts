@@ -33,6 +33,45 @@ import EventsSupportPage1 from "../components/sections/support/EventsSupportPage
 import EventsPrivacyPolicyPage1 from "../components/sections/privacy-policy/EventsPrivacyPolicyPage1";
 import EventsTermsConditionPage1 from "../components/sections/terms-conditions/EventsTermsConditionPage1";
 import EventsFooter1 from "../components/sections/footer/EventsFooter1";
+import EventsPageBanner1 from "../components/sections/breadcrumb/EventsPageBanner1";
+import EventsAboutContent1 from "../components/sections/about/EventsAboutContent1";
+import EventsAboutStats1 from "../components/sections/about/EventsAboutStats1";
+import EventsAboutValues1 from "../components/sections/about/EventsAboutValues1";
+import EventsAboutCta1 from "../components/sections/about/EventsAboutCta1";
+import EventsOurStoryContent1 from "../components/sections/our-story/EventsOurStoryContent1";
+import EventsOurStoryStats1 from "../components/sections/our-story/EventsOurStoryStats1";
+import EventsOurStoryMilestones1 from "../components/sections/our-story/EventsOurStoryMilestones1";
+import EventsVisionBlock1 from "../components/sections/mission-vision/EventsVisionBlock1";
+import EventsMissionBlock1 from "../components/sections/mission-vision/EventsMissionBlock1";
+import EventsCoreBeliefs1 from "../components/sections/mission-vision/EventsCoreBeliefs1";
+import EventsTeamMembers1 from "../components/sections/team/EventsTeamMembers1";
+import EventsTeamJoinCta1 from "../components/sections/team/EventsTeamJoinCta1";
+import EventsTeamDetailContent1 from "../components/sections/team/EventsTeamDetailContent1";
+import EventsFeaturedAward1 from "../components/sections/awards/EventsFeaturedAward1";
+import EventsTrophyWall1 from "../components/sections/awards/EventsTrophyWall1";
+import EventsAwardsStats1 from "../components/sections/awards/EventsAwardsStats1";
+import EventsGalleryGrid1 from "../components/sections/gallery/EventsGalleryGrid1";
+import EventsBlogGrid1 from "../components/sections/blog/EventsBlogGrid1";
+import EventsBlogDetailsContent1 from "../components/sections/blog/EventsBlogDetailsContent1";
+import EventsBlogRecentPosts1 from "../components/sections/blog/EventsBlogRecentPosts1";
+import EventsContactOverview1 from "../components/sections/contact/EventsContactOverview1";
+import EventsContactMap1 from "../components/sections/contact/EventsContactMap1";
+import EventsCareersOverview1 from "../components/sections/career/EventsCareersOverview1";
+import EventsCareersRoles1 from "../components/sections/career/EventsCareersRoles1";
+import EventsCareersQuoteCta1 from "../components/sections/career/EventsCareersQuoteCta1";
+import EventsCareersApplyForm1 from "../components/sections/career/EventsCareersApplyForm1";
+import EventsCareersApplyJobDetails1 from "../components/sections/career/EventsCareersApplyJobDetails1";
+import EventsCareersApplyWhyJoinUs1 from "../components/sections/career/EventsCareersApplyWhyJoinUs1";
+import EventsSupportOverview1 from "../components/sections/support/EventsSupportOverview1";
+import EventsLegalSections1 from "../components/sections/privacy-policy/EventsLegalSections1";
+import EventsPresence1 from "../components/sections/global-presence/EventsPresence1";
+import EventsEventCategories1 from "../components/sections/event/EventsEventCategories1";
+import EventsEventCta1 from "../components/sections/event/EventsEventCta1";
+import EventsEventDetailContent1 from "../components/sections/event/EventsEventDetailContent1";
+import EventsEventDetailCta1 from "../components/sections/event/EventsEventDetailCta1";
+import EventsCaseStudyOverview1 from "../components/sections/casestudy/EventsCaseStudyOverview1";
+import EventsCaseStudyProject1 from "../components/sections/casestudy/EventsCaseStudyProject1";
+import EventsCaseStudyCta1 from "../components/sections/casestudy/EventsCaseStudyCta1";
 // gaurav-end
 
 
@@ -169,6 +208,136 @@ import RealEstateTopbar1 from "../components/sections/topbar/RealEstateTopbar1";
 import RealEstateTopbar2 from "../components/sections/topbar/RealEstateTopbar2";
 import SchoolTopbar1 from "../components/sections/topbar/SchoolTopbar1";
 import SchoolTopbar2 from "../components/sections/topbar/SchoolTopbar2";
+import NGOAbout2 from "../components/sections/about/NGOAbout2";
+import NGOAboutPage2 from "../components/sections/about/NGOAboutPage2";
+import NGOAwardsContent2 from "../components/sections/awards/NGOAwardsContent2";
+import NGOAwardsPage2 from "../components/sections/awards/NGOAwardsPage2";
+import NGOAwardsGrid2 from "../components/sections/awards/NGOAwardsGrid2";
+import NGOAwardsSupport2 from "../components/sections/awards/NGOAwardsSupport2";
+import NGOAwardsTransparency2 from "../components/sections/awards/NGOAwardsTransparency2";
+import NGOBanner2 from "../components/sections/banner/NGOBanner2";
+import NGOBlog2 from "../components/sections/blog/NGOBlog2";
+import NGOBlogDetailsContent2 from "../components/sections/blog/NGOBlogDetailsContent2";
+import NGOBlogDetailsPage2 from "../components/sections/blog/NGOBlogDetailsPage2";
+import NGOBlogGrid2 from "../components/sections/blog/NGOBlogGrid2";
+import NGOBlogPage2 from "../components/sections/blog/NGOBlogPage2";
+import NGOBlogRecentPosts2 from "../components/sections/blog/NGOBlogRecentPosts2";
+import NGOBranchesContent2 from "../components/sections/branches/NGOBranchesContent2";
+import NGOBranchesPage2 from "../components/sections/branches/NGOBranchesPage2";
+import NGOBranchesLocations2 from "../components/sections/branches/NGOBranchesLocations2";
+import NGOBranchesCta2 from "../components/sections/branches/NGOBranchesCta2";
+import NGOBranchesContact2 from "../components/sections/branches/NGOBranchesContact2";
+import NGOCareersApplyForm2 from "../components/sections/career/NGOCareersApplyForm2";
+import NGOCareersApplyJobDetails2 from "../components/sections/career/NGOCareersApplyJobDetails2";
+import NGOCareersApplyPage2 from "../components/sections/career/NGOCareersApplyPage2";
+import NGOCareersCta2 from "../components/sections/career/NGOCareersCta2";
+import NGOCareersOverview2 from "../components/sections/career/NGOCareersOverview2";
+import NGOCareersPage2 from "../components/sections/career/NGOCareersPage2";
+import NGOCareersRoles2 from "../components/sections/career/NGOCareersRoles2";
+import NGOCaseStudyOverview2 from "../components/sections/casestudy/NGOCaseStudyOverview2";
+import NGOCaseStudyContent2 from "../components/sections/casestudy/NGOCaseStudyContent2";
+import NGOCaseStudyCta2 from "../components/sections/casestudy/NGOCaseStudyCta2";
+import NGOCaseStudyPage2 from "../components/sections/casestudy/NGOCaseStudyPage2";
+import NGOCaseDetailsArticle2 from "../components/sections/casestudy/NGOCaseDetailsArticle2";
+import NGOCaseDetailsSidebar2 from "../components/sections/casestudy/NGOCaseDetailsSidebar2";
+import NGOCaseDetailsContent2 from "../components/sections/casestudy/NGOCaseDetailsContent2";
+import NGOCaseDetailsPage2 from "../components/sections/casestudy/NGOCaseDetailsPage2";
+import NGOCauses2 from "../components/sections/causes/NGOCauses2";
+import NGOCta2 from "../components/sections/cta/NGOCta2";
+import NGOContact2 from "../components/sections/contact/NGOContact2";
+import NGOContactFeatures2 from "../components/sections/contact/NGOContactFeatures2";
+import NGOContactMap2 from "../components/sections/contact/NGOContactMap2";
+import NGOContactOverview2 from "../components/sections/contact/NGOContactOverview2";
+import NGOContactPage2 from "../components/sections/contact/NGOContactPage2";
+import NGOFrenchiseIntro2 from "../components/sections/frenchise/NGOFrenchiseIntro2";
+import NGOFrenchiseForm2 from "../components/sections/frenchise/NGOFrenchiseForm2";
+import NGOFrenchiseProcess2 from "../components/sections/frenchise/NGOFrenchiseProcess2";
+import NGOFrenchiseCta2 from "../components/sections/frenchise/NGOFrenchiseCta2";
+import NGOFrenchisePage2 from "../components/sections/frenchise/NGOFrenchisePage2";
+import NGOEnquiryIntro2 from "../components/sections/enquiry/NGOEnquiryIntro2";
+import NGOEnquiryForm2 from "../components/sections/enquiry/NGOEnquiryForm2";
+import NGOEnquiryContact2 from "../components/sections/enquiry/NGOEnquiryContact2";
+import NGOEnquiryCta2 from "../components/sections/enquiry/NGOEnquiryCta2";
+import NGOEnquiryPage2 from "../components/sections/enquiry/NGOEnquiryPage2";
+import NGOCookieContent2 from "../components/sections/cookie-policy/NGOCookieContent2";
+import NGOCookiePolicyPage2 from "../components/sections/cookie-policy/NGOCookiePolicyPage2";
+import NGODisclaimerContent2 from "../components/sections/disclaimer/NGODisclaimerContent2";
+import NGODisclaimerPage2 from "../components/sections/disclaimer/NGODisclaimerPage2";
+import NGODonateContent2 from "../components/sections/donation/NGODonateContent2";
+import NGODonation2 from "../components/sections/donation/NGODonation2";
+import NGOEventDetailContent2 from "../components/sections/event/NGOEventDetailContent2";
+import NGOEventDetailPage2 from "../components/sections/event/NGOEventDetailPage2";
+import NGOEvents2 from "../components/sections/event/NGOEvents2";
+import NGOEventsList2 from "../components/sections/event/NGOEventsList2";
+import NGOEventsPage2 from "../components/sections/event/NGOEventsPage2";
+import NGOFAQ2 from "../components/sections/faq/NGOFAQ2";
+import NGOFAQContent2 from "../components/sections/faq/NGOFAQContent2";
+import NGOFAQPage2 from "../components/sections/faq/NGOFAQPage2";
+import NGOFooter2 from "../components/sections/footer/NGOFooter2";
+import NGOGallery2 from "../components/sections/gallery/NGOGallery2";
+import NGOGalleryGrid2 from "../components/sections/gallery/NGOGalleryGrid2";
+import NGOGalleryPage2 from "../components/sections/gallery/NGOGalleryPage2";
+import NGOHeader2 from "../components/sections/header/NGOHeader2";
+import NGOIndustryContent2 from "../components/sections/industry/NGOIndustryContent2";
+import NGOIndustryPage2 from "../components/sections/industry/NGOIndustryPage2";
+import NGOIndustryPartner2 from "../components/sections/industry/NGOIndustryPartner2";
+import NGOMediaContent2 from "../components/sections/media/NGOMediaContent2";
+import NGOMediaPage2 from "../components/sections/media/NGOMediaPage2";
+import NGOMission2 from "../components/sections/mission-vision/NGOMission2";
+import NGOPartners2 from "../components/sections/partners/NGOPartners2";
+import NGOPartnersContent2 from "../components/sections/partners/NGOPartnersContent2";
+import NGOPartnersPage2 from "../components/sections/partners/NGOPartnersPage2";
+import NGOCsrIntro2 from "../components/sections/csr/NGOCsrIntro2";
+import NGOCsrFocus2 from "../components/sections/csr/NGOCsrFocus2";
+import NGOCsrImpact2 from "../components/sections/csr/NGOCsrImpact2";
+import NGOCsrProjects2 from "../components/sections/csr/NGOCsrProjects2";
+import NGOCsrCta2 from "../components/sections/csr/NGOCsrCta2";
+import NGOCsrValues2 from "../components/sections/csr/NGOCsrValues2";
+import NGOCsrPage2 from "../components/sections/csr/NGOCsrPage2";
+import NGOBrochureIntro2 from "../components/sections/brochure/NGOBrochureIntro2";
+import NGOBrochureList2 from "../components/sections/brochure/NGOBrochureList2";
+import NGOBrochureCta2 from "../components/sections/brochure/NGOBrochureCta2";
+import NGOBrochurePage2 from "../components/sections/brochure/NGOBrochurePage2";
+import NGOLegalContent2 from "../components/sections/privacy-policy/NGOLegalContent2";
+import NGOPrivacyContent2 from "../components/sections/privacy-policy/NGOPrivacyContent2";
+import NGOPrivacyPolicyPage2 from "../components/sections/privacy-policy/NGOPrivacyPolicyPage2";
+import NGOProjectDetailContent2 from "../components/sections/projects/NGOProjectDetailContent2";
+import NGOProjectDetailPage2 from "../components/sections/projects/NGOProjectDetailPage2";
+import NGOProjects2 from "../components/sections/projects/NGOProjects2";
+import NGOProjectsGrid2 from "../components/sections/projects/NGOProjectsGrid2";
+import NGOProjectsPage2 from "../components/sections/projects/NGOProjectsPage2";
+import NGORefundContent2 from "../components/sections/refund-policy/NGORefundContent2";
+import NGORefundPolicyPage2 from "../components/sections/refund-policy/NGORefundPolicyPage2";
+import NGOServiceDetailContent2 from "../components/sections/service/NGOServiceDetailContent2";
+import NGOServiceDetailPage2 from "../components/sections/service/NGOServiceDetailPage2";
+import NGOServicesContent2 from "../components/sections/service/NGOServicesContent2";
+import NGOServicesCta2 from "../components/sections/service/NGOServicesCta2";
+import NGOServicesPage2 from "../components/sections/service/NGOServicesPage2";
+import NGOSuccessStories2 from "../components/sections/success-stories/NGOSuccessStories2";
+import NGOSupportOverview2 from "../components/sections/support/NGOSupportOverview2";
+import NGOSupportIntro2 from "../components/sections/support/NGOSupportIntro2";
+import NGOSupportWays2 from "../components/sections/support/NGOSupportWays2";
+import NGOSupportImpact2 from "../components/sections/support/NGOSupportImpact2";
+import NGOSupportCta2 from "../components/sections/support/NGOSupportCta2";
+import NGOSupportTransparency2 from "../components/sections/support/NGOSupportTransparency2";
+import NGOSupportPage2 from "../components/sections/support/NGOSupportPage2";
+import NGOTeam2 from "../components/sections/team/NGOTeam2";
+import NGOTeamCta2 from "../components/sections/team/NGOTeamCta2";
+import NGOTeamDetailContent2 from "../components/sections/team/NGOTeamDetailContent2";
+import NGOTeamDetailProfile2 from "../components/sections/team/NGOTeamDetailProfile2";
+import NGOTeamDetailAbout2 from "../components/sections/team/NGOTeamDetailAbout2";
+import NGOTeamDetailExperience2 from "../components/sections/team/NGOTeamDetailExperience2";
+import NGOTeamDetailAchievements2 from "../components/sections/team/NGOTeamDetailAchievements2";
+import NGOTeamDetailPage2 from "../components/sections/team/NGOTeamDetailPage2";
+import NGOTeamMembers2 from "../components/sections/team/NGOTeamMembers2";
+import NGOTeamsPage2 from "../components/sections/team/NGOTeamsPage2";
+import NGOTermsContent2 from "../components/sections/terms-conditions/NGOTermsContent2";
+import NGOTermsConditionPage2 from "../components/sections/terms-conditions/NGOTermsConditionPage2";
+import NGOTestimonial2 from "../components/sections/testimonial/NGOTestimonial2";
+import NGOTestimonialsContent2 from "../components/sections/testimonial/NGOTestimonialsContent2";
+import NGOTestimonialsPage2 from "../components/sections/testimonial/NGOTestimonialsPage2";
+import NGOTopbar2 from "../components/sections/topbar/NGOTopbar2";
+import NGOWhyChooseUs2 from "../components/sections/whychooseus/NGOWhyChooseUs2";
 import BusinessWhyChooseUs1 from "../components/sections/whychooseus/BusinessWhyChooseUs1";
 import BusinessWhyChooseUs2 from "../components/sections/whychooseus/BusinessWhyChooseUs2";
 import EcommerceWhyChooseUs1 from "../components/sections/whychooseus/EcommerceWhyChooseUs1";
@@ -385,6 +554,136 @@ export const sectionRegistry: Record<string, ComponentType<SectionProps>> = {
   SchoolFooter2,
   EcommerceFooter1,
   EcommerceFooter2,
+  NGOAbout2,
+  NGOAboutPage2,
+  NGOAwardsContent2,
+  NGOAwardsPage2,
+  NGOAwardsGrid2,
+  NGOAwardsSupport2,
+  NGOAwardsTransparency2,
+  NGOBanner2,
+  NGOBlog2,
+  NGOBlogDetailsContent2,
+  NGOBlogDetailsPage2,
+  NGOBlogGrid2,
+  NGOBlogPage2,
+  NGOBlogRecentPosts2,
+  NGOBranchesContent2,
+  NGOBranchesPage2,
+  NGOBranchesLocations2,
+  NGOBranchesCta2,
+  NGOBranchesContact2,
+  NGOCareersApplyForm2,
+  NGOCareersApplyJobDetails2,
+  NGOCareersApplyPage2,
+  NGOCareersCta2,
+  NGOCareersOverview2,
+  NGOCareersPage2,
+  NGOCareersRoles2,
+  NGOCaseStudyOverview2,
+  NGOCaseStudyContent2,
+  NGOCaseStudyCta2,
+  NGOCaseStudyPage2,
+  NGOCaseDetailsArticle2,
+  NGOCaseDetailsSidebar2,
+  NGOCaseDetailsContent2,
+  NGOCaseDetailsPage2,
+  NGOCauses2,
+  NGOCta2,
+  NGOContact2,
+  NGOContactFeatures2,
+  NGOContactMap2,
+  NGOContactOverview2,
+  NGOContactPage2,
+  NGOFrenchiseIntro2,
+  NGOFrenchiseForm2,
+  NGOFrenchiseProcess2,
+  NGOFrenchiseCta2,
+  NGOFrenchisePage2,
+  NGOEnquiryIntro2,
+  NGOEnquiryForm2,
+  NGOEnquiryContact2,
+  NGOEnquiryCta2,
+  NGOEnquiryPage2,
+  NGOCookieContent2,
+  NGOCookiePolicyPage2,
+  NGODisclaimerContent2,
+  NGODisclaimerPage2,
+  NGODonateContent2,
+  NGODonation2,
+  NGOEventDetailContent2,
+  NGOEventDetailPage2,
+  NGOEvents2,
+  NGOEventsList2,
+  NGOEventsPage2,
+  NGOFAQ2,
+  NGOFAQContent2,
+  NGOFAQPage2,
+  NGOFooter2,
+  NGOGallery2,
+  NGOGalleryGrid2,
+  NGOGalleryPage2,
+  NGOHeader2,
+  NGOIndustryContent2,
+  NGOIndustryPage2,
+  NGOIndustryPartner2,
+  NGOMediaContent2,
+  NGOMediaPage2,
+  NGOMission2,
+  NGOPartners2,
+  NGOPartnersContent2,
+  NGOPartnersPage2,
+  NGOCsrIntro2,
+  NGOCsrFocus2,
+  NGOCsrImpact2,
+  NGOCsrProjects2,
+  NGOCsrCta2,
+  NGOCsrValues2,
+  NGOCsrPage2,
+  NGOBrochureIntro2,
+  NGOBrochureList2,
+  NGOBrochureCta2,
+  NGOBrochurePage2,
+  NGOLegalContent2,
+  NGOPrivacyContent2,
+  NGOPrivacyPolicyPage2,
+  NGOProjectDetailContent2,
+  NGOProjectDetailPage2,
+  NGOProjects2,
+  NGOProjectsGrid2,
+  NGOProjectsPage2,
+  NGORefundContent2,
+  NGORefundPolicyPage2,
+  NGOServiceDetailContent2,
+  NGOServiceDetailPage2,
+  NGOServicesContent2,
+  NGOServicesCta2,
+  NGOServicesPage2,
+  NGOSuccessStories2,
+  NGOSupportOverview2,
+  NGOSupportIntro2,
+  NGOSupportWays2,
+  NGOSupportImpact2,
+  NGOSupportCta2,
+  NGOSupportTransparency2,
+  NGOSupportPage2,
+  NGOTeam2,
+  NGOTeamCta2,
+  NGOTeamDetailContent2,
+  NGOTeamDetailProfile2,
+  NGOTeamDetailAbout2,
+  NGOTeamDetailExperience2,
+  NGOTeamDetailAchievements2,
+  NGOTeamDetailPage2,
+  NGOTeamMembers2,
+  NGOTeamsPage2,
+  NGOTermsContent2,
+  NGOTermsConditionPage2,
+  NGOTestimonial2,
+  NGOTestimonialsContent2,
+  NGOTestimonialsPage2,
+  NGOTopbar2,
+  NGOWhyChooseUs2,
   EventsHeader1,
   EventsBanner1,
   EventsAbout1,
@@ -417,6 +716,45 @@ export const sectionRegistry: Record<string, ComponentType<SectionProps>> = {
   EventsPrivacyPolicyPage1,
   EventsTermsConditionPage1,
   EventsFooter1,
+  EventsPageBanner1,
+  EventsAboutContent1,
+  EventsAboutStats1,
+  EventsAboutValues1,
+  EventsAboutCta1,
+  EventsOurStoryContent1,
+  EventsOurStoryStats1,
+  EventsOurStoryMilestones1,
+  EventsVisionBlock1,
+  EventsMissionBlock1,
+  EventsCoreBeliefs1,
+  EventsTeamMembers1,
+  EventsTeamJoinCta1,
+  EventsTeamDetailContent1,
+  EventsFeaturedAward1,
+  EventsTrophyWall1,
+  EventsAwardsStats1,
+  EventsGalleryGrid1,
+  EventsBlogGrid1,
+  EventsBlogDetailsContent1,
+  EventsBlogRecentPosts1,
+  EventsContactOverview1,
+  EventsContactMap1,
+  EventsCareersOverview1,
+  EventsCareersRoles1,
+  EventsCareersQuoteCta1,
+  EventsCareersApplyForm1,
+  EventsCareersApplyJobDetails1,
+  EventsCareersApplyWhyJoinUs1,
+  EventsSupportOverview1,
+  EventsLegalSections1,
+  EventsPresence1,
+  EventsEventCategories1,
+  EventsEventCta1,
+  EventsEventDetailContent1,
+  EventsEventDetailCta1,
+  EventsCaseStudyOverview1,
+  EventsCaseStudyProject1,
+  EventsCaseStudyCta1,
 };
 
 export const getSectionComponent = (
@@ -449,6 +787,7 @@ export const getSectionComponent = (
   const looseMatch = Object.keys(sectionRegistry).find(
     (key) =>
       !/Page\d+$/i.test(key) &&
+      key.startsWith(prefix) &&
       new RegExp(`${componentSectionType}\\d+$`, "i").test(key),
   );
 

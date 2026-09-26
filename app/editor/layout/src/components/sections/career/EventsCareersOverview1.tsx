@@ -73,6 +73,7 @@ export default function EventsCareersOverview1({ data = {} }: SectionProps) {
       data-editor-section-label="Careers Overview"
 
       data-editor-fields="description description2 heroImage heroImageAlt stats"
+      data-editor-card-fields="value label"
 
       className="mt-8 md:mt-10 lg:mt-14"
 

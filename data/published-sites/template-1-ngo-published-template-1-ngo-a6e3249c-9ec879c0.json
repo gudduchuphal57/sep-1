@@ -1,0 +1,122 @@
+{
+  "id": "template-1-ngo-published-template-1-ngo-a6e3249c-9ec879c0",
+  "templateId": "template-1",
+  "category": "NGO/published/template-1-ngo-a6e3249c",
+  "pageLinks": [
+    {
+      "label": "Home",
+      "href": "#"
+    },
+    {
+      "label": "About",
+      "href": "#about"
+    },
+    {
+      "label": "Services",
+      "href": "#services"
+    },
+    {
+      "label": "Contact",
+      "href": "#contact"
+    }
+  ],
+  "sections": [
+    {
+      "id": "CustomPage-about",
+      "page": "about",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "About",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "About",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "About",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-services",
+      "page": "services",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-contact",
+      "page": "contact",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Contact",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Contact",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Contact",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    }
+  ],
+  "publishedAt": "2026-09-05T07:16:49.103Z"
+}

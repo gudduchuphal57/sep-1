@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ChangeEvent, type PointerEvent } from "react";
 import { createPortal } from "react-dom";
-import { Check, ChevronLeft, ChevronRight, Menu, Plus, Trash, X } from "lucide-react";
+import { Check, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Menu, Plus, Trash, X } from "lucide-react";
 import {
   BannerSlideData,
   ButtonData,
@@ -12,10 +12,24 @@ import {
 } from "../../types/section";
 import { getSectionComponent } from "../../lib/sectionRegistry";
 import {
+  EventsSubsectionLayoutPreview,
+  getEventsSubsectionLayouts,
+} from "../../lib/eventsSubsectionLayouts";
+import {
+  NGOSubsectionLayoutPreview,
+  getNGOSubsectionLayouts,
+} from "../../lib/ngoSubsectionLayouts";
+import {
+  MAX_EVENTS_CAREERS_FORM_FIELDS,
+  resolveEventsCareersApplyForm,
+} from "../../lib/eventsCareersApplyForm";
+import {
   getCategoryLayoutOptions,
   getCategoryPageLayoutOptions,
+  getCategoryVariantData,
 } from "../../data/templateFlow";
 import { PageLink, usePreview } from "../context/PreviewContext";
+import { ngoIconOptions, ngoSocialIconOptions } from "../../lib/ngoIcons";
 
 type MenuItem = {
   label: string;
@@ -38,6 +52,12 @@ type StickySectionType = "scroll" | "sticky";
 type BannerBackgroundMode = "image" | "video" | "solid" | "gradient";
 const MAX_FOOTER_LINKS_PER_COLUMN = 10;
 const MAX_PROPERTY_PROCESS_STEPS = 4;
+const MAX_NGO_FRENCHISE_FORM_FIELDS = 11;
+const MAX_NGO_ENQUIRY_FORM_FIELDS = 10;
+const MAX_NGO_CONTACT_FORM_FIELDS = 8;
+const MAX_EVENTS_CONTACT_FORM_FIELDS = 10;
+const MAX_NGO_ENQUIRY_LEFT_FEATURES = 5;
+const MAX_NGO_ENQUIRY_CONTACT_ITEMS = 5;
 
 type EditSectionModalProps = {
   category: string;
@@ -133,10 +153,23 @@ const contactPageLayouts = [
 
 const pageLayoutsBySection: Record<string, { id: string; name: string }[]> = {
   About: aboutPageLayouts,
+  AboutPage: aboutPageLayouts,
+  AboutUsPage: aboutPageLayouts,
   Service: servicePageLayouts,
   Gallery: galleryPageLayouts,
   Contact: contactPageLayouts,
 };
+
+const eventsInnerPagesWithoutPageLayout = new Set(["Contact"]);
+
+const eventsBreadcrumbManagedFields = new Set([
+  "breadcrumbBackgroundType",
+  "breadcrumbColorBackgroundType",
+  "backgroundImage",
+  "backgroundColor",
+  "breadcrumbGradientColor",
+  "textColor",
+]);
 
 const MAX_MENU_LINKS = 7;
 const MAX_DROPDOWN_LINKS = 10;
@@ -177,7 +210,9 @@ const getMediaKindFromKey = (key: string): "image" | "video" | null => {
     return null;
   }
 
-  if (normalizedKey === "poster" || normalizedKey === "src") return "image";
+  if (normalizedKey === "poster" || normalizedKey === "src" || normalizedKey === "logo") {
+    return "image";
+  }
   if (/image\d*$/.test(normalizedKey)) {
     return "image";
   }
@@ -201,9 +236,14 @@ const socialLinkLabels: SocialLinkData["label"][] = [
   "instagram",
   "twitter",
   "linkedin",
+  "youtube",
+  "pinterest",
 ];
 
 const MAX_FOOTER_SOCIAL_LINKS = 6;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 const iconFieldOptions = [
   { value: "IconAward", label: "Award" },
@@ -229,26 +269,26 @@ const iconFieldOptions = [
   { value: "IconTrophy", label: "Trophy" },
   { value: "IconUsers", label: "Users" },
   { value: "IconWorld", label: "World" },
-  { value: "Award", label: "Award (event)" },
-  { value: "Calendar", label: "Calendar (event)" },
+  { value: "Award", label: "Award" },
+  { value: "Calendar", label: "Calendar" },
   { value: "ChefHat", label: "Chef Hat" },
-  { value: "Heart", label: "Heart (event)" },
+  { value: "Heart", label: "Heart" },
   { value: "MapPin", label: "Map Pin" },
-  { value: "Music", label: "Music (event)" },
+  { value: "Music", label: "Music" },
   { value: "Presentation", label: "Presentation" },
   { value: "Shield", label: "Shield" },
   { value: "Smile", label: "Smile" },
-  { value: "Sparkles", label: "Sparkles (event)" },
+  { value: "Sparkles", label: "Sparkles" },
   { value: "Ticket", label: "Ticket" },
-  { value: "Users", label: "Users (event)" },
+  { value: "Users", label: "Users" },
   { value: "delivery", label: "Delivery" },
   { value: "email", label: "Email" },
   { value: "location", label: "Location" },
   { value: "phone", label: "Phone" },
   { value: "send", label: "Send" },
-  { value: "shield", label: "Shield (contact)" },
+  { value: "shield", label: "Shield" },
   { value: "support", label: "Support" },
-  { value: "users", label: "Users (contact)" },
+  { value: "users", label: "Users" },
   { value: "verified", label: "Verified" },
   { value: "→", label: "Arrow" },
 ];
@@ -259,6 +299,8 @@ const sidebarItemsBySection: Record<string, string[]> = {
   Header: ["Header Content", "Header Layout", "Navigation Menu"],
   Banner: ["Banner Content", "Banner Layout"],
   About: ["About Content", "About Layout"],
+  AboutPage: ["AboutPage Content", "AboutPage Layout"],
+  AboutUsPage: ["AboutUsPage Content", "AboutUsPage Layout"],
   Service: ["Service Content", "Service Layout"],
   Product: ["Product Content", "Product Layout"],
   WhyChooseUs: ["WhyChooseUs Content", "WhyChooseUs Layout"],
@@ -267,12 +309,23 @@ const sidebarItemsBySection: Record<string, string[]> = {
   FAQ: ["FAQ Content", "FAQ Layout"],
   Testimonial: ["Our Clients Content", "Our Clients Layout"],
   Awards: ["Awards Content", "Awards Layout"],
+  AwardsPage: ["Awards Content", "Awards Layout"],
   Blog: ["Blog Content", "Blog Layout"],
+  BlogPage: ["Blog Content", "Blog Layout"],
   CompanyStatistics: ["Statistics Content", "Statistics Layout"],
   CareerPage: ["CareerPage Content", "CareerPage Form"],
+  Careers: ["Careers Content", "Careers Layout"],
   FormDetail: ["Form Content", "Form Layout"],
   PopularEvents: ["PopularEvents Content"],
   Team: ["Team Content"],
+  Causes: ["Causes Content", "Causes Layout"],
+  Projects: ["Projects Content", "Projects Layout"],
+  ProjectsPage: ["Projects Content", "Projects Layout"],
+  Industry: ["Industry Content", "Industry Layout"],
+  Branches: ["Branches Content", "Branches Layout"],
+  Events: ["Events Content", "Events Layout"],
+  EventsPage: ["Events Content", "Events Layout"],
+  Cta: ["CTA Content", "CTA Layout"],
   Footer: ["Footer Layout", "Footer Content", "External Link"],
 };
 
@@ -288,6 +341,18 @@ const componentContentFieldsByVariant: Record<string, string[]> = {
   "PropertyProcess-1": ["pretitle", "title", "desc", "steps", "button"],
   "InvestmentOpportunities-1": ["pretitle", "title", "desc", "items", "button"],
   "Contact-1": ["pretitle", "title", "desc", "backgroundImage", "backgroundImageTitle", "formFields", "formSubmitLabel", "successMessage"],
+  "EventsContact1": [
+    "pretitle",
+    "title",
+    "desc",
+    "leftBadge",
+    "leftTitle",
+    "leftDesc",
+    "features",
+    "ctaLabel",
+    "ctaHref",
+    "form",
+  ],
   "About-1": ["pretitle", "title", "desc", "backgroundImage", "backgroundImageTitle", "buttons"],
   "EventsAbout1": [
     "pretitle",
@@ -300,6 +365,366 @@ const componentContentFieldsByVariant: Record<string, string[]> = {
     "buttons",
     "stats",
   ],
+  "NGOAbout2": [
+    "badge",
+    "title",
+    "desc",
+    "buttons",
+    "trustBadges",
+    "gallery",
+    "statistics",
+    "background",
+  ],
+  "NGOMission2": [
+    "badge",
+    "title",
+    "tabs",
+    "imageSection",
+  ],
+  "NGOWhyChooseUs2": [
+    "badge",
+    "title",
+    "desc",
+    "image",
+    "imageAlt",
+    "imageOverlay",
+    "cards",
+  ],
+  "NGOServicesContent2": [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+  ],
+  "NGOServicesCta2": ["callToAction"],
+  "NGOTeam2": [
+    "pretitle",
+    "title",
+    "desc",
+    "members",
+  ],
+  "NGOTeamCta2": ["cta"],
+  "NGOTeamDetailProfile2": [
+    "name",
+    "role",
+    "bio",
+    "image",
+    "stats",
+    "contactInfo",
+    "socialLinks",
+  ],
+  "NGOTeamDetailAbout2": ["about", "skills"],
+  "NGOTeamDetailExperience2": ["experience"],
+  "NGOTeamDetailAchievements2": ["achievements"],
+  "NGOMediaContent2": ["sectionTitle", "mediaCards"],
+  "NGOIndustryContent2": [
+    "pretitle",
+    "title",
+    "desc",
+    "sectionTag",
+    "sectors",
+  ],
+  "NGOIndustryPartner2": [
+    "partnerTitle",
+    "partnerTitleHighlight",
+    "partnerDesc",
+    "partnerButton",
+    "metrics",
+  ],
+  "NGOIndustryPage2": [
+    "pretitle",
+    "title",
+    "desc",
+    "sectionTag",
+    "sectors",
+  ],
+  "NGOBranchesContent2": ["pretitle", "title", "desc", "stats"],
+  "NGOBranchesLocations2": [
+    "locationsLabel",
+    "locationsTitle",
+    "branches",
+    "mapImage",
+  ],
+  "NGOBranchesCta2": [
+    "ctaLabel",
+    "ctaTitle",
+    "ctaDesc",
+    "ctaPrimaryButton",
+    "ctaSecondaryButton",
+    "ctaImage",
+  ],
+  "NGOBranchesContact2": ["contactItems"],
+  "NGOBranchesPage2": ["pretitle", "title", "desc", "stats"],
+  "NGOAwardsContent2": ["pretitle", "title", "desc", "stats"],
+  "NGOAwardsGrid2": ["awardsLabel", "awardsTitle", "awards"],
+  "NGOAwardsSupport2": [
+    "supportLabel",
+    "supportTitle",
+    "supportTitleHighlight",
+    "supportDesc",
+    "supportButton",
+    "supportImage",
+  ],
+  "NGOAwardsTransparency2": [
+    "transparencyTitle",
+    "transparencyDesc",
+    "transparencyButton",
+  ],
+  "NGOAwardsPage2": ["pretitle", "title", "desc", "stats"],
+  "NGOCareersOverview2": ["title", "desc", "benefits"],
+  "NGOCareersRoles2": ["rolesTitle", "rolesApplyLabel", "jobs"],
+  "NGOCareersCta2": ["ctaTitle", "ctaDesc", "ctaButton"],
+  "NGOCareersPage2": ["title", "desc", "benefits"],
+  "NGOCauses2": [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+    "exploreButton",
+    "showExploreButton",
+  ],
+  "NGOProjects2": [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+    "exploreButton",
+    "showExploreButton",
+  ],
+  "NGOProjectsPage2": [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+  ],
+  "NGOEvents2": [
+    "pretitle",
+    "title",
+    "desc",
+    "events",
+    "exploreButton",
+    "showExploreButton",
+  ],
+  "NGOTestimonial2": [
+    "pretitle",
+    "title",
+    "desc",
+    "testimonials",
+  ],
+  "NGOBlog2": [
+    "pretitle",
+    "title",
+    "desc",
+    "articles",
+    "exploreButton",
+    "showExploreButton",
+  ],
+  "NGOGallery2": [
+    "pretitle",
+    "title",
+    "desc",
+    "categories",
+    "images",
+  ],
+  "NGOGalleryPage2": [
+    "pretitle",
+    "title",
+    "desc",
+    "categories",
+    "images",
+  ],
+  "NGOContact2": ["office", "contactItems", "form"],
+  "NGOContactOverview2": ["office", "contactItems", "form"],
+  "NGOContactFeatures2": ["cards"],
+  "NGOContactMap2": ["mapEmbedUrl"],
+  "NGOContactPage2": ["office", "form", "cards", "mapEmbedUrl"],
+  "NGOFrenchiseIntro2": ["pretitle", "title", "desc", "features"],
+  "NGOFrenchiseForm2": [
+    "leftPretitle",
+    "leftTitle",
+    "leftDesc",
+    "leftPoints",
+    "leftImage",
+    "leftImageAlt",
+    "formTitle",
+    "formPretitle",
+    "form",
+  ],
+  "NGOFrenchiseProcess2": ["processPretitle", "processTitle", "steps"],
+  "NGOFrenchiseCta2": [
+    "ctaTitle",
+    "ctaPretitle",
+    "ctaDesc",
+    "ctaPhone",
+    "ctaEmail",
+    "ctaHours",
+    "ctaImage",
+    "ctaImageAlt",
+  ],
+  "NGOFrenchisePage2": ["pretitle", "title", "desc", "features"],
+  "NGOEnquiryIntro2": ["pretitle", "title", "desc"],
+  "NGOEnquiryForm2": [
+    "pretitle",
+    "title",
+    "desc",
+    "leftTitle",
+    "leftDesc",
+    "leftFeatures",
+    "leftImage",
+    "leftImageAlt",
+    "formTitle",
+    "form",
+  ],
+  "NGOEnquiryContact2": [
+    "contactTitle",
+    "contactPretitle",
+    "contactDesc",
+    "contactItems",
+  ],
+  "NGOEnquiryCta2": [
+    "ctaIcon",
+    "ctaText",
+    "ctaSubtext",
+    "ctaButtonLabel",
+    "ctaButtonHref",
+    "ctaButtonIcon",
+  ],
+  "NGOEnquiryPage2": [
+    "pretitle",
+    "title",
+    "desc",
+    "leftTitle",
+    "leftDesc",
+    "leftFeatures",
+    "leftImage",
+    "leftImageAlt",
+    "formTitle",
+    "form",
+  ],
+  "NGOSupportIntro2": ["pretitle", "title", "desc", "values"],
+  "NGOSupportOverview2": ["pretitle", "title", "desc", "values"],
+  "NGOSupportWays2": ["waysPretitle", "waysTitle", "supportCards"],
+  "NGOSupportImpact2": [
+    "impactPretitle",
+    "impactTitle",
+    "stats",
+    "closingText",
+  ],
+  "NGOSupportCta2": [
+    "ctaPretitle",
+    "ctaTitle",
+    "ctaDesc",
+    "ctaImage",
+    "ctaPrimaryButton",
+    "ctaSecondaryButton",
+  ],
+  "NGOSupportTransparency2": [
+    "transparencyIcon",
+    "transparencyTitle",
+    "transparencyDesc",
+    "transparencyButton",
+  ],
+  "NGOSupportPage2": ["pretitle", "title", "desc", "values"],
+  "NGOFAQ2": ["pretitle", "title", "desc", "questions"],
+  "NGOFAQContent2": ["pretitle", "title", "desc", "questions"],
+  "NGOFAQPage2": ["pretitle", "title", "desc", "questions"],
+  "NGOPartners2": ["pretitle", "title", "desc", "partnersList"],
+  "NGOPartnersContent2": ["pretitle", "title", "desc", "partnersList"],
+  "NGOPartnersPage2": ["pretitle", "title", "desc", "partnersList"],
+  "NGOCsrIntro2": ["pretitle", "title", "desc", "stats"],
+  "NGOCsrFocus2": ["focusPretitle", "focusItems"],
+  "NGOCsrImpact2": ["impactPretitle", "impactDesc", "impactButton", "pillars"],
+  "NGOCsrProjects2": ["projectsPretitle", "csrProjectItems"],
+  "NGOCsrCta2": ["ctaTitle", "ctaDesc", "ctaButton"],
+  "NGOCsrValues2": ["coreValueItems"],
+  "NGOCsrPage2": ["pretitle", "title", "desc", "stats"],
+  "NGOTestimonialsContent2": [
+    "pretitle",
+    "title",
+    "highlight",
+    "desc",
+    "testimonials",
+  ],
+  "NGOTestimonialsPage2": ["pretitle", "title", "highlight", "desc", "testimonials"],
+  "NGOBrochureIntro2": ["pretitle", "title", "desc", "features"],
+  "NGOBrochureList2": ["listPretitle", "listTitle", "brochures"],
+  "NGOBrochureCta2": [
+    "ctaPretitle",
+    "ctaTitle",
+    "ctaDesc",
+    "ctaPrimaryButton",
+    "ctaSecondaryButton",
+    "ctaStats",
+  ],
+  "NGOBrochurePage2": ["pretitle", "title", "desc", "features"],
+  "NGORefundContent2": ["conditions"],
+  "NGORefundPolicyPage2": ["conditions"],
+  "NGOPrivacyContent2": ["conditions"],
+  "NGOPrivacyPolicyPage2": ["conditions"],
+  "NGOTermsContent2": ["conditions"],
+  "NGOTermsConditionPage2": ["conditions"],
+  "NGOCookieContent2": ["conditions"],
+  "NGOCookiePolicyPage2": ["conditions"],
+  "NGODisclaimerContent2": ["conditions"],
+  "NGODisclaimerPage2": ["conditions"],
+  "NGOCaseStudyContent2": [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+  ],
+  "NGOCaseStudyOverview2": [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+  ],
+  "NGOCaseStudyCta2": ["ctaTitle", "ctaDesc", "ctaButton"],
+  "NGOCaseStudyPage2": [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+  ],
+  "NGOCaseDetailsArticle2": [
+    "pageTitle",
+    "primaryTitle",
+    "primaryImage",
+    "primaryImageAlt",
+    "primaryParagraphs",
+    "postedOn",
+    "secondaryTitle",
+    "secondaryParagraphs",
+  ],
+  "NGOCaseDetailsSidebar2": [
+    "popularPostsTitle",
+    "popularPosts",
+  ],
+  "NGOCaseDetailsContent2": [
+    "pageTitle",
+    "primaryTitle",
+    "primaryImage",
+    "primaryImageAlt",
+    "primaryParagraphs",
+    "postedOn",
+    "secondaryTitle",
+    "secondaryParagraphs",
+    "popularPostsTitle",
+    "popularPosts",
+  ],
+  "NGOCaseDetailsPage2": [
+    "pageTitle",
+    "primaryTitle",
+    "primaryImage",
+    "primaryImageAlt",
+    "primaryParagraphs",
+    "postedOn",
+    "secondaryTitle",
+    "secondaryParagraphs",
+    "popularPostsTitle",
+    "popularPosts",
+  ],
+  "NGOCta2": ["title", "desc", "button"],
   "About-2": ["pretitle", "title", "subtitle", "desc", "backgroundImage", "backgroundImageTitle", "sideImage", "sideImageTitle", "philosophyTitle", "philosophyDesc", "buttons"],
   "AboutPage-1": ["pretitle", "title", "subtitle", "desc", "desc2", "sideImage", "sideImageTitle", "philosophyTitle", "philosophyDesc", "buttons"],
   "AboutPage-2": ["pretitle", "title", "desc", "desc2", "sideImage", "sideImageTitle"],
@@ -368,12 +793,12 @@ const componentContentFieldsByVariant: Record<string, string[]> = {
     "breadcrumb",
     "description",
     "description1",
-    "description2",
-    "description3",
     "quote",
-    "quoteRole",
     "image",
     "imageAlt",
+    "description2",
+    "description3",
+    "quoteRole",
     "image2",
     "image2Alt",
     "stats",
@@ -404,14 +829,23 @@ const componentContentFieldsByVariant: Record<string, string[]> = {
     "rolesTitle",
     "rolesApplyLabel",
     "roles",
-    "benefits",
-    "culture",
-    "applyForm",
-    "whyJoinUs",
     "quote",
     "quoteAuthor",
     "ctaLabel",
     "ctaHref",
+  ],
+  "EventsTeamsPage1": [
+    "title",
+    "subtitle",
+    "backgroundImage",
+    "breadcrumb",
+    "textColor",
+    "backgroundColor",
+    "departments",
+    "members",
+    "joinTitle",
+    "joinDescription",
+    "joinButton1",
   ],
   "EventsCareersApplyPage1": [
     "backgroundImage",
@@ -734,6 +1168,8 @@ const careerPageFormContentFields = new Set([
   "successDesc",
   "successButtonLabel",
 ]);
+const EVENTS_CAREERS_FORM_TAB = "Career Form";
+const eventsCareersFormContentFields = new Set(["applyForm"]);
 const cardCollectionFields = new Set([
   "awardItems",
   "amenities",
@@ -756,12 +1192,17 @@ const cardCollectionFields = new Set([
   "projectItems",
   "skills",
   "stats",
-  "steps",
+  "experience",
+  "achievements",
+  "mediaCards",
+  "awards",
   "teamItems",
   "testimonialItems",
   "values",
   "whyChooseUsItems",
   "events",
+  "testimonials",
+  "articles",
   "images",
   "cards",
   "members",
@@ -779,39 +1220,80 @@ const cardCollectionFields = new Set([
   "highlights",
   "projectPoints",
   "sections",
+  "tabs",
+  "sectors",
+  "metrics",
+  "branches",
+  "supportCards",
+  "questions",
+  "partnersList",
+  "focusItems",
+  "csrProjectItems",
+  "pillars",
+  "coreValueItems",
+  "brochures",
+  "ctaStats",
+  "popularPosts",
+  "leftPoints",
+  "steps",
 ]);
 
 const visibleCardFieldsByCollection: Record<string, string[]> = {
   awardItems: ["image", "year", "title", "org", "desc", "description", "href"],
   benefits: ["image", "title", "desc", "description"],
+  buttons: ["label", "href", "variant", "icon"],
   culture: ["title", "description"],
   blogItems: ["image", "alt", "label", "title", "description", "excerpt", "desc", "date", "link", "href"],
+  recentNews: ["image", "date", "title", "href"],
   categories: ["image", "name", "title", "label", "desc", "href"],
   cities: ["image", "name", "title", "category", "location", "desc", "href"],
   collectionItems: ["image", "eyebrow", "title", "desc", "description", "href"],
-  features: ["image", "title", "label", "value", "desc", "description"],
+  features: ["icon", "image", "title", "label", "value", "desc", "description"],
+  fields: ["placeholder", "type", "width"],
   galleryItems: ["image", "title", "desc", "description"],
-  cards: ["image", "badge"],
-  content: ["type", "text", "items"],
+  cards: ["image", "badge", "icon", "title", "desc", "description"],
+  content: ["type", "text", "items", "primary", "secondary", "features"],
+  tabs: ["id", "label", "icon", "active", "content"],
+  ngoMissionTabItems: ["id", "label", "icon", "content"],
+  ngoMissionFeatures: ["icon", "title", "description"],
   relatedPosts: ["image", "alt", "label", "title", "description", "link"],
-  roles: ["title", "location", "type", "description", "applyHref"],
+  roles: ["title", "location", "type", "description"],
   whyJoinUs: ["icon", "title", "description"],
   contactItems: ["icon", "label", "value"],
   highlights: ["title", "description"],
   projectPoints: ["title", "description"],
   faqItems: ["question", "answer"],
+  questions: ["question", "answer"],
+  partnersList: ["logo", "name", "website"],
+  focusItems: ["image", "icon", "title", "description"],
+  csrProjectItems: ["image", "title", "description"],
+  pillars: ["icon", "title", "description"],
+  coreValueItems: ["icon", "title", "description"],
+  brochures: ["image", "name", "description", "downloadlabel", "downloadUrl"],
+  ctaStats: ["icon", "value", "label"],
+  popularPosts: ["image", "date", "category", "title", "slug"],
+  steps: ["icon", "title", "description"],
   sections: ["title", "content"],
+  conditions: ["title", "content"],
+  sectors: ["image", "icon", "title", "description"],
+  metrics: ["icon", "value", "label"],
+  branches: ["city", "address", "phone"],
   impactStats: ["image", "stat", "value", "label", "desc"],
   jobs: ["title", "location", "type", "desc"],
   productItems: ["image", "productTitle", "productSubtitle", "productInfoDesc", "productFeatures", "price", "link"],
   productSlides: ["image", "productTitle", "productSubtitle", "productInfoDesc", "productFeatures", "price", "link"],
   programs: ["image", "amount", "title", "desc", "description", "href"],
   projectItems: ["image", "status", "statusText", "category", "listingsLabel", "title", "location", "desc", "description", "href"],
-  stats: ["stat", "value", "number", "label", "desc"],
+  stats: ["stat", "value", "number", "label", "desc", "icon"],
+  statistics: ["icon", "value", "label"],
+  trustBadges: ["icon", "text", "desc"],
   steps: ["image", "title", "desc", "description"],
   teamItems: ["image", "name", "role", "title", "desc"],
+  testimonials: ["image", "name", "designation", "rating", "message"],
+  articles: ["image", "category", "date", "title", "description", "href"],
   testimonialItems: ["image", "name", "role", "quote", "rating", "initials", "address"],
   values: ["image", "number", "title", "desc", "description", "icon"],
+  supportCards: ["icon", "title", "description", "button"],
   whyChooseUsItems: ["image", "icon", "stat", "title", "desc", "description"],
   events: [
     "image",
@@ -825,19 +1307,46 @@ const visibleCardFieldsByCollection: Record<string, string[]> = {
     "link",
   ],
   images: ["src"],
-  items: ["icon", "value", "title", "description"],
+  items: [
+    "image",
+    "icon",
+    "category",
+    "title",
+    "titleLink",
+    "description",
+    "desc",
+    "value",
+    "button",
+  ],
   milestones: ["year", "title", "description"],
   coreBeliefs: ["icon", "title", "description", "desc"],
   points: ["icon", "text"],
   breadcrumb: ["label", "href"],
   departments: ["label", "value"],
-  awards: ["year", "title", "body", "category", "icon", "description"],
+  awards: ["image", "title", "description", "year", "body", "category", "icon"],
   ctaItems: ["value", "label"],
   members: ["image", "name", "role", "department", "bio", "social"],
+  socials: ["icon", "href"],
+  skills: ["skill", "percentage", "title", "description"],
+  experience: ["period", "role", "organization", "description"],
+  achievements: ["title", "description"],
+  mediaCards: ["image", "title", "articleUrl"],
 };
 
 const visibleObjectFieldsByKey: Record<string, string[]> = {
   vision: ["description", "detail", "image", "imageAlt", "points"],
+  imageSection: ["mainImage", "purposeCard"],
+  mainImage: ["src", "alt"],
+  purposeCard: ["icon", "badge", "title"],
+  callToAction: [
+    "titlePrefix",
+    "titleHighlight",
+    "description",
+    "buttonText",
+    "buttonLink",
+    "bannerImage",
+  ],
+  imageOverlay: ["icon", "text", "highlight"],
   mission: [
     "pretitle",
     "title",
@@ -856,10 +1365,12 @@ const visibleObjectFieldsByKey: Record<string, string[]> = {
     "imageAlt",
   ],
   ctaButton: ["label", "href"],
+  impactButton: ["label", "href"],
   detailCtaButton: ["label", "href"],
   applyForm: [
     "title",
     "subtitle",
+    "fields",
     "locations",
     "noticePeriods",
     "submitLabel",
@@ -871,6 +1382,7 @@ const visibleObjectFieldsByKey: Record<string, string[]> = {
     "whyJoinUsTitle",
   ],
   form: [
+    "fields",
     "namePlaceholder",
     "emailPlaceholder",
     "subjectPlaceholder",
@@ -878,6 +1390,38 @@ const visibleObjectFieldsByKey: Record<string, string[]> = {
     "buttonLabel",
     "buttonIcon",
   ],
+  leftContent: ["badge", "title", "description", "features", "cta"],
+  badge: ["label", "icon"],
+  title: ["line1", "highlight", "line2", "part1", "part2"],
+  desc: ["primary", "secondary"],
+  gallery: [
+    "mainImage",
+    "topImage",
+    "sideImage",
+    "playButton",
+    "floatingCard",
+  ],
+  mainImage: ["src", "alt"],
+  topImage: ["src", "alt"],
+  sideImage: ["src", "alt"],
+  playButton: ["videoUrl"],
+  floatingCard: ["pretitle", "title", "highlight"],
+  background: ["showDecorations"],
+  image: ["src", "alt"],
+  button: ["label", "href"],
+  partnerButton: ["label", "href"],
+  ctaPrimaryButton: ["label", "href"],
+  ctaSecondaryButton: ["label", "href"],
+  exploreButton: ["label", "href"],
+  cta: ["title", "description", "button"],
+  contactInfo: [
+    "email",
+    "phone",
+    "location",
+    "qualification",
+    "languages",
+  ],
+  socialLinks: ["facebook", "linkedin", "twitter", "instagram", "youtube"],
 };
 
 const nonVisualContentFields = new Set([
@@ -911,6 +1455,7 @@ const normalizeSectionType = (sectionType: string) => {
   const normalized = sectionType.trim().toLowerCase();
   const aliases: Record<string, string> = {
     faq: "FAQ",
+    faqs: "FAQ",
     formdetail: "FormDetail",
     testimonial: "Testimonial",
     whychooseus: "WhyChooseUs",
@@ -937,15 +1482,37 @@ const normalizeSectionType = (sectionType: string) => {
     careerpage: "CareerPage",
     blogpage: "BlogPage",
     blogdetail: "BlogDetail",
+    csr: "CSR",
     csrpage: "CSRPage",
+    brochure: "Brochure",
+    brochurepage: "BrochurePage",
+    casestudy: "CaseStudy",
+    casestudypage: "CaseStudyPage",
+    casedetails: "CaseDetails",
+    casedetail: "CaseDetails",
+    frenchise: "Frenchise",
+    franchise: "Frenchise",
+    enquiry: "Enquiry",
+    enquirynow: "Enquiry",
+    testimonialspage: "TestimonialsPage",
     contactpage: "ContactPage",
     missionvision: "MissionVision",
     privacypolicy: "PrivacyPolicy",
-    termsconditions: "TermsConditions",
+    privacy: "PrivacyPolicy",
+    termsconditions: "TermsCondition",
+    termscondition: "TermsCondition",
+    terms: "TermsCondition",
     cookiepolicy: "CookiePolicy",
+    cookie: "CookiePolicy",
+    disclaimer: "Disclaimer",
     refundpolicy: "RefundPolicy",
+    refund: "RefundPolicy",
     propertydetail: "PropertyDetail",
     projectdetail: "ProjectDetail",
+    projectspage: "ProjectsPage",
+    servicespage: "ServicesPage",
+    teamspage: "TeamsPage",
+    eventspage: "EventsPage",
     propertycatalog: "PropertyCatalog",
   };
 
@@ -958,8 +1525,24 @@ const getDefaultTab = (sectionType: string) =>
   sidebarItemsBySection[normalizeSectionType(sectionType)]?.[0] ??
   `${normalizeSectionType(sectionType)} Content`;
 
-const formatSectionTitle = (sectionType: string) =>
-  normalizeSectionType(sectionType);
+const getSubsectionContentTabName = (label: string) => {
+  const trimmed = label.trim();
+  if (!trimmed) return "";
+  return /content$/i.test(trimmed) ? trimmed : `${trimmed} Content`;
+};
+
+const getSubsectionLayoutTabName = (label: string) => {
+  const trimmed = label.trim();
+  if (!trimmed) return "Layout";
+  return /content$/i.test(trimmed)
+    ? `${trimmed.replace(/\s*content$/i, "").trim()} Layout`
+    : `${trimmed} Layout`;
+};
+
+const formatSectionTitle = (sectionType: string) => {
+  const type = normalizeSectionType(sectionType);
+  return type === "Cta" ? "CTA" : type;
+};
 
 const limitLinkText = (value: string) => value.slice(0, MAX_LINK_TEXT_LENGTH);
 
@@ -1037,8 +1620,20 @@ const getDefaultBannerData = (
 };
 
 const getVisibleSocialLinks = (
-  socialLinks: { label: SocialLinkData["label"]; href: string }[] = [],
-) => socialLinks.slice(0, MAX_TOPBAR_SOCIAL_LINKS);
+  socialLinks?: unknown,
+) => {
+  if (!Array.isArray(socialLinks)) return [];
+
+  return socialLinks
+    .filter(
+      (item): item is { label: SocialLinkData["label"]; href: string } =>
+        typeof item === "object" &&
+        item !== null &&
+        "label" in item &&
+        "href" in item,
+    )
+    .slice(0, MAX_TOPBAR_SOCIAL_LINKS);
+};
 
 const SelectedLayoutBadge = ({
   active,
@@ -1107,6 +1702,10 @@ const specializedContentFieldSchemas: Record<string, HandledFieldObject> = {
     phone: true,
     email: true,
     location: true,
+    address: true,
+    phoneHref: true,
+    headerCta: true,
+    buttons: true,
     hiddenContentFields: true,
     socialLinks: {
       $items: { label: true, href: true },
@@ -1116,13 +1715,18 @@ const specializedContentFieldSchemas: Record<string, HandledFieldObject> = {
     logo: true,
     logoImage: true,
     logoImageTitle: true,
+    logoType: true,
     headerBackgroundType: true,
     headerType: true,
     headerBackgroundColor: true,
     headerGradientColor: true,
     headerTextColor: true,
     menu: true,
+    header: true,
+    PopupData: true,
+    popupData: true,
     button: { label: true, href: true, variant: true },
+    headerCta: { label: true, href: true },
     buttons: {
       $items: { label: true, href: true, variant: true },
     },
@@ -1149,10 +1753,17 @@ const specializedContentFieldSchemas: Record<string, HandledFieldObject> = {
         video: true,
         alt: true,
         title: true,
+        pretitle: true,
         desc: true,
+        overlayOpacity: true,
+        bgImageUrl: true,
+        ctaButtons: true,
         button: { label: true, href: true, variant: true },
+        secondButton: { label: true, href: true, variant: true },
       },
     },
+    slides: true,
+    banner: true,
   },
   FormDetail: {
     pretitle: true,
@@ -1174,6 +1785,7 @@ const specializedContentFieldSchemas: Record<string, HandledFieldObject> = {
     logo: true,
     logoImage: true,
     logoImageTitle: true,
+    logoType: true,
     desc: true,
     footerBackgroundType: true,
     footerBackgroundColor: true,
@@ -1197,8 +1809,14 @@ const specializedContentFieldSchemas: Record<string, HandledFieldObject> = {
     disclaimerTitle: true,
     disclaimerText: true,
     newsletterTitle: true,
+    newsletterDesc: true,
     newsletterPlaceholder: true,
     newsletterButtonLabel: true,
+    recentNewsTitle: true,
+    recentNews: {
+      $items: { title: true, date: true, image: true, href: true },
+    },
+    footerSubscribe: true,
     whatsappLink: true,
     callLink: true,
   },
@@ -1248,6 +1866,7 @@ type GenericFieldEditorProps = {
   value: unknown;
   path: GenericFieldPath;
   sectionType: string;
+  category?: string;
   onChange: (path: GenericFieldPath, value: unknown) => void;
   onMediaChange: (
     path: GenericFieldPath,
@@ -1263,6 +1882,7 @@ type GenericFieldEditorProps = {
   ) => void;
   availablePageNames?: string[];
   cardFields?: string[];
+  categorySelectOptions?: Array<{ value: string; label: string }>;
 };
 
 const userManageableCollectionFields = new Set([
@@ -1275,6 +1895,8 @@ const userManageableCollectionFields = new Set([
   "awardItems",
   "blogItems",
   "stats",
+  "statistics",
+  "trustBadges",
   "features",
   "whyChooseUsItems",
   "projectItems",
@@ -1291,6 +1913,9 @@ const userManageableCollectionFields = new Set([
   "impactStats",
   "groups",
   "events",
+  "testimonials",
+  "articles",
+  "recentNews",
   "tabs",
   "images",
   "cards",
@@ -1310,23 +1935,224 @@ const userManageableCollectionFields = new Set([
   "projectPoints",
   "sections",
   "skills",
+  "stats",
+  "experience",
+  "achievements",
+  "mediaCards",
+  "buttons",
+  "sectors",
+  "metrics",
+  "branches",
+  "supportCards",
+  "questions",
+  "partnersList",
+  "focusItems",
+  "csrProjectItems",
+  "pillars",
+  "coreValueItems",
+  "brochures",
+  "ctaStats",
+  "popularPosts",
+  "primaryParagraphs",
+  "secondaryParagraphs",
+  "leftPoints",
+  "leftFeatures",
+  "steps",
+  "breadcrumb",
+  "conditions",
 ]);
 
 const formatFieldLabel = (fieldName: string) =>
   fieldName === "href"
     ? "Link"
-    : fieldName
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (letter) => letter.toUpperCase());
+    : fieldName === "src"
+      ? "Image"
+      : fieldName === "fields"
+        ? "Form Fields"
+                : fieldName === "line1"
+          ? "Title"
+          : fieldName === "highlight"
+            ? "Highlight"
+            : fieldName === "line2"
+              ? "Title Line 2"
+                : fieldName === "sectionTitle"
+                  ? "Title"
+              : fieldName === "articleUrl"
+                ? "Redirect URL"
+                : fieldName === "titleLink"
+                ? "Title Link"
+                : fieldName === "purposeCard"
+                  ? "Our Purpose"
+    : fieldName === "iconName"
+      ? "Icon"
+    : fieldName === "titleHighlight"
+      ? "Highlight"
+    : fieldName === "partnerTitle"
+      ? "Title"
+    : fieldName === "partnerTitleHighlight"
+      ? "Highlight"
+    : fieldName === "partnerDesc"
+      ? "Description"
+    : fieldName === "partnerButton"
+      ? "Button"
+    : fieldName === "sectionTag"
+      ? "Section Tag"
+    : fieldName === "sectors"
+      ? "Industries"
+    : fieldName === "locationsLabel"
+      ? "Pretitle"
+    : fieldName === "locationsTitle"
+      ? "Title"
+    : fieldName === "mapImage"
+      ? "Map Image"
+    : fieldName === "ctaLabel"
+      ? "Pretitle"
+    : fieldName === "ctaTitle"
+      ? "Title"
+    : fieldName === "ctaDesc"
+      ? "Description"
+    : fieldName === "ctaPrimaryButton"
+      ? "Primary Button"
+    : fieldName === "ctaSecondaryButton"
+      ? "Secondary Button"
+    : fieldName === "ctaImage"
+      ? "Image"
+    : fieldName === "awardsLabel"
+      ? "Pretitle"
+    : fieldName === "awardsTitle"
+      ? "Title"
+    : fieldName === "supportLabel"
+      ? "Pretitle"
+    : fieldName === "supportTitle"
+      ? "Title"
+    : fieldName === "supportTitleHighlight"
+      ? "Highlight"
+    : fieldName === "supportDesc"
+      ? "Description"
+    : fieldName === "supportButton"
+      ? "Button"
+    : fieldName === "supportImage"
+      ? "Image"
+    : fieldName === "transparencyTitle"
+      ? "Title"
+    : fieldName === "transparencyDesc"
+      ? "Description"
+    : fieldName === "transparencyButton"
+      ? "Button"
+    : fieldName === "rolesTitle"
+      ? "Title"
+    : fieldName === "rolesApplyLabel"
+      ? "Apply Button"
+    : fieldName === "ctaButton"
+      ? "Button"
+    : fieldName === "website"
+      ? "Website"
+    : fieldName === "mapEmbedUrl"
+      ? "Map Embed URL"
+    : fieldName === "waysPretitle"
+      ? "Pretitle"
+    : fieldName === "waysTitle"
+      ? "Title"
+    : fieldName === "impactPretitle"
+      ? "Pretitle"
+    : fieldName === "impactTitle"
+      ? "Title"
+    : fieldName === "closingText"
+      ? "Closing Text"
+    : fieldName === "value2"
+      ? "Value 2"
+    : fieldName === "ctaPretitle"
+      ? "Pretitle"
+    : fieldName === "listPretitle"
+      ? "Pretitle"
+    : fieldName === "listTitle"
+      ? "Title"
+    : fieldName === "titleLine1"
+      ? "Title Line 1"
+    : fieldName === "titleLine2"
+      ? "Title Line 2"
+    : fieldName === "downloadlabel"
+      ? "Download Label"
+    : fieldName === "downloadUrl"
+      ? "Download URL"
+    : fieldName === "transparencyIcon"
+      ? "Icon"
+    : fieldName === "employmentType"
+      ? "Job Type"
+    : fieldName === "subLabel"
+      ? "Sub Label"
+    : fieldName === "city"
+      ? "City"
+                : fieldName === "showExploreButton"
+                  ? "Show Explore Button"
+                : fieldName === "newsletterDesc"
+                  ? "Description"
+                : fieldName === "recentNews"
+                  ? "Recent Blogs"
+                : fieldName === "recentNewsTitle"
+                  ? "Recent Blogs Title"
+              : fieldName === "desc"
+            ? "Description"
+              : fieldName === "leftPretitle"
+                ? "Left Pretitle"
+              : fieldName === "leftTitle"
+                ? "Left Title"
+              : fieldName === "leftTitleHighlight"
+                ? "Left Title Highlight"
+              : fieldName === "leftDesc"
+                ? "Left Description"
+              : fieldName === "formTitle"
+                ? "Form Title"
+              : fieldName === "formPretitle"
+                ? "Form Pretitle"
+              : fieldName === "leftFeatures"
+                ? "Features"
+              : fieldName === "contactTitle"
+                ? "Pretitle"
+              : fieldName === "contactPretitle"
+                ? "Title"
+              : fieldName === "contactDesc"
+                ? "Description"
+              : fieldName === "primary"
+            ? "Description"
+            : fieldName === "secondary"
+              ? "Description 2"
+              : fieldName === "videoUrl"
+                ? "Video URL"
+                : fieldName === "showDecorations"
+                  ? "Show Decorations"
+                  : fieldName
+                      .replace(/([A-Z])/g, " $1")
+                      .replace(/([a-zA-Z])(\d+)/g, "$1 $2")
+                      .replace(/^./, (letter) => letter.toUpperCase());
+
+const eventsAboutContentFieldLabels: Record<string, string> = {
+  description1: "Description 1",
+  description2: "Description 2",
+  description3: "Description 3",
+  quote: "Quote 1",
+  quoteRole: "Quote 2",
+  image: "Image 1",
+  imageAlt: "Image Alt 1",
+  image2: "Image 2",
+  image2Alt: "Image Alt 2",
+};
 
 const nestedContentFieldOrder = [
   "image",
+  "logo",
+  "src",
   "video",
+  "videoUrl",
   "icon",
+  "line1",
   "title",
   "name",
   "pretitle",
   "subtitle",
+  "highlight",
+  "primary",
+  "secondary",
   "desc",
   "description",
   "detail",
@@ -1342,11 +2168,13 @@ const nestedContentFieldOrder = [
   "value",
   "text",
   "items",
+  "variant",
   "price",
   "status",
   "statusText",
   "type",
   "category",
+  "titleLink",
   "location",
   "date",
   "phone",
@@ -1430,12 +2258,14 @@ const GenericFieldEditor = ({
   value,
   path,
   sectionType,
+  category,
   onChange,
   onMediaChange,
   onAddArrayItem,
   onDeleteArrayItem,
   availablePageNames = [],
   cardFields,
+  categorySelectOptions = [],
 }: GenericFieldEditorProps) => {
   const [pendingDeleteIndex, setPendingDeleteIndex] = useState<number | null>(
     null,
@@ -1468,6 +2298,22 @@ const GenericFieldEditor = ({
       path.length === 1 &&
       (value.length === 0 ||
         value.every((item) => typeof item === "string"));
+    const isContactFormFields =
+      (sectionType === "Contact" ||
+        sectionType === "Frenchise" ||
+        sectionType === "FrenchisePage" ||
+        sectionType === "Franchise" ||
+        sectionType === "Enquiry" ||
+        sectionType === "EnquiryPage" ||
+        sectionType === "EnquiryNow") &&
+      fieldName === "fields" &&
+      path.length === 2 &&
+      path[0] === "form";
+    const isContactFeatures =
+      sectionType === "Contact" &&
+      fieldName === "features" &&
+      path.length === 2 &&
+      path[0] === "leftContent";
     const isNestedStringList =
       (path.length > 1 || isTabStringList) &&
       (value.length === 0
@@ -1484,7 +2330,37 @@ const GenericFieldEditor = ({
       canAddTopLevelItems ||
       (isFeatureCollection && Boolean(onAddArrayItem)) ||
       (isVisionMissionPoints && Boolean(onAddArrayItem)) ||
-      (isNestedStringList && Boolean(onAddArrayItem));
+      (isNestedStringList && Boolean(onAddArrayItem)) ||
+      (isContactFormFields && Boolean(onAddArrayItem)) ||
+      (isContactFeatures && Boolean(onAddArrayItem));
+    const isFrenchiseFormFields =
+      isContactFormFields &&
+      (sectionType === "Frenchise" ||
+        sectionType === "FrenchisePage" ||
+        sectionType === "Franchise");
+    const isEnquiryFormFields =
+      isContactFormFields &&
+      (sectionType === "Enquiry" ||
+        sectionType === "EnquiryPage" ||
+        sectionType === "EnquiryNow");
+    const isEventsContactFormFields =
+      isContactFormFields && category === "Events" && sectionType === "Contact";
+    const isNgoContactFormFields =
+      isContactFormFields &&
+      category === "NGO" &&
+      (sectionType === "Contact" || sectionType === "ContactPage");
+    const isEnquiryLeftFeatures =
+      (sectionType === "Enquiry" ||
+        sectionType === "EnquiryPage" ||
+        sectionType === "EnquiryNow") &&
+      fieldName === "leftFeatures" &&
+      path.length === 1;
+    const isEnquiryContactItems =
+      (sectionType === "Enquiry" ||
+        sectionType === "EnquiryPage" ||
+        sectionType === "EnquiryNow") &&
+      fieldName === "contactItems" &&
+      path.length === 1;
     const collectionLimitReached =
       (isFeatureCollection && value.length >= 5) ||
       (isTopLevelFeaturesCollection &&
@@ -1493,19 +2369,89 @@ const GenericFieldEditor = ({
         value.length >= MAX_BLOG_CARDS) ||
       (isPropertyProcessSteps &&
         value.length >= MAX_PROPERTY_PROCESS_STEPS) ||
+      (isFrenchiseFormFields &&
+        value.length >= MAX_NGO_FRENCHISE_FORM_FIELDS) ||
+      (isEnquiryFormFields &&
+        value.length >= MAX_NGO_ENQUIRY_FORM_FIELDS) ||
+      (isEventsContactFormFields &&
+        value.length >= MAX_EVENTS_CONTACT_FORM_FIELDS) ||
+      (isNgoContactFormFields &&
+        value.length >= MAX_NGO_CONTACT_FORM_FIELDS) ||
+      (isEnquiryLeftFeatures &&
+        value.length >= MAX_NGO_ENQUIRY_LEFT_FEATURES) ||
+      (isEnquiryContactItems &&
+        value.length >= MAX_NGO_ENQUIRY_CONTACT_ITEMS) ||
       (sectionType === "About" &&
         fieldName === "stats" &&
         path.length === 1 &&
-        value.length >= 1);
+        value.length >= 1) ||
+      (category === "Events" &&
+        sectionType === "About" &&
+        fieldName === "buttons" &&
+        path.length === 1 &&
+        value.length >= 1) ||
+      (category === "NGO" &&
+        (sectionType === "About" ||
+          sectionType === "AboutPage" ||
+          sectionType === "AboutUsPage") &&
+        fieldName === "buttons" &&
+        path.length === 1 &&
+        value.length >= 2) ||
+      (category === "NGO" &&
+        (sectionType === "About" ||
+          sectionType === "AboutPage" ||
+          sectionType === "AboutUsPage") &&
+        fieldName === "trustBadges" &&
+        path.length === 1 &&
+        value.length >= 3) ||
+      (category === "NGO" &&
+        (sectionType === "About" ||
+          sectionType === "AboutPage" ||
+          sectionType === "AboutUsPage") &&
+        fieldName === "statistics" &&
+        path.length === 1 &&
+        value.length >= 4) ||
+      (category === "NGO" &&
+        (sectionType === "AboutPage" ||
+          sectionType === "AboutUsPage") &&
+        fieldName === "tabs" &&
+        path.length === 1 &&
+        value.length >= 4) ||
+      (category === "NGO" &&
+        (sectionType === "AboutPage" ||
+          sectionType === "AboutUsPage") &&
+        fieldName === "cards" &&
+        path.length === 1 &&
+        value.length >= 6) ||
+      (category === "NGO" &&
+        sectionType === "Causes" &&
+        fieldName === "items" &&
+        path.length === 1 &&
+        value.length >= 6) ||
+      (category === "NGO" &&
+        sectionType === "Footer" &&
+        fieldName === "recentNews" &&
+        path.length === 1 &&
+        value.length >= 3);
     const canDeleteItems =
       Boolean(onDeleteArrayItem) &&
       value.length > 0 &&
       (isNestedStringList ||
+        isContactFormFields ||
+        isContactFeatures ||
         ((path.length === 1 || isFeatureCollection || isVisionMissionPoints) &&
           value.some(
             (item) =>
               typeof item === "object" && item !== null && !Array.isArray(item),
           )));
+    const canReorderItems = isContactFormFields && value.length > 1;
+    const moveItem = (fromIndex: number, toIndex: number) => {
+      if (toIndex < 0 || toIndex >= value.length) return;
+      const nextItems = [...value];
+      const [moved] = nextItems.splice(fromIndex, 1);
+      nextItems.splice(toIndex, 0, moved);
+      onChange(path, nextItems);
+    };
     const pendingDeleteItem =
       pendingDeleteIndex === null ? undefined : value[pendingDeleteIndex];
     const pendingDeleteRecord =
@@ -1522,11 +2468,14 @@ const GenericFieldEditor = ({
             pendingDeleteRecord?.productTitle,
             pendingDeleteRecord?.name,
             pendingDeleteRecord?.label,
+            pendingDeleteRecord?.placeholder,
             pendingDeleteRecord?.question,
           ].find((item): item is string => typeof item === "string" && Boolean(item.trim())) ??
           (pendingDeleteIndex === null ? "this card" : `Item ${pendingDeleteIndex + 1}`);
     const deleteItemNoun = isFeatureCollection
       ? "feature"
+      : isContactFormFields
+        ? "field"
       : isNestedStringList
         ? "item"
         : "card";
@@ -1535,12 +2484,175 @@ const GenericFieldEditor = ({
       <section className="rounded-xl bg-[#f4f4f5] p-4">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h4 className="text-sm font-bold text-slate-900">
-            {formatFieldLabel(fieldName)}
+            {sectionType === "Causes" && fieldName === "items"
+              ? `Causes (${value.length})`
+              : (sectionType === "Projects" || sectionType === "ProjectsPage") &&
+                  fieldName === "items"
+                ? `Projects (${value.length})`
+              : (sectionType === "Events" || sectionType === "EventsPage") &&
+                  fieldName === "events"
+                ? `Events (${value.length})`
+              : (sectionType === "Testimonial" ||
+                    sectionType === "TestimonialsPage") &&
+                  fieldName === "testimonials"
+                ? `Testimonials (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Teams" || sectionType === "TeamsPage") &&
+                  fieldName === "members"
+                ? `Team Members (${value.length})`
+              : category === "Events" &&
+                  (sectionType === "Teams" || sectionType === "Team") &&
+                  fieldName === "departments"
+                ? `Department Tabs (${value.length})`
+              : category === "Events" &&
+                  (sectionType === "Teams" || sectionType === "Team") &&
+                  fieldName === "members"
+                ? `Team Members (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "Media" &&
+                  fieldName === "mediaCards"
+                ? `Media (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "Industry" &&
+                  fieldName === "sectors"
+                ? `Industries (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "Industry" &&
+                  fieldName === "metrics"
+                ? `Metrics (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "Branches" &&
+                  fieldName === "stats"
+                ? `Stats (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "Branches" &&
+                  fieldName === "branches"
+                ? `Branches (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Support" || sectionType === "SupportPage") &&
+                  fieldName === "values"
+                ? `Values (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Support" || sectionType === "SupportPage") &&
+                  fieldName === "supportCards"
+                ? `Support Cards (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Support" || sectionType === "SupportPage") &&
+                  fieldName === "stats"
+                ? `Stats (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "Contact" &&
+                  fieldName === "contactItems"
+                ? `Contact Details (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Frenchise" ||
+                    sectionType === "FrenchisePage" ||
+                    sectionType === "Franchise") &&
+                  fieldName === "features"
+                ? `Features (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Frenchise" ||
+                    sectionType === "FrenchisePage" ||
+                    sectionType === "Franchise") &&
+                  fieldName === "leftPoints"
+                ? `Benefits (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Frenchise" ||
+                    sectionType === "FrenchisePage" ||
+                    sectionType === "Franchise") &&
+                  fieldName === "steps"
+                ? `Steps (${value.length})`
+              : isEnquiryLeftFeatures
+                ? `Features (${value.length})`
+              : isEnquiryContactItems
+                ? `Contact (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "Branches" &&
+                  fieldName === "contactItems"
+                ? `Contact (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "Gallery" &&
+                  fieldName === "categories"
+                ? `Categories (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "Gallery" &&
+                  fieldName === "images"
+                ? `Photos (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "FAQ" || sectionType === "FAQPage") &&
+                  fieldName === "questions"
+                ? `Questions (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Partners" || sectionType === "PartnersPage") &&
+                  fieldName === "partnersList"
+                ? `Partners (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "CSR" || sectionType === "CSRPage") &&
+                  fieldName === "stats"
+                ? `Stats (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "CSR" || sectionType === "CSRPage") &&
+                  fieldName === "focusItems"
+                ? `Focus Areas (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "CSR" || sectionType === "CSRPage") &&
+                  fieldName === "pillars"
+                ? `Pillars (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "CSR" || sectionType === "CSRPage") &&
+                  fieldName === "csrProjectItems"
+                ? `CSR Projects (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "CSR" || sectionType === "CSRPage") &&
+                  fieldName === "coreValueItems"
+                ? `Core Values (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Brochure" || sectionType === "BrochurePage") &&
+                  fieldName === "features"
+                ? `Features (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Brochure" || sectionType === "BrochurePage") &&
+                  fieldName === "brochures"
+                ? `Brochures (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "Brochure" || sectionType === "BrochurePage") &&
+                  fieldName === "ctaStats"
+                ? `Stats (${value.length})`
+              : category === "NGO" &&
+                  sectionType === "CaseStudy" &&
+                  fieldName === "items"
+                ? `Case Studies (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "CaseDetails" ||
+                    sectionType === "CaseDetailsPage") &&
+                  fieldName === "popularPosts"
+                ? `Popular Posts (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "CaseDetails" ||
+                    sectionType === "CaseDetailsPage") &&
+                  fieldName === "primaryParagraphs"
+                ? `Article Paragraphs (${value.length})`
+              : category === "NGO" &&
+                  (sectionType === "CaseDetails" ||
+                    sectionType === "CaseDetailsPage") &&
+                  fieldName === "secondaryParagraphs"
+                ? `Secondary Paragraphs (${value.length})`
+              : sectionType === "Blog" && fieldName === "articles"
+                ? `Blogs (${value.length})`
+              : sectionType === "Footer" && fieldName === "recentNews"
+                ? `Recent Blogs (${value.length})`
+              : `${formatFieldLabel(fieldName)} (${value.length})`}
           </h4>
           {canAddItems &&
             !(
               sectionType === "About" &&
               fieldName === "stats" &&
+              collectionLimitReached
+            ) &&
+            !(
+              category === "Events" &&
+              sectionType === "About" &&
+              fieldName === "buttons" &&
               collectionLimitReached
             ) && (
             <button
@@ -1560,9 +2672,180 @@ const GenericFieldEditor = ({
                     ? `Maximum ${MAX_BLOG_CARDS} Cards`
                     : isTopLevelFeaturesCollection
                       ? `Maximum ${MAX_FEATURE_CARDS} Cards`
-                      : "Maximum 5 Features"
+                      : category === "NGO" &&
+                          (sectionType === "AboutPage" ||
+                            sectionType === "AboutUsPage") &&
+                          fieldName === "tabs"
+                        ? "Maximum 4 Tabs"
+                      : category === "NGO" &&
+                          (sectionType === "AboutPage" ||
+                            sectionType === "AboutUsPage") &&
+                          fieldName === "cards"
+                        ? "Maximum 6 Cards"
+                      : category === "NGO" &&
+                          (sectionType === "About" ||
+                            sectionType === "AboutPage" ||
+                            sectionType === "AboutUsPage") &&
+                          fieldName === "statistics"
+                        ? "Maximum 4 Statistics"
+                        : category === "NGO" &&
+                            (sectionType === "About" ||
+                              sectionType === "AboutPage" ||
+                              sectionType === "AboutUsPage") &&
+                            fieldName === "trustBadges"
+                          ? "Maximum 3 Trust Badges"
+                          : category === "NGO" &&
+                              (sectionType === "About" ||
+                                sectionType === "AboutPage" ||
+                                sectionType === "AboutUsPage") &&
+                              fieldName === "buttons"
+                            ? "Maximum 2 Buttons"
+                            : category === "NGO" &&
+                                sectionType === "Causes" &&
+                                fieldName === "items"
+                              ? "Maximum 6 Causes"
+                            : category === "NGO" &&
+                                sectionType === "Footer" &&
+                                fieldName === "recentNews"
+                              ? "Maximum 3 Blogs"
+                            : isFrenchiseFormFields
+                              ? `Maximum ${MAX_NGO_FRENCHISE_FORM_FIELDS} Fields`
+                            : isEnquiryFormFields
+                              ? `Maximum ${MAX_NGO_ENQUIRY_FORM_FIELDS} Fields`
+                            : isEventsContactFormFields
+                              ? `Maximum ${MAX_EVENTS_CONTACT_FORM_FIELDS} Fields`
+                            : isNgoContactFormFields
+                              ? `Maximum ${MAX_NGO_CONTACT_FORM_FIELDS} Fields`
+                            : isEnquiryLeftFeatures
+                              ? `Maximum ${MAX_NGO_ENQUIRY_LEFT_FEATURES} Features`
+                            : isEnquiryContactItems
+                              ? `Maximum ${MAX_NGO_ENQUIRY_CONTACT_ITEMS} Contact Items`
+                            : "Maximum 5 Features"
                 : fieldName === "listings"
                   ? "Add Product"
+                  : fieldName === "buttons"
+                    ? "Add Button"
+                    : fieldName === "statistics"
+                      ? "Add Statistic"
+                      : fieldName === "trustBadges"
+                        ? "Add Trust Badge"
+                    : fieldName === "items" && sectionType === "Causes"
+                      ? "Add Cause"
+                    : fieldName === "items" &&
+                        (sectionType === "Services" ||
+                          sectionType === "ServicesPage")
+                      ? "Add Service"
+                    : fieldName === "members" &&
+                        category === "NGO" &&
+                        (sectionType === "Teams" ||
+                          sectionType === "TeamsPage")
+                      ? "Add Member"
+                    : fieldName === "mediaCards" && sectionType === "Media"
+                      ? "Add Media"
+                    : fieldName === "sectors" && sectionType === "Industry"
+                      ? "Add Industry"
+                    : fieldName === "metrics" && sectionType === "Industry"
+                      ? "Add Metric"
+                    : fieldName === "stats" && sectionType === "Branches"
+                      ? "Add Stat"
+                    : fieldName === "branches" && sectionType === "Branches"
+                      ? "Add Branch"
+                    : fieldName === "contactItems" &&
+                        category === "NGO" &&
+                        sectionType === "Contact"
+                      ? "Add Detail"
+                    : fieldName === "features" &&
+                        category === "NGO" &&
+                        (sectionType === "Frenchise" ||
+                          sectionType === "FrenchisePage" ||
+                          sectionType === "Franchise")
+                      ? "Add Feature"
+                    : fieldName === "leftPoints" &&
+                        category === "NGO" &&
+                        (sectionType === "Frenchise" ||
+                          sectionType === "FrenchisePage" ||
+                          sectionType === "Franchise")
+                      ? "Add Benefit"
+                    : fieldName === "steps" &&
+                        category === "NGO" &&
+                        (sectionType === "Frenchise" ||
+                          sectionType === "FrenchisePage" ||
+                          sectionType === "Franchise")
+                      ? "Add Step"
+                    : isEnquiryLeftFeatures
+                      ? "Add Feature"
+                    : isEnquiryContactItems
+                      ? "Add Contact"
+                    : fieldName === "contactItems" &&
+                        sectionType === "Branches"
+                      ? "Add Contact"
+                    : fieldName === "stats" && sectionType === "AwardsPage"
+                      ? "Add Stat"
+                    : fieldName === "awards" && sectionType === "AwardsPage"
+                      ? "Add Award"
+                    : fieldName === "benefits" && sectionType === "Careers"
+                      ? "Add Benefit"
+                    : fieldName === "jobs" && sectionType === "Careers"
+                      ? "Add Job"
+                    : fieldName === "items" &&
+                        (sectionType === "Projects" ||
+                          sectionType === "ProjectsPage")
+                      ? "Add Project"
+                    : fieldName === "events" &&
+                        (sectionType === "Events" ||
+                          sectionType === "EventsPage")
+                      ? "Add Event"
+                    : fieldName === "testimonials" &&
+                        (sectionType === "Testimonial" ||
+                          sectionType === "TestimonialsPage")
+                      ? "Add Testimonial"
+                    : fieldName === "brochures" &&
+                        category === "NGO" &&
+                        (sectionType === "Brochure" ||
+                          sectionType === "BrochurePage")
+                      ? "Add Brochure"
+                    : fieldName === "ctaStats" &&
+                        category === "NGO" &&
+                        (sectionType === "Brochure" ||
+                          sectionType === "BrochurePage")
+                      ? "Add Stat"
+                    : fieldName === "items" &&
+                        category === "NGO" &&
+                        sectionType === "CaseStudy"
+                      ? "Add Case Study"
+                    : fieldName === "popularPosts" &&
+                        category === "NGO" &&
+                        (sectionType === "CaseDetails" ||
+                          sectionType === "CaseDetailsPage")
+                      ? "Add Popular Post"
+                    : fieldName === "primaryParagraphs" &&
+                        category === "NGO" &&
+                        (sectionType === "CaseDetails" ||
+                          sectionType === "CaseDetailsPage")
+                      ? "Add Paragraph"
+                    : fieldName === "secondaryParagraphs" &&
+                        category === "NGO" &&
+                        (sectionType === "CaseDetails" ||
+                          sectionType === "CaseDetailsPage")
+                      ? "Add Paragraph"
+                    : fieldName === "categories" &&
+                        category === "NGO" &&
+                        sectionType === "Gallery"
+                      ? "Add Category"
+                    : fieldName === "images" &&
+                        category === "NGO" &&
+                        sectionType === "Gallery"
+                      ? "Add Photo"
+                    : fieldName === "cards" &&
+                        category === "NGO" &&
+                        sectionType === "Contact"
+                      ? "Add Feature"
+                    : fieldName === "articles" && sectionType === "Blog"
+                      ? "Add Blog"
+                    : fieldName === "recentNews" && sectionType === "Footer"
+                      ? "Add Blog"
+                    : isContactFormFields
+                      ? "Add Field"
                   : isFeatureCollection
                     ? "Add Feature"
                     : isNestedStringList
@@ -1590,36 +2873,120 @@ const GenericFieldEditor = ({
   return (
     <div
       key={String(itemKey)}
-      className="relative rounded-xl border border-slate-200 bg-white p-3"
+      className="rounded-xl border border-slate-200 bg-white p-3"
     >
-      {canDeleteItems && (
-        <button
-          type="button"
-          onClick={() => setPendingDeleteIndex(index)}
-          className={`absolute right-3 top-3 z-10 flex items-center gap-1 rounded-lg border border-red-200 bg-white font-semibold text-red-600 hover:bg-red-50 ${
-            isFeatureCollection
-              ? "h-7 px-2 text-[10px]"
-              : "h-8 px-3 text-xs"
-          }`}
-          aria-label={`Delete ${formatFieldLabel(fieldName)} item ${index + 1}`}
-        >
-          <Trash size={isFeatureCollection ? 11 : 15} />
-          Delete
-        </button>
-      )}
+      {isTabStringList || isNestedStringList ? (
+        <div className="flex items-end gap-2">
+          <div className="min-w-0 flex-1">
+            <GenericFieldEditor
+              fieldName={
+                isTabStringList
+                  ? `Tab heading Item ${index + 1}`
+                  : `Item ${index + 1}`
+              }
+              value={item}
+              path={[...path, index]}
+              sectionType={sectionType}
+              category={category}
+              onChange={onChange}
+              onMediaChange={onMediaChange}
+              onAddArrayItem={onAddArrayItem}
+              onDeleteArrayItem={onDeleteArrayItem}
+              availablePageNames={availablePageNames}
+              cardFields={cardFields}
+              categorySelectOptions={categorySelectOptions}
+            />
+          </div>
+          {canDeleteItems && (
+            <button
+              type="button"
+              onClick={() => setPendingDeleteIndex(index)}
+              className="mb-0 flex h-10 shrink-0 items-center gap-1 rounded-lg border border-red-200 bg-white px-3 text-xs font-semibold text-red-600 hover:bg-red-50"
+              aria-label={`Delete ${formatFieldLabel(fieldName)} item ${index + 1}`}
+            >
+              <Trash size={15} />
+              Delete
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="relative">
+          <div className="mb-2 flex items-center justify-end gap-2">
+            {canReorderItems && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => moveItem(index, index - 1)}
+                  disabled={index === 0}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  aria-label={`Move field ${index + 1} up`}
+                >
+                  <ChevronUp size={16} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveItem(index, index + 1)}
+                  disabled={index === value.length - 1}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  aria-label={`Move field ${index + 1} down`}
+                >
+                  <ChevronDown size={16} />
+                </button>
+                <span className="mr-1 text-xs font-semibold text-slate-500">
+                  {index + 1}
+                  {index === 0 ? "st" : index === 1 ? "nd" : index === 2 ? "rd" : "th"}
+                </span>
+              </>
+            )}
+            {canDeleteItems && (
+              <button
+                type="button"
+                onClick={() => setPendingDeleteIndex(index)}
+                className={`flex items-center gap-1 rounded-lg border border-red-200 bg-white font-semibold text-red-600 hover:bg-red-50 ${
+                  isFeatureCollection
+                    ? "h-7 px-2 text-[10px]"
+                    : "h-8 px-3 text-xs"
+                }`}
+                aria-label={`Delete ${formatFieldLabel(fieldName)} item ${index + 1}`}
+              >
+                <Trash size={isFeatureCollection ? 11 : 15} />
+                Delete
+              </button>
+            )}
+          </div>
 
-      <GenericFieldEditor
-        fieldName={isTabStringList ? `Tab heading Item ${index + 1}` : `Item ${index + 1}`}
-        value={item}
-        path={[...path, index]}
-        sectionType={sectionType}
-        onChange={onChange}
-        onMediaChange={onMediaChange}
-        onAddArrayItem={onAddArrayItem}
-        onDeleteArrayItem={onDeleteArrayItem}
-        availablePageNames={availablePageNames}
-        cardFields={cardFields}
-      />
+          <GenericFieldEditor
+            fieldName={
+              isContactFormFields
+                ? `Field ${index + 1}`
+                : isContactFeatures
+                  ? `Card ${index + 1}`
+                  : category === "NGO" &&
+                      (sectionType === "AboutPage" ||
+                        sectionType === "AboutUsPage") &&
+                      path[0] === "tabs"
+                    ? `Tab ${index + 1}`
+                    : category === "NGO" &&
+                        (sectionType === "AboutPage" ||
+                          sectionType === "AboutUsPage") &&
+                        path.includes("features")
+                      ? `Feature ${index + 1}`
+                      : `Item ${index + 1}`
+            }
+            value={item}
+            path={[...path, index]}
+            sectionType={sectionType}
+            category={category}
+            onChange={onChange}
+            onMediaChange={onMediaChange}
+            onAddArrayItem={onAddArrayItem}
+            onDeleteArrayItem={onDeleteArrayItem}
+            availablePageNames={availablePageNames}
+            cardFields={cardFields}
+            categorySelectOptions={categorySelectOptions}
+          />
+        </div>
+      )}
     </div>
   );
 })}
@@ -1681,12 +3048,70 @@ const GenericFieldEditor = ({
   }
 
   if (typeof value === "object" && value !== null) {
+    const titleRecord = value as Record<string, unknown>;
+    const isNgoWhyChooseTitle =
+      category === "NGO" &&
+      (sectionType === "AboutPage" || sectionType === "AboutUsPage") &&
+      fieldName === "title" &&
+      path.length === 1 &&
+      typeof titleRecord.line1 === "string" &&
+      !("highlight" in titleRecord);
+    if (isNgoWhyChooseTitle) {
+      const titleText = [titleRecord.line1, titleRecord.line2]
+        .filter((part): part is string => typeof part === "string" && Boolean(part.trim()))
+        .join(" ")
+        .trim();
+      return (
+        <label className="block">
+          <span className="mb-1 block text-xs font-semibold text-slate-600">
+            Title
+          </span>
+          <input
+            value={titleText}
+            onChange={(event) => onChange(path, event.target.value)}
+            className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
+          />
+        </label>
+      );
+    }
+
+    const isNgoMissionImageSection =
+      category === "NGO" &&
+      (sectionType === "AboutPage" || sectionType === "AboutUsPage") &&
+      fieldName === "imageSection";
+    const isNgoMissionPurposeCard =
+      category === "NGO" &&
+      (sectionType === "AboutPage" || sectionType === "AboutUsPage") &&
+      fieldName === "purposeCard";
+    const purposeCardValue = isNgoMissionImageSection
+      ? (value as Record<string, unknown>).purposeCard
+      : undefined;
+    const hasPurposeCard =
+      purposeCardValue !== null &&
+      typeof purposeCardValue === "object" &&
+      !Array.isArray(purposeCardValue);
+
     return (
       <div className="space-y-3">
         {fieldName.startsWith("Item ") && (
           <h5 className="text-xs font-bold uppercase tracking-wide text-slate-500">
             {fieldName}
           </h5>
+        )}
+        {isNgoMissionPurposeCard && (
+          <div className="flex items-center justify-between gap-3">
+            <h5 className="text-xs font-bold uppercase tracking-wide text-slate-500">
+              Our Purpose
+            </h5>
+            <button
+              type="button"
+              onClick={() => onChange(path, null)}
+              className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+            >
+              <Trash size={13} />
+              Delete
+            </button>
+          </div>
         )}
         {(() => {
           const isPropertyListingItem =
@@ -1711,16 +3136,148 @@ const GenericFieldEditor = ({
               : undefined
             : undefined;
           const collectionCardFields = isCollectionItem
-            ? (collectionKey === "breadcrumb"
+            ? category === "NGO" &&
+              sectionType === "Gallery" &&
+              collectionKey === "categories"
+              ? ["label"]
+              : category === "NGO" &&
+                  sectionType === "Gallery" &&
+                  (collectionKey === "images" ||
+                    collectionKey === "galleryItems" ||
+                    collectionKey === "cards")
+                ? ["image", "src", "category"]
+              : collectionKey === "partnersList"
+                ? ["logo", "name", "website"]
+              : collectionKey === "focusItems"
+                ? ["image", "icon", "title", "description"]
+              : collectionKey === "csrProjectItems"
+                ? ["image", "title", "description"]
+              : collectionKey === "pillars" || collectionKey === "coreValueItems"
+                ? ["icon", "title", "description"]
+              : collectionKey === "brochures"
+                ? ["image", "name", "description", "downloadlabel", "downloadUrl"]
+              : collectionKey === "ctaStats"
+                ? ["icon", "value", "label"]
+              : collectionKey === "questions"
+                ? ["question", "answer"]
+              : category === "NGO" &&
+                  (sectionType === "Support" || sectionType === "SupportPage") &&
+                  collectionKey === "values"
+                ? ["icon", "title", "description"]
+              : category === "NGO" &&
+                  (sectionType === "Support" || sectionType === "SupportPage") &&
+                  collectionKey === "supportCards"
+                ? ["icon", "title", "description", "button"]
+              : category === "NGO" &&
+                  (sectionType === "Support" || sectionType === "SupportPage") &&
+                  collectionKey === "stats"
+                ? ["icon", "value", "label"]
+              : category === "NGO" &&
+                  sectionType === "Contact" &&
+                  collectionKey === "contactItems"
+                ? ["icon", "title", "value"]
+              : category === "NGO" &&
+                  sectionType === "Contact" &&
+                  collectionKey === "fields"
+                ? ["label", "placeholder", "type", "width"]
+              : category === "Events" &&
+                  sectionType === "Careers" &&
+                  collectionKey === "stats"
+                ? ["value", "label"]
+              : category === "Events" &&
+                  sectionType === "Careers" &&
+                  collectionKey === "roles"
+                ? ["title", "location", "type", "description"]
+              : category === "Events" &&
+                  sectionType === "CareersApply" &&
+                  collectionKey === "whyJoinUs"
+                ? ["icon", "title", "description"]
+              : category === "NGO" &&
+                  sectionType === "About" &&
+                  collectionKey === "buttons"
+                ? ["label", "href", "variant", "icon"]
+              : category === "NGO" &&
+                  sectionType === "About" &&
+                  collectionKey === "trustBadges"
+                ? ["icon", "text", "desc"]
+              : category === "NGO" &&
+                  sectionType === "About" &&
+                  collectionKey === "statistics"
+                ? ["icon", "value", "label"]
+              : category === "NGO" &&
+                  (sectionType === "AboutPage" ||
+                    sectionType === "AboutUsPage") &&
+                  collectionKey === "tabs"
+                ? visibleCardFieldsByCollection.ngoMissionTabItems
+              : category === "NGO" &&
+                  (sectionType === "AboutPage" ||
+                    sectionType === "AboutUsPage") &&
+                  collectionKey === "features"
+                ? visibleCardFieldsByCollection.ngoMissionFeatures
+              : category === "Events" &&
+                  (sectionType === "Teams" || sectionType === "Team") &&
+                  collectionKey === "departments"
+                ? ["label", "value"]
+              : category === "Events" &&
+                  (sectionType === "Teams" || sectionType === "Team") &&
+                  collectionKey === "members"
+                ? ["image", "name", "role", "department", "bio", "social"]
+              : collectionKey === "breadcrumb"
               ? visibleCardFieldsByCollection.breadcrumb
-              : cardFields?.length
-                ? cardFields
-                : collectionKey
-                  ? visibleCardFieldsByCollection[collectionKey]
-                  : undefined)
+              : collectionKey === "buttons"
+                ? visibleCardFieldsByCollection.buttons
+                : collectionKey === "fields"
+                  ? visibleCardFieldsByCollection.fields
+                  : cardFields?.length
+                    ? cardFields
+                    : collectionKey
+                      ? visibleCardFieldsByCollection[collectionKey]
+                      : undefined
             : undefined;
+          const isNgoMissionFeatureItem =
+            category === "NGO" &&
+            (sectionType === "AboutPage" || sectionType === "AboutUsPage") &&
+            path.includes("features") &&
+            typeof path[path.length - 1] === "number";
           const objectFieldAllowlist =
-            visibleObjectFieldsByKey[fieldName] ??
+            category === "Events" &&
+            sectionType === "Contact" &&
+            fieldName === "form"
+              ? ["fields", "buttonLabel", "buttonIcon"]
+              : category === "NGO" &&
+            sectionType === "Contact" &&
+            fieldName === "office"
+              ? ["title", "description", "address", "phone", "email", "hours"]
+              : category === "NGO" &&
+                  sectionType === "Contact" &&
+                  fieldName === "form"
+                ? ["title", "pretitle", "fields", "button"]
+              : category === "NGO" &&
+                  sectionType === "Contact" &&
+                  (fieldName === "address" ||
+                    fieldName === "phone" ||
+                    fieldName === "email" ||
+                    fieldName === "hours")
+                ? ["label", "value"]
+              : category === "NGO" &&
+                  sectionType === "Contact" &&
+                  fieldName === "button"
+                ? ["label"]
+              : isNgoMissionFeatureItem
+                ? visibleCardFieldsByCollection.ngoMissionFeatures
+              : category === "NGO" &&
+                  (sectionType === "AboutPage" ||
+                    sectionType === "AboutUsPage") &&
+                  fieldName === "content" &&
+                  path[0] === "tabs"
+                ? ["primary", "secondary", "features"]
+              : category === "Events" &&
+                  (sectionType === "AboutPage" ||
+                    sectionType === "AboutUsPage") &&
+                  (fieldName === "cta" ||
+                    (path.length === 1 && path[0] === "cta"))
+                ? ["pretitle", "title", "description", "button"]
+              : visibleObjectFieldsByKey[fieldName] ??
             (path.length === 1 && typeof path[0] === "string"
               ? visibleObjectFieldsByKey[path[0]]
               : undefined);
@@ -1738,8 +3295,32 @@ const GenericFieldEditor = ({
               ? propertyListingContentFieldOrder
               : isCareerFormItem
                 ? careerFormFieldOrder
-                : nestedContentFieldOrder,
+                : objectFieldAllowlist?.length
+                  ? objectFieldAllowlist
+                  : collectionCardFields?.length
+                    ? collectionCardFields
+                    : nestedContentFieldOrder,
           );
+          if (collectionCardFields?.length) {
+            for (const field of collectionCardFields) {
+              if (entries.some(([key]) => key === field)) continue;
+              if (
+                field === "image" &&
+                (entries.some(([key]) => key === "src") ||
+                  editableEntries.some(([key]) => key === "src"))
+              ) {
+                continue;
+              }
+              if (
+                field === "src" &&
+                (entries.some(([key]) => key === "image") ||
+                  editableEntries.some(([key]) => key === "image"))
+              ) {
+                continue;
+              }
+              entries.push([field, ""]);
+            }
+          }
           const isProductItem =
             path.length === 2 &&
             (path[0] === "productItems" || path[0] === "productSlides");
@@ -1760,30 +3341,96 @@ const GenericFieldEditor = ({
             );
           }
 
-          return entries.map(([childName, childValue]) => (
-            <GenericFieldEditor
-              key={childName}
-              fieldName={childName}
-              value={childValue}
-              path={[...path, childName]}
-              sectionType={sectionType}
-              onChange={onChange}
-              onMediaChange={onMediaChange}
-              onAddArrayItem={onAddArrayItem}
-              onDeleteArrayItem={onDeleteArrayItem}
-              availablePageNames={availablePageNames}
-              cardFields={cardFields}
-            />
-          ));
+          const visibleEntries = entries.filter(([childName, childValue]) => {
+            if (isNgoMissionImageSection && childName === "purposeCard") {
+              return (
+                childValue !== null &&
+                typeof childValue === "object" &&
+                !Array.isArray(childValue)
+              );
+            }
+            return true;
+          });
+
+          return (
+            <>
+              {visibleEntries.map(([childName, childValue]) => (
+                <GenericFieldEditor
+                  key={childName}
+                  fieldName={childName}
+                  value={childValue}
+                  path={[...path, childName]}
+                  sectionType={sectionType}
+                  category={category}
+                  onChange={onChange}
+                  onMediaChange={onMediaChange}
+                  onAddArrayItem={onAddArrayItem}
+                  onDeleteArrayItem={onDeleteArrayItem}
+                  availablePageNames={availablePageNames}
+                  cardFields={cardFields}
+                  categorySelectOptions={categorySelectOptions}
+                />
+              ))}
+              {isNgoMissionImageSection && !hasPurposeCard ? (
+                <button
+                  type="button"
+                  onClick={() =>
+                    onChange([...path, "purposeCard"], {
+                      icon: "target",
+                      badge: "Our Purpose",
+                      title: "Creating meaningful impact for a better tomorrow.",
+                    })
+                  }
+                  className="flex items-center gap-1 rounded-md bg-blue-600 px-3 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+                >
+                  <Plus size={14} />
+                  Add Our Purpose
+                </button>
+              ) : null}
+            </>
+          );
         })()}
       </div>
     );
   }
 
   const label =
-    path[0] === "tabs" && typeof path[1] === "number"
-      ? `Tab heading Item ${Number(path[1]) + 1}`
-      : formatFieldLabel(fieldName);
+    path[0] === "tabs" &&
+    typeof path[1] === "number" &&
+    path.length === 2
+      ? `Tab ${Number(path[1]) + 1}`
+      : sectionType === "Contact" &&
+          path[0] === "leftContent" &&
+          fieldName === "title" &&
+          path.length === 2
+        ? "Card Title"
+        : (sectionType === "Projects" || sectionType === "ProjectsPage") &&
+            fieldName === "href"
+          ? "Redirect URL"
+        : category === "NGO" &&
+            sectionType === "Gallery" &&
+            fieldName === "label" &&
+            path[0] === "categories"
+          ? "Category Name"
+        : category === "NGO" &&
+            sectionType === "Contact" &&
+            path[0] === "contactItems" &&
+            fieldName === "title"
+          ? "Title"
+        : category === "NGO" &&
+            sectionType === "Contact" &&
+            fieldName === "pretitle"
+          ? "Description"
+        : sectionType === "Contact" &&
+            path[0] === "leftContent" &&
+            fieldName === "description" &&
+            path.length === 2
+          ? "Card Description"
+          : (sectionType === "AboutPage" || sectionType === "AboutUsPage") &&
+              path.length === 1 &&
+              eventsAboutContentFieldLabels[fieldName]
+            ? eventsAboutContentFieldLabels[fieldName]
+            : formatFieldLabel(fieldName);
   const mediaKind =
     typeof value === "string" ? getMediaKindFromKey(fieldName) : null;
 
@@ -1850,7 +3497,7 @@ const GenericFieldEditor = ({
   }
 
   const stringValue = value == null ? "" : String(value);
-  if (/color$/i.test(fieldName)) {
+  if (/color$/i.test(fieldName) && fieldName !== "bgColor") {
     const colorValue = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(stringValue)
       ? stringValue
       : fieldName.toLowerCase().includes("background")
@@ -1865,20 +3512,169 @@ const GenericFieldEditor = ({
       />
     );
   }
-  const isRating = sectionType === "Testimonial" && fieldName === "rating";
+  const isRating =
+    (sectionType === "Testimonial" || sectionType === "TestimonialsPage") &&
+    fieldName === "rating";
   const isNumber = typeof value === "number" || isRating;
   const isLongText =
     stringValue.length > 80 ||
-    /^(desc|desc2|description|answer|quote|copyrightText)$/i.test(fieldName);
+    /^(desc|desc2|description|message|answer|quote|copyrightText|primary|secondary)$/i.test(
+      fieldName,
+    );
   const isProductLink =
     fieldName === "link" &&
     path.length === 3 &&
     (path[0] === "productItems" || path[0] === "productSlides");
-  const isIconField = fieldName === "icon" || fieldName === "buttonIcon";
+  const isIconField =
+    fieldName === "icon" ||
+    fieldName === "buttonIcon" ||
+    fieldName === "iconName" ||
+    fieldName === "transparencyIcon";
+  const isSocialIconField =
+    isIconField &&
+    path.some(
+      (segment) =>
+        segment === "socials" ||
+        segment === "socialLinks" ||
+        segment === "social",
+    );
   const pageExists = availablePageNames.some(
     (pageName) =>
       pageName.trim().toLowerCase() === stringValue.trim().toLowerCase(),
   );
+  const useNgoIcons = category === "NGO";
+  const activeIconOptions = isSocialIconField
+    ? ngoSocialIconOptions
+    : useNgoIcons
+      ? ngoIconOptions
+      : iconFieldOptions;
+  const iconSelectValue = activeIconOptions.some(
+    (option) => option.value === stringValue,
+  )
+    ? stringValue
+    : "";
+
+  if (fieldName === "variant") {
+    return (
+      <label className="block">
+        <span className="mb-1 block text-xs font-semibold text-slate-600">
+          Variant
+        </span>
+        <select
+          value={stringValue || "primary"}
+          onChange={(event) => onChange(path, event.target.value)}
+          className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
+        >
+          <option value="primary">Primary</option>
+          <option value="secondary">Secondary</option>
+        </select>
+      </label>
+    );
+  }
+
+  if (
+    fieldName === "category" &&
+    category === "NGO" &&
+    sectionType === "Gallery" &&
+    categorySelectOptions.length > 0
+  ) {
+    const optionValues = categorySelectOptions.map((option) => option.value);
+    const selectValue = optionValues.includes(stringValue)
+      ? stringValue
+      : "";
+
+    return (
+      <label className="block">
+        <span className="mb-1 block text-xs font-semibold text-slate-600">
+          Category
+        </span>
+        <select
+          value={selectValue}
+          onChange={(event) => onChange(path, event.target.value)}
+          className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
+        >
+          <option value="" disabled>
+            Select category
+          </option>
+          {categorySelectOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+    );
+  }
+
+  if (
+    fieldName === "badge" &&
+    category === "Events" &&
+    sectionType === "Gallery" &&
+    categorySelectOptions.length > 0
+  ) {
+    const matchedOption =
+      categorySelectOptions.find(
+        (option) =>
+          option.value.toLowerCase() === stringValue.toLowerCase(),
+      ) ?? null;
+
+    return (
+      <label className="block">
+        <span className="mb-1 block text-xs font-semibold text-slate-600">
+          Category
+        </span>
+        <select
+          value={matchedOption?.value ?? ""}
+          onChange={(event) => onChange(path, event.target.value)}
+          className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
+        >
+          <option value="" disabled>
+            Select category
+          </option>
+          {categorySelectOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+    );
+  }
+
+  if (
+    fieldName === "department" &&
+    category === "Events" &&
+    (sectionType === "Teams" || sectionType === "Team") &&
+    categorySelectOptions.length > 0
+  ) {
+    const matchedOption =
+      categorySelectOptions.find(
+        (option) =>
+          option.value.toLowerCase() === stringValue.toLowerCase(),
+      ) ?? null;
+
+    return (
+      <label className="block">
+        <span className="mb-1 block text-xs font-semibold text-slate-600">
+          Department
+        </span>
+        <select
+          value={matchedOption?.value ?? ""}
+          onChange={(event) => onChange(path, event.target.value)}
+          className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
+        >
+          <option value="" disabled>
+            Select department
+          </option>
+          {categorySelectOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+    );
+  }
 
   if (isIconField) {
     return (
@@ -1887,19 +3683,68 @@ const GenericFieldEditor = ({
           {label}
         </span>
         <select
-          value={stringValue}
+          value={iconSelectValue}
           onChange={(event) => onChange(path, event.target.value)}
           className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
         >
-          {!iconFieldOptions.some((option) => option.value === stringValue) &&
-            stringValue && (
-              <option value={stringValue}>{stringValue}</option>
-            )}
-          {iconFieldOptions.map((option) => (
+          <option value="" disabled>
+            Select icon
+          </option>
+          {activeIconOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
+        </select>
+      </label>
+    );
+  }
+
+  if (
+    fieldName === "type" &&
+    path[0] === "form" &&
+    path[1] === "fields" &&
+    typeof path[2] === "number"
+  ) {
+    return (
+      <label className="block">
+        <span className="mb-1 block text-xs font-semibold text-slate-600">
+          Field Type
+        </span>
+        <select
+          value={stringValue || "text"}
+          onChange={(event) => onChange(path, event.target.value)}
+          className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
+        >
+          <option value="text">Text</option>
+          <option value="email">Email</option>
+          <option value="tel">Phone</option>
+          <option value="textarea">Textarea</option>
+          <option value="select">Select</option>
+          <option value="radio">Radio</option>
+        </select>
+      </label>
+    );
+  }
+
+  if (
+    fieldName === "width" &&
+    path[0] === "form" &&
+    path[1] === "fields" &&
+    typeof path[2] === "number"
+  ) {
+    return (
+      <label className="block">
+        <span className="mb-1 block text-xs font-semibold text-slate-600">
+          Field Width
+        </span>
+        <select
+          value={stringValue === "full" ? "full" : "half"}
+          onChange={(event) => onChange(path, event.target.value)}
+          className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
+        >
+          <option value="half">Half</option>
+          <option value="full">Full</option>
         </select>
       </label>
     );
@@ -2006,7 +3851,9 @@ export default function EditSectionModal({
   onDeleteSection,
 }: EditSectionModalProps) {
   const scopedContentTab = subsectionScope
-    ? `${subsectionScope.label} Content`
+    ? category === "Events"
+      ? getSubsectionContentTabName(subsectionScope.label)
+      : `${subsectionScope.label} Content`
     : null;
   const scopedFields = subsectionScope?.fields ?? [];
   const scopedFormFields = subsectionScope?.formTabFields?.filter((field) =>
@@ -2021,7 +3868,11 @@ export default function EditSectionModal({
       ? "Tabs"
       : hasScopedContentAndFormTabs
         ? scopedContentTab ?? getDefaultTab(sectionType)
-        : getDefaultTab(sectionType),
+        : subsectionScope
+          ? category === "Events"
+            ? getSubsectionContentTabName(subsectionScope.label)
+            : `${subsectionScope.label} Content`
+          : getDefaultTab(sectionType),
   );
   const [colorPanelOpen, setColorPanelOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -2043,6 +3894,8 @@ export default function EditSectionModal({
   >(null);
   const [layoutGenerationActive, setLayoutGenerationActive] = useState(false);
   const [boxLayoutMessage, setBoxLayoutMessage] = useState("");
+  const [pendingCareersFormFieldDeleteIndex, setPendingCareersFormFieldDeleteIndex] =
+    useState<number | null>(null);
   const [pendingFooterSectionDelete, setPendingFooterSectionDelete] = useState<{
     kind: "logo" | "column" | "contact" | "disclaimer" | "bottom";
     label: string;
@@ -2052,14 +3905,29 @@ export default function EditSectionModal({
     index: number;
     label: string;
   } | null>(null);
+  const [pendingNGOInstagramImageDelete, setPendingNGOInstagramImageDelete] =
+    useState<{
+      index: number;
+      label: string;
+    } | null>(null);
+  const [pendingNGOPopupSocialLinkDelete, setPendingNGOPopupSocialLinkDelete] =
+    useState<{
+      index: number;
+      label: string;
+    } | null>(null);
   const bannerImageInputRef = useRef<HTMLInputElement>(null);
   const bannerVideoInputRef = useRef<HTMLInputElement>(null);
+  const breadcrumbImageInputRef = useRef<HTMLInputElement>(null);
   const activeSectionType = normalizeSectionType(sectionType);
   const currentSection = sections.find(
     (item) => (item.id ?? item.type) === sectionId,
   );
   const activeSectionKey = currentSection?.id ?? currentSection?.type ?? sectionId;
   const isPageSection = Boolean(currentSection?.page);
+  const isEventsHomeContact =
+    category === "Events" &&
+    activeSectionType === "Contact" &&
+    !isPageSection;
   const activeVariant = currentSection?.data?.[currentSection.variant]
     ? currentSection.variant
     : currentSection?.variant?.startsWith(`${activeSectionType}-`)
@@ -2115,34 +3983,340 @@ export default function EditSectionModal({
     layoutCardCollections.length === 1
       ? String(layoutCardCollections[0][0])
       : undefined;
+  const isEventsCareersSection =
+    category === "Events" && activeSectionType === "Careers";
+  const isEventsCareersOpenRolesSubsection =
+    isEventsCareersSection &&
+    subsectionScope?.label.trim().toLowerCase() === "open roles";
+  const isEventsTeamsSection =
+    category === "Events" && activeSectionType === "Teams";
+  const isEventsTeamMembersSubsection =
+    isEventsTeamsSection &&
+    subsectionScope?.label.trim().toLowerCase() === "team members";
+  const showEventsTeamTabsTab = isEventsTeamMembersSubsection;
   const showBoxLayoutTab =
     hasCardCollection &&
-    (!isPageSection || Boolean(subsectionScope) || Boolean(boxLayoutCollectionField));
+    (!isPageSection || Boolean(subsectionScope) || Boolean(boxLayoutCollectionField)) &&
+    !(
+      category === "Events" &&
+      isPageSection &&
+      !isEventsCareersOpenRolesSubsection
+    ) &&
+    !(category === "Events" && activeSectionType === "Contact") &&
+    !(category === "Events" && activeSectionType === "About") &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "Testimonial" ||
+        activeSectionType === "TestimonialsPage")
+    ) &&
+    !(category === "NGO" && activeSectionType === "TeamDetail") &&
+    !(category === "NGO" && activeSectionType === "Media") &&
+    !(
+      category === "NGO" &&
+      activeSectionType === "Industry" &&
+      subsectionScope?.label.trim().toLowerCase() === "industry partner"
+    ) &&
+    !(
+      category === "NGO" &&
+      activeSectionType === "Branches" &&
+      ["branches", "branches content", "branches cta", "branches contact"].includes(
+        subsectionScope?.label.trim().toLowerCase() ?? "",
+      )
+    ) &&
+    !(
+      category === "NGO" &&
+      activeSectionType === "AwardsPage" &&
+      [
+        "awards",
+        "awards content",
+        "awards support",
+        "awards transparency",
+      ].includes(subsectionScope?.label.trim().toLowerCase() ?? "")
+    ) &&
+    !(
+      category === "NGO" &&
+      activeSectionType === "Careers" &&
+      ["open roles", "careers cta"].includes(
+        subsectionScope?.label.trim().toLowerCase() ?? "",
+      )
+    ) &&
+    !(category === "NGO" && activeSectionType === "Gallery") &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "Contact" || activeSectionType === "ContactPage")
+    ) &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "Support" || activeSectionType === "SupportPage")
+    ) &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "FAQ" || activeSectionType === "FAQPage")
+    ) &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "Partners" || activeSectionType === "PartnersPage")
+    ) &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "CSR" || activeSectionType === "CSRPage")
+    ) &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "Brochure" || activeSectionType === "BrochurePage")
+    ) &&
+    !(category === "NGO" && activeSectionType === "CaseStudy") &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "CaseDetails" ||
+        activeSectionType === "CaseDetailsPage")
+    ) &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "Frenchise" ||
+        activeSectionType === "FrenchisePage" ||
+        activeSectionType === "Franchise")
+    ) &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "Enquiry" ||
+        activeSectionType === "EnquiryPage" ||
+        activeSectionType === "EnquiryNow")
+    ) &&
+    !(
+      category === "NGO" &&
+      (activeSectionType === "RefundPolicy" ||
+        activeSectionType === "Refund" ||
+        activeSectionType === "PrivacyPolicy" ||
+        activeSectionType === "TermsCondition" ||
+        activeSectionType === "TermsConditions" ||
+        activeSectionType === "CookiePolicy" ||
+        activeSectionType === "Disclaimer")
+    ) &&
+    !(category === "NGO" && activeSectionType === "TestimonialsPage");
   const availableCardCount = hasCardCollection
     ? Math.min(...layoutCardCollections.map(([, value]) => (value as unknown[]).length))
     : 0;
   const baseSidebarItems = sidebarItemsBySection[activeSectionType] ?? [
     `${activeSectionType} Content`,
   ];
+  const sidebarItems =
+    category === "NGO" && activeSectionType === "Testimonial"
+      ? ["Testimonial Content", "Testimonial Layout"]
+      : isEventsHomeContact
+        ? ["Contact Content", "Form", "Contact Layout"]
+      : category === "Events" &&
+          isPageSection &&
+          !subsectionScope &&
+          !eventsInnerPagesWithoutPageLayout.has(activeSectionType)
+        ? [`${activeSectionType} Content`, `${activeSectionType} Layout`]
+        : category === "Events" &&
+            activeSectionType === "Contact" &&
+            isPageSection
+          ? baseSidebarItems.filter((item) => item !== "Contact Layout")
+          : baseSidebarItems;
   const editableTabsItem =
     activeSectionType === "CitiesWeServe" ||
     activeSectionType === "PopularEvents" ||
     activeVariant === "RealEstateProject1"
       ? ["Tabs"]
       : [];
+  const isEventsInnerPageSubsection =
+    category === "Events" && isPageSection && Boolean(subsectionScope);
+  const isNGOProjectsSection =
+    category === "NGO" &&
+    /projects/i.test(activeSectionType) &&
+    !/detail/i.test(activeSectionType);
+  const isNGOIndustrySection =
+    category === "NGO" && activeSectionType === "Industry";
+  const isNGOBranchesSection =
+    category === "NGO" && activeSectionType === "Branches";
+  const isNGOAwardsSection =
+    category === "NGO" && activeSectionType === "AwardsPage";
+  const isNGOCareersSection =
+    category === "NGO" && activeSectionType === "Careers";
+  const isNGOBlogSection =
+    category === "NGO" &&
+    (activeSectionType === "Blog" || activeSectionType === "BlogPage");
+  const isNGOEventsSection =
+    category === "NGO" &&
+    (activeSectionType === "Events" || activeSectionType === "EventsPage");
+  const isNGOGallerySection =
+    category === "NGO" &&
+    (activeSectionType === "Gallery" || activeSectionType === "GalleryPage");
+  const isNGOContactSection =
+    category === "NGO" &&
+    (activeSectionType === "Contact" || activeSectionType === "ContactPage");
+  const isNGOSupportSection =
+    category === "NGO" &&
+    (activeSectionType === "Support" || activeSectionType === "SupportPage");
+  const isNGOFAQSection =
+    category === "NGO" &&
+    (activeSectionType === "FAQ" || activeSectionType === "FAQPage");
+  const isNGOPartnersSection =
+    category === "NGO" &&
+    (activeSectionType === "Partners" || activeSectionType === "PartnersPage");
+  const isNGOCsrSection =
+    category === "NGO" &&
+    (activeSectionType === "CSR" || activeSectionType === "CSRPage");
+  const isNGOBrochureSection =
+    category === "NGO" &&
+    (activeSectionType === "Brochure" || activeSectionType === "BrochurePage");
+  const isNGOCaseStudySection =
+    category === "NGO" && activeSectionType === "CaseStudy";
+  const isNGOCaseDetailsSection =
+    category === "NGO" &&
+    (activeSectionType === "CaseDetails" ||
+      activeSectionType === "CaseDetailsPage");
+  const isNGOFrenchiseSection =
+    category === "NGO" &&
+    (activeSectionType === "Frenchise" ||
+      activeSectionType === "FrenchisePage" ||
+      activeSectionType === "Franchise");
+  const isNGOEnquirySection =
+    category === "NGO" &&
+    (activeSectionType === "Enquiry" ||
+      activeSectionType === "EnquiryPage" ||
+      activeSectionType === "EnquiryNow");
+  const isNGORefundSection =
+    category === "NGO" &&
+    (activeSectionType === "RefundPolicy" ||
+      activeSectionType === "Refund");
+  const isNGOLegalPagesSection =
+    category === "NGO" &&
+    (isNGORefundSection ||
+      activeSectionType === "PrivacyPolicy" ||
+      activeSectionType === "TermsCondition" ||
+      activeSectionType === "TermsConditions" ||
+      activeSectionType === "CookiePolicy" ||
+      activeSectionType === "Disclaimer");
+  const isNGOTestimonialsPageSection =
+    category === "NGO" && activeSectionType === "TestimonialsPage";
+  const isNGOCareersOpenRolesSubsection =
+    isNGOCareersSection &&
+    subsectionScope?.label.trim().toLowerCase() === "open roles";
+  const isNGOAboutPageSubsection =
+    category === "NGO" &&
+    Boolean(subsectionScope) &&
+    (isNGOProjectsSection ||
+      isNGOIndustrySection ||
+      isNGOBranchesSection ||
+      isNGOAwardsSection ||
+      isNGOCareersSection ||
+      isNGOBlogSection ||
+      isNGOEventsSection ||
+      isNGOGallerySection ||
+      isNGOContactSection ||
+      isNGOSupportSection ||
+      isNGOFAQSection ||
+      isNGOPartnersSection ||
+      isNGOCsrSection ||
+      isNGOBrochureSection ||
+      isNGOCaseStudySection ||
+      isNGOCaseDetailsSection ||
+      isNGOFrenchiseSection ||
+      isNGOEnquirySection ||
+      isNGOLegalPagesSection ||
+      isNGOTestimonialsPageSection ||
+      (isPageSection &&
+        (activeSectionType === "AboutPage" ||
+          activeSectionType === "AboutUsPage" ||
+          activeSectionType === "Services" ||
+          activeSectionType === "ServicesPage" ||
+          activeSectionType === "Teams" ||
+          activeSectionType === "TeamsPage" ||
+          activeSectionType === "TeamDetail" ||
+          activeSectionType === "Media" ||
+          activeSectionType === "Industry" ||
+          activeSectionType === "ProjectsPage" ||
+          activeSectionType === "Blog" ||
+          activeSectionType === "BlogPage" ||
+          activeSectionType === "EventsPage" ||
+          activeSectionType === "Gallery" ||
+          activeSectionType === "GalleryPage" ||
+          activeSectionType === "Contact" ||
+          activeSectionType === "ContactPage" ||
+          activeSectionType === "Support" ||
+          activeSectionType === "SupportPage" ||
+          activeSectionType === "FAQ" ||
+          activeSectionType === "FAQPage" ||
+          activeSectionType === "Partners" ||
+          activeSectionType === "PartnersPage" ||
+          activeSectionType === "CSR" ||
+          activeSectionType === "CSRPage" ||
+          activeSectionType === "Brochure" ||
+          activeSectionType === "BrochurePage" ||
+          activeSectionType === "CaseStudy" ||
+          activeSectionType === "CaseDetails" ||
+          activeSectionType === "CaseDetailsPage" ||
+          activeSectionType === "Frenchise" ||
+          activeSectionType === "FrenchisePage" ||
+          activeSectionType === "Franchise" ||
+          activeSectionType === "Enquiry" ||
+          activeSectionType === "EnquiryPage" ||
+          activeSectionType === "EnquiryNow" ||
+          activeSectionType === "RefundPolicy" ||
+          activeSectionType === "Refund" ||
+          activeSectionType === "PrivacyPolicy" ||
+          activeSectionType === "TermsCondition" ||
+          activeSectionType === "TermsConditions" ||
+          activeSectionType === "CookiePolicy" ||
+          activeSectionType === "Disclaimer" ||
+          activeSectionType === "TestimonialsPage")));
+  const showEventsCareersFormTab =
+    isEventsCareersOpenRolesSubsection || isNGOCareersOpenRolesSubsection;
+  const subsectionSidebarLabel = subsectionScope?.label.trim() ?? "";
+  const subsectionContentTabName =
+    getSubsectionContentTabName(subsectionSidebarLabel);
+  const subsectionLayoutTabName =
+    getSubsectionLayoutTabName(subsectionSidebarLabel);
   const visibleSidebarItems = subsectionScope
     ? hasScopedContentAndFormTabs
-      ? [scopedContentTab ?? `${activeSectionType} Content`, "Form"]
+      ? [
+          scopedContentTab ?? `${activeSectionType} Content`,
+          "Form",
+          ...(isNGOFrenchiseSection || isNGOEnquirySection
+            ? [subsectionLayoutTabName]
+            : []),
+        ]
       : [
         activeVariant === "RealEstateProject1" &&
           subsectionScope.label.trim().toLowerCase() === "project categories"
           ? "Tabs"
-          : `${activeSectionType} Content`,
+          : subsectionContentTabName,
+        ...(isEventsInnerPageSubsection || isNGOAboutPageSubsection
+          ? [subsectionLayoutTabName]
+          : []),
+        ...(showEventsCareersFormTab &&
+        (isEventsCareersOpenRolesSubsection || isNGOCareersOpenRolesSubsection)
+          ? [EVENTS_CAREERS_FORM_TAB]
+          : []),
+        ...(showEventsTeamTabsTab ? ["Tabs"] : []),
         ...(showBoxLayoutTab ? ["Box Layout"] : []),
       ]
     : showBoxLayoutTab
-      ? [...baseSidebarItems, ...editableTabsItem, "Box Layout"]
-      : [...baseSidebarItems, ...editableTabsItem];
+      ? [
+          ...sidebarItems,
+          ...(showEventsCareersFormTab ? [EVENTS_CAREERS_FORM_TAB] : []),
+          ...editableTabsItem,
+          "Box Layout",
+        ]
+      : [
+          ...sidebarItems,
+          ...(showEventsCareersFormTab ? [EVENTS_CAREERS_FORM_TAB] : []),
+          ...editableTabsItem,
+        ];
+
+  const sidebarTabKey = visibleSidebarItems.join("|");
+  useEffect(() => {
+    if (
+      category === "Events" &&
+      visibleSidebarItems.length > 0 &&
+      !visibleSidebarItems.includes(activeTab)
+    ) {
+      setActiveTab(visibleSidebarItems[0]);
+    }
+  }, [activeTab, category, sidebarTabKey, visibleSidebarItems]);
 
   const activeTopbarData = currentSection?.data?.[activeVariant] as
     | {
@@ -2155,8 +4329,12 @@ export default function EditSectionModal({
       phone?: string;
       email?: string;
       location?: string;
+      address?: string;
+      phoneHref?: string;
+      headerCta?: { label?: string; href?: string };
+      buttons?: { label?: string; href?: string }[];
       socialLinks?: {
-        label: "facebook" | "instagram" | "twitter" | "linkedin";
+        label: SocialLinkData["label"];
         href: string;
       }[];
       hiddenContentFields?: string[];
@@ -2168,14 +4346,31 @@ export default function EditSectionModal({
       logo?: string;
       logoImage?: string;
       logoImageTitle?: string;
+      logoType?: "image" | "text" | "image-text";
       headerBackgroundType?: HeaderBackgroundType;
       headerType?: StickySectionType;
       headerBackgroundColor?: string;
       headerGradientColor?: string;
       headerTextColor?: string;
+      headerCta?: ButtonData;
       menu?: MenuItem[];
       buttons?: ButtonData[];
       button?: ButtonData;
+      PopupData?: {
+        aboutpopup?: { title?: string; desc?: string };
+        instagram?: {
+          title?: string;
+          images?: Array<{ src?: string; alt?: string }>;
+        };
+        contactpopup?: {
+          phone?: string;
+          phoneHref?: string;
+          separator?: string;
+          email?: string;
+          emailHref?: string;
+        };
+        socialLinkspopup?: Array<{ label?: string; href?: string }>;
+      };
     }
     | undefined;
 
@@ -2210,7 +4405,31 @@ export default function EditSectionModal({
       formFields?: FormFieldData[];
     }
     | undefined;
-  const activeGenericData = currentSection?.data?.[activeVariant] as
+  const pageVariantData = currentSection?.data?.[activeVariant] as
+    | SectionData
+    | undefined;
+  const ngoAboutNestedKey = (() => {
+    if (category !== "NGO") return null;
+    if (
+      activeSectionType !== "AboutPage" &&
+      activeSectionType !== "AboutUsPage"
+    ) {
+      return null;
+    }
+    const label = subsectionScope?.label.trim().toLowerCase() ?? "";
+    if (label === "mission" || label === "mission vision") return "mission";
+    if (label === "why choose us") return "whyChooseUs";
+    if (label === "about content") return "aboutContent";
+    return null;
+  })();
+  const nestedNgoAboutData =
+    ngoAboutNestedKey &&
+    pageVariantData?.[ngoAboutNestedKey] &&
+    typeof pageVariantData[ngoAboutNestedKey] === "object" &&
+    !Array.isArray(pageVariantData[ngoAboutNestedKey])
+      ? (pageVariantData[ngoAboutNestedKey] as SectionData)
+      : undefined;
+  const activeGenericData = (nestedNgoAboutData ?? pageVariantData) as
     | SectionData
     | undefined;
   const boxLayoutByField =
@@ -2242,8 +4461,935 @@ export default function EditSectionModal({
       breadcrumbScopeLabel === "page banner" ||
       Array.isArray(editorData.breadcrumb)
     ) {
+      editorData.breadcrumbBackgroundType =
+        editorData.breadcrumbBackgroundType === "color" ? "color" : "image";
       editorData.textColor = editorData.textColor || "#ffffff";
-      editorData.backgroundColor = editorData.backgroundColor || "#111827";
+      if (editorData.breadcrumbBackgroundType === "color") {
+        editorData.backgroundColor =
+          editorData.backgroundColor ||
+          (category === "NGO" ? "#120a1a" : "#111827");
+        editorData.breadcrumbColorBackgroundType =
+          editorData.breadcrumbColorBackgroundType === "gradient"
+            ? "gradient"
+            : "solid";
+        editorData.breadcrumbGradientColor =
+          editorData.breadcrumbGradientColor ||
+          (category === "NGO" ? "#ff541b" : "#d61b58");
+      }
+      if (
+        category === "NGO" &&
+        !editorData.backgroundImage &&
+        editorData.banner &&
+        typeof editorData.banner === "object" &&
+        !Array.isArray(editorData.banner)
+      ) {
+        const bannerImage = (editorData.banner as { bgImageUrl?: unknown })
+          .bgImageUrl;
+        if (typeof bannerImage === "string" && bannerImage.trim()) {
+          editorData.backgroundImage = bannerImage;
+        }
+      }
+    }
+
+    if (isEventsHomeContact) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const left = asRecord(editorData.leftContent);
+      const cta = asRecord(left.cta);
+      editorData.leftBadge =
+        (typeof editorData.leftBadge === "string" && editorData.leftBadge) ||
+        (typeof left.badge === "string" && left.badge) ||
+        "";
+      {
+        const rawTitle =
+          (typeof editorData.leftTitle === "string" && editorData.leftTitle) ||
+          (typeof left.title === "string" && left.title) ||
+          "";
+        const titleLines = rawTitle.split("\n");
+        editorData.leftTitle = titleLines[0] ?? "";
+        editorData.leftTitleHighlight =
+          (typeof editorData.leftTitleHighlight === "string" &&
+            editorData.leftTitleHighlight) ||
+          titleLines.slice(1).join("\n");
+      }
+      editorData.leftDesc =
+        (typeof editorData.leftDesc === "string" && editorData.leftDesc) ||
+        (typeof left.description === "string" && left.description) ||
+        "";
+      if (!Array.isArray(editorData.features)) {
+        editorData.features = Array.isArray(left.features) ? left.features : [];
+      }
+      editorData.ctaLabel =
+        (typeof editorData.ctaLabel === "string" && editorData.ctaLabel) ||
+        (typeof cta.label === "string" && cta.label) ||
+        "";
+      editorData.ctaHref =
+        (typeof editorData.ctaHref === "string" && editorData.ctaHref) ||
+        (typeof cta.href === "string" && cta.href) ||
+        "";
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Services" ||
+        activeSectionType === "ServicesPage") &&
+      ["services", "services content", ""].includes(
+        subsectionScope?.label.trim().toLowerCase() ?? "",
+      )
+    ) {
+      const header =
+        editorData.header &&
+        typeof editorData.header === "object" &&
+        !Array.isArray(editorData.header)
+          ? (editorData.header as Record<string, unknown>)
+          : {};
+      const breadcrumbCurrent =
+        editorData.banner &&
+        typeof editorData.banner === "object" &&
+        !Array.isArray(editorData.banner) &&
+        typeof (editorData.banner as { breadcrumbCurrent?: unknown })
+          .breadcrumbCurrent === "string"
+          ? (editorData.banner as { breadcrumbCurrent: string })
+              .breadcrumbCurrent
+          : "";
+      const headerTitle = [
+        typeof header.titlePrefix === "string" ? header.titlePrefix : "",
+        typeof header.titleHighlight === "string" ? header.titleHighlight : "",
+      ]
+        .join("")
+        .trim();
+      const currentTitle =
+        typeof editorData.title === "string" ? editorData.title.trim() : "";
+      editorData.pretitle =
+        (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+        (typeof header.subTag === "string" && header.subTag) ||
+        "TOGETHER WE SERVE";
+      editorData.title =
+        currentTitle &&
+        currentTitle !== "Services" &&
+        currentTitle !== breadcrumbCurrent
+          ? currentTitle
+          : headerTitle || currentTitle || "Our Services";
+      editorData.desc =
+        (typeof editorData.desc === "string" && editorData.desc) ||
+        (typeof editorData.description === "string" &&
+          editorData.description) ||
+        (typeof header.description === "string" && header.description) ||
+        "";
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Teams" ||
+        activeSectionType === "TeamsPage") &&
+      ["team", "team members", ""].includes(
+        subsectionScope?.label.trim().toLowerCase() ?? "",
+      )
+    ) {
+      const badge =
+        editorData.badge &&
+        typeof editorData.badge === "object" &&
+        !Array.isArray(editorData.badge)
+          ? (editorData.badge as Record<string, unknown>)
+          : {};
+      const heading =
+        editorData.heading &&
+        typeof editorData.heading === "object" &&
+        !Array.isArray(editorData.heading)
+          ? (editorData.heading as Record<string, unknown>)
+          : {};
+      const breadcrumbCurrent =
+        editorData.banner &&
+        typeof editorData.banner === "object" &&
+        !Array.isArray(editorData.banner) &&
+        typeof (editorData.banner as { breadcrumbCurrent?: unknown })
+          .breadcrumbCurrent === "string"
+          ? (editorData.banner as { breadcrumbCurrent: string })
+              .breadcrumbCurrent
+          : "";
+      const headingTitle =
+        typeof heading.title === "string" ? heading.title.trim() : "";
+      const currentTitle =
+        typeof editorData.title === "string" ? editorData.title.trim() : "";
+      const pretitleValue =
+        (typeof editorData.pretitle === "string" && editorData.pretitle.trim()) ||
+        (typeof badge.label === "string" && badge.label.trim()) ||
+        "Meet Our Team";
+      editorData.pretitle = pretitleValue;
+      const sameAsPretitle = (value: string) =>
+        value.trim().toLowerCase() === pretitleValue.toLowerCase();
+      editorData.title =
+        currentTitle &&
+        currentTitle !== "Teams" &&
+        !sameAsPretitle(currentTitle)
+          ? currentTitle
+          : headingTitle && !sameAsPretitle(headingTitle)
+            ? headingTitle
+            : breadcrumbCurrent && !sameAsPretitle(breadcrumbCurrent)
+              ? breadcrumbCurrent
+              : "Our Team";
+      editorData.desc =
+        (typeof editorData.desc === "string" && editorData.desc) ||
+        (typeof editorData.description === "string" &&
+          editorData.description) ||
+        "";
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Media" &&
+      ["media", "media content", ""].includes(
+        subsectionScope?.label.trim().toLowerCase() ?? "",
+      )
+    ) {
+      const nestedContent =
+        editorData.content &&
+        typeof editorData.content === "object" &&
+        !Array.isArray(editorData.content)
+          ? (editorData.content as Record<string, unknown>)
+          : {};
+      const nestedTitle =
+        typeof nestedContent.sectionTitle === "string"
+          ? nestedContent.sectionTitle.trim()
+          : "";
+      editorData.sectionTitle =
+        (typeof editorData.sectionTitle === "string" &&
+          editorData.sectionTitle.trim()) ||
+        nestedTitle ||
+        "Latest Media Highlights";
+      const sourceCards = Array.isArray(editorData.mediaCards)
+        ? editorData.mediaCards
+        : Array.isArray(nestedContent.mediaCards)
+          ? nestedContent.mediaCards
+          : [];
+      editorData.mediaCards = sourceCards.map((card) => {
+        if (!card || typeof card !== "object" || Array.isArray(card)) {
+          return card;
+        }
+        const item = card as Record<string, unknown>;
+        return {
+          ...item,
+          image:
+            (typeof item.image === "string" && item.image) ||
+            (typeof item.logoUrl === "string" && item.logoUrl) ||
+            "",
+          articleUrl:
+            (typeof item.articleUrl === "string" && item.articleUrl) ||
+            (typeof item.href === "string" && item.href) ||
+            (typeof item.link === "string" && item.link) ||
+            "",
+        };
+      });
+    }
+
+    if (category === "NGO" && activeSectionType === "Industry") {
+      const industryLabel =
+        subsectionScope?.label.trim().toLowerCase() ?? "";
+      const header =
+        editorData.header &&
+        typeof editorData.header === "object" &&
+        !Array.isArray(editorData.header)
+          ? (editorData.header as Record<string, unknown>)
+          : {};
+      const headerTitle =
+        header.title &&
+        typeof header.title === "object" &&
+        !Array.isArray(header.title)
+          ? (header.title as Record<string, unknown>)
+          : {};
+      const partnerBanner =
+        editorData.partnerBanner &&
+        typeof editorData.partnerBanner === "object" &&
+        !Array.isArray(editorData.partnerBanner)
+          ? (editorData.partnerBanner as Record<string, unknown>)
+          : {};
+      const partnerTitle =
+        partnerBanner.title &&
+        typeof partnerBanner.title === "object" &&
+        !Array.isArray(partnerBanner.title)
+          ? (partnerBanner.title as Record<string, unknown>)
+          : {};
+      const partnerCta =
+        partnerBanner.cta &&
+        typeof partnerBanner.cta === "object" &&
+        !Array.isArray(partnerBanner.cta)
+          ? (partnerBanner.cta as Record<string, unknown>)
+          : {};
+
+      if (
+        ["", "industry", "industry content"].includes(industryLabel)
+      ) {
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof header.topBadge === "string" && header.topBadge) ||
+          "TOGETHER WE EMPOWER";
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        const highlightTitle = [
+          typeof editorData.titleHighlight === "string"
+            ? editorData.titleHighlight
+            : "",
+          typeof headerTitle.part2 === "string" ? headerTitle.part2 : "",
+        ]
+          .map((part) => part.trim())
+          .find(Boolean) ?? "";
+        const combinedTitle = [
+          typeof headerTitle.part1 === "string" ? headerTitle.part1 : "",
+          typeof headerTitle.part2 === "string" ? headerTitle.part2 : "",
+        ]
+          .map((part) => part.trim())
+          .filter(Boolean)
+          .join(" ");
+        const mergedTitle =
+          currentTitle &&
+          highlightTitle &&
+          !currentTitle.toLowerCase().includes(highlightTitle.toLowerCase())
+            ? `${currentTitle} ${highlightTitle}`.trim()
+            : currentTitle;
+        editorData.title =
+          mergedTitle && mergedTitle.toLowerCase() !== "industry we serve"
+            ? mergedTitle
+            : combinedTitle || "Industries We Serve";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof header.pretitle === "string" && header.pretitle) ||
+          "";
+        editorData.sectionTag =
+          (typeof editorData.sectionTag === "string" &&
+            editorData.sectionTag) ||
+          (typeof header.sectionTag === "string" && header.sectionTag) ||
+          "";
+        const sourceSectors = Array.isArray(editorData.sectors)
+          ? editorData.sectors
+          : Array.isArray(editorData.industries)
+            ? editorData.industries
+            : [];
+        editorData.sectors = sourceSectors.map((card) => {
+          if (!card || typeof card !== "object" || Array.isArray(card)) {
+            return card;
+          }
+          const item = card as Record<string, unknown>;
+          const imageValue = item.image;
+          const imageSrc =
+            typeof imageValue === "string"
+              ? imageValue
+              : imageValue &&
+                  typeof imageValue === "object" &&
+                  !Array.isArray(imageValue) &&
+                  typeof (imageValue as { src?: unknown }).src === "string"
+                ? (imageValue as { src: string }).src
+                : "";
+          const icon =
+            (typeof item.icon === "string" && item.icon) ||
+            (typeof item.iconName === "string" && item.iconName) ||
+            "heart";
+          return {
+            ...item,
+            image: imageSrc,
+            icon,
+            iconName: icon,
+          };
+        });
+      }
+
+      if (industryLabel === "industry partner") {
+        editorData.partnerTitle =
+          (typeof editorData.partnerTitle === "string" &&
+            editorData.partnerTitle) ||
+          (typeof partnerTitle.line1 === "string" && partnerTitle.line1) ||
+          "Partner With Us to";
+        editorData.partnerTitleHighlight =
+          (typeof editorData.partnerTitleHighlight === "string" &&
+            editorData.partnerTitleHighlight) ||
+          (typeof partnerTitle.line2 === "string" && partnerTitle.line2) ||
+          "Create Lasting Change";
+        editorData.partnerDesc =
+          (typeof editorData.partnerDesc === "string" &&
+            editorData.partnerDesc) ||
+          (typeof partnerBanner.description === "string" &&
+            partnerBanner.description) ||
+          "";
+        const existingButton =
+          editorData.partnerButton &&
+          typeof editorData.partnerButton === "object" &&
+          !Array.isArray(editorData.partnerButton)
+            ? (editorData.partnerButton as Record<string, unknown>)
+            : {};
+        editorData.partnerButton = {
+          label:
+            (typeof existingButton.label === "string" &&
+              existingButton.label) ||
+            (typeof partnerCta.text === "string" && partnerCta.text) ||
+            "Get Involved",
+          href:
+            (typeof existingButton.href === "string" && existingButton.href) ||
+            (typeof partnerCta.url === "string" && partnerCta.url) ||
+            "/contact-us",
+        };
+        const sourceMetrics = Array.isArray(editorData.metrics)
+          ? editorData.metrics
+          : Array.isArray(partnerBanner.metrics)
+            ? partnerBanner.metrics
+            : [];
+        editorData.metrics = sourceMetrics.map((card) => {
+          if (!card || typeof card !== "object" || Array.isArray(card)) {
+            return card;
+          }
+          const item = card as Record<string, unknown>;
+          return {
+            ...item,
+            icon:
+              (typeof item.icon === "string" && item.icon) ||
+              (typeof item.iconName === "string" && item.iconName) ||
+              "heart",
+          };
+        });
+      }
+    }
+
+    if (category === "NGO" && activeSectionType === "Branches") {
+      const branchesLabel =
+        subsectionScope?.label.trim().toLowerCase() ?? "";
+      const header =
+        editorData.header &&
+        typeof editorData.header === "object" &&
+        !Array.isArray(editorData.header)
+          ? (editorData.header as Record<string, unknown>)
+          : {};
+      const locationsSection =
+        editorData.locationsSection &&
+        typeof editorData.locationsSection === "object" &&
+        !Array.isArray(editorData.locationsSection)
+          ? (editorData.locationsSection as Record<string, unknown>)
+          : {};
+      const mapSide =
+        locationsSection.mapSide &&
+        typeof locationsSection.mapSide === "object" &&
+        !Array.isArray(locationsSection.mapSide)
+          ? (locationsSection.mapSide as Record<string, unknown>)
+          : {};
+      const ctaBanner =
+        editorData.ctaBanner &&
+        typeof editorData.ctaBanner === "object" &&
+        !Array.isArray(editorData.ctaBanner)
+          ? (editorData.ctaBanner as Record<string, unknown>)
+          : {};
+      const ctaImageObj =
+        ctaBanner.image &&
+        typeof ctaBanner.image === "object" &&
+        !Array.isArray(ctaBanner.image)
+          ? (ctaBanner.image as Record<string, unknown>)
+          : {};
+      const primaryButton =
+        ctaBanner.primaryButton &&
+        typeof ctaBanner.primaryButton === "object" &&
+        !Array.isArray(ctaBanner.primaryButton)
+          ? (ctaBanner.primaryButton as Record<string, unknown>)
+          : {};
+      const secondaryButton =
+        ctaBanner.secondaryButton &&
+        typeof ctaBanner.secondaryButton === "object" &&
+        !Array.isArray(ctaBanner.secondaryButton)
+          ? (ctaBanner.secondaryButton as Record<string, unknown>)
+          : {};
+      const contactBar =
+        editorData.contactBar &&
+        typeof editorData.contactBar === "object" &&
+        !Array.isArray(editorData.contactBar)
+          ? (editorData.contactBar as Record<string, unknown>)
+          : {};
+
+      if (["", "branches", "branches content"].includes(branchesLabel)) {
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof header.label === "string" && header.label) ||
+          "OUR BRANCHES";
+        editorData.title =
+          currentTitle && currentTitle.toLowerCase() !== "branches"
+            ? currentTitle
+            : (typeof header.heading === "string" && header.heading) ||
+              "Our Branches, Stronger Together";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof header.description === "string" && header.description) ||
+          "";
+      }
+
+      if (branchesLabel === "branch locations") {
+        editorData.locationsLabel =
+          (typeof editorData.locationsLabel === "string" &&
+            editorData.locationsLabel) ||
+          (typeof locationsSection.label === "string" &&
+            locationsSection.label) ||
+          "WHERE WE WORK";
+        editorData.locationsTitle =
+          (typeof editorData.locationsTitle === "string" &&
+            editorData.locationsTitle) ||
+          (typeof locationsSection.title === "string" &&
+            locationsSection.title) ||
+          "Find a Branch Near You";
+        editorData.mapImage =
+          (typeof editorData.mapImage === "string" && editorData.mapImage) ||
+          (typeof mapSide.mapImage === "string" && mapSide.mapImage) ||
+          "/Indianmap.png";
+        editorData.branches = Array.isArray(editorData.branches)
+          ? editorData.branches
+          : Array.isArray(locationsSection.branches)
+            ? locationsSection.branches
+            : [];
+      }
+
+      if (branchesLabel === "branches cta") {
+        editorData.ctaLabel =
+          (typeof editorData.ctaLabel === "string" && editorData.ctaLabel) ||
+          (typeof ctaBanner.label === "string" && ctaBanner.label) ||
+          "";
+        editorData.ctaTitle =
+          (typeof editorData.ctaTitle === "string" && editorData.ctaTitle) ||
+          (typeof ctaBanner.title === "string" && ctaBanner.title) ||
+          "";
+        editorData.ctaDesc =
+          (typeof editorData.ctaDesc === "string" && editorData.ctaDesc) ||
+          (typeof ctaBanner.description === "string" &&
+            ctaBanner.description) ||
+          "";
+        editorData.ctaImage =
+          (typeof editorData.ctaImage === "string" && editorData.ctaImage) ||
+          (typeof ctaImageObj.src === "string" && ctaImageObj.src) ||
+          "";
+        const existingPrimary =
+          editorData.ctaPrimaryButton &&
+          typeof editorData.ctaPrimaryButton === "object" &&
+          !Array.isArray(editorData.ctaPrimaryButton)
+            ? (editorData.ctaPrimaryButton as Record<string, unknown>)
+            : {};
+        const existingSecondary =
+          editorData.ctaSecondaryButton &&
+          typeof editorData.ctaSecondaryButton === "object" &&
+          !Array.isArray(editorData.ctaSecondaryButton)
+            ? (editorData.ctaSecondaryButton as Record<string, unknown>)
+            : {};
+        editorData.ctaPrimaryButton = {
+          label:
+            (typeof existingPrimary.label === "string" &&
+              existingPrimary.label) ||
+            (typeof primaryButton.label === "string" && primaryButton.label) ||
+            "Donate Now",
+          href:
+            (typeof existingPrimary.href === "string" &&
+              existingPrimary.href) ||
+            (typeof primaryButton.href === "string" && primaryButton.href) ||
+            "/donate",
+        };
+        editorData.ctaSecondaryButton = {
+          label:
+            (typeof existingSecondary.label === "string" &&
+              existingSecondary.label) ||
+            (typeof secondaryButton.label === "string" &&
+              secondaryButton.label) ||
+            "Contact Us",
+          href:
+            (typeof existingSecondary.href === "string" &&
+              existingSecondary.href) ||
+            (typeof secondaryButton.href === "string" &&
+              secondaryButton.href) ||
+            "/contact-us",
+        };
+      }
+
+      if (branchesLabel === "branches contact") {
+        editorData.contactItems = Array.isArray(editorData.contactItems)
+          ? editorData.contactItems
+          : Array.isArray(contactBar.items)
+            ? contactBar.items
+            : [];
+      }
+    }
+
+    if (category === "NGO" && activeSectionType === "AwardsPage") {
+      const awardsLabel =
+        subsectionScope?.label.trim().toLowerCase() ?? "";
+      const header =
+        editorData.header &&
+        typeof editorData.header === "object" &&
+        !Array.isArray(editorData.header)
+          ? (editorData.header as Record<string, unknown>)
+          : {};
+      const headerTitle =
+        header.title &&
+        typeof header.title === "object" &&
+        !Array.isArray(header.title)
+          ? (header.title as Record<string, unknown>)
+          : {};
+      const awardsSection =
+        editorData.awardsSection &&
+        typeof editorData.awardsSection === "object" &&
+        !Array.isArray(editorData.awardsSection)
+          ? (editorData.awardsSection as Record<string, unknown>)
+          : {};
+      const supportBanner =
+        editorData.supportBanner &&
+        typeof editorData.supportBanner === "object" &&
+        !Array.isArray(editorData.supportBanner)
+          ? (editorData.supportBanner as Record<string, unknown>)
+          : {};
+      const supportTitle =
+        supportBanner.title &&
+        typeof supportBanner.title === "object" &&
+        !Array.isArray(supportBanner.title)
+          ? (supportBanner.title as Record<string, unknown>)
+          : {};
+      const supportCta =
+        supportBanner.cta &&
+        typeof supportBanner.cta === "object" &&
+        !Array.isArray(supportBanner.cta)
+          ? (supportBanner.cta as Record<string, unknown>)
+          : {};
+      const trophyImage =
+        supportBanner.trophyImage &&
+        typeof supportBanner.trophyImage === "object" &&
+        !Array.isArray(supportBanner.trophyImage)
+          ? (supportBanner.trophyImage as Record<string, unknown>)
+          : {};
+      const transparencyBanner =
+        editorData.transparencyBanner &&
+        typeof editorData.transparencyBanner === "object" &&
+        !Array.isArray(editorData.transparencyBanner)
+          ? (editorData.transparencyBanner as Record<string, unknown>)
+          : {};
+      const transparencyCta =
+        transparencyBanner.cta &&
+        typeof transparencyBanner.cta === "object" &&
+        !Array.isArray(transparencyBanner.cta)
+          ? (transparencyBanner.cta as Record<string, unknown>)
+          : {};
+
+      if (["", "awards", "awards content"].includes(awardsLabel)) {
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof header.topBadge === "string" && header.topBadge) ||
+          "OUR AWARDS";
+        editorData.title =
+          currentTitle &&
+          currentTitle.toLowerCase() !== "awards & recognitions"
+            ? currentTitle
+            : [headerTitle.part1, headerTitle.part2]
+                .filter(
+                  (part): part is string =>
+                    typeof part === "string" && Boolean(part.trim()),
+                )
+                .join(" ") || "Awards & Recognition";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof header.pretitle === "string" && header.pretitle) ||
+          "";
+        const sourceStats = Array.isArray(editorData.stats)
+          ? editorData.stats
+          : [];
+        editorData.stats = sourceStats.map((card) => {
+          if (!card || typeof card !== "object" || Array.isArray(card)) {
+            return card;
+          }
+          const item = card as Record<string, unknown>;
+          const icon =
+            (typeof item.icon === "string" && item.icon) ||
+            (typeof item.iconName === "string" && item.iconName) ||
+            "star";
+          return { ...item, icon, iconName: icon };
+        });
+      }
+
+      if (awardsLabel === "awards grid") {
+        editorData.awardsLabel =
+          (typeof editorData.awardsLabel === "string" &&
+            editorData.awardsLabel) ||
+          (typeof awardsSection.topBadge === "string" &&
+            awardsSection.topBadge) ||
+          "HONORED FOR OUR IMPACT";
+        editorData.awardsTitle =
+          (typeof editorData.awardsTitle === "string" &&
+            editorData.awardsTitle) ||
+          (typeof awardsSection.title === "string" && awardsSection.title) ||
+          "Recognitions That Motivate Us";
+        const sourceAwards = Array.isArray(editorData.awards)
+          ? editorData.awards
+          : Array.isArray(awardsSection.awards)
+            ? awardsSection.awards
+            : [];
+        editorData.awards = sourceAwards.map((card) => {
+          if (!card || typeof card !== "object" || Array.isArray(card)) {
+            return card;
+          }
+          const item = card as Record<string, unknown>;
+          const imageValue = item.image;
+          const imageSrc =
+            typeof imageValue === "string"
+              ? imageValue
+              : imageValue &&
+                  typeof imageValue === "object" &&
+                  !Array.isArray(imageValue) &&
+                  typeof (imageValue as { src?: unknown }).src === "string"
+                ? (imageValue as { src: string }).src
+                : "";
+          return {
+            ...item,
+            image: imageSrc,
+            description:
+              (typeof item.description === "string" && item.description) ||
+              (typeof item.desc === "string" && item.desc) ||
+              "",
+          };
+        });
+      }
+
+      if (awardsLabel === "awards support") {
+        editorData.supportLabel =
+          (typeof editorData.supportLabel === "string" &&
+            editorData.supportLabel) ||
+          (typeof supportBanner.topBadge === "string" &&
+            supportBanner.topBadge) ||
+          "TOGETHER WE ACHIEVE MORE";
+        editorData.supportTitle =
+          (typeof editorData.supportTitle === "string" &&
+            editorData.supportTitle) ||
+          (typeof supportTitle.line1 === "string" && supportTitle.line1) ||
+          "Your Support Builds";
+        editorData.supportTitleHighlight =
+          (typeof editorData.supportTitleHighlight === "string" &&
+            editorData.supportTitleHighlight) ||
+          (typeof supportTitle.line2 === "string" && supportTitle.line2) ||
+          "Our Success";
+        editorData.supportDesc =
+          (typeof editorData.supportDesc === "string" &&
+            editorData.supportDesc) ||
+          (typeof supportBanner.description === "string" &&
+            supportBanner.description) ||
+          "";
+        editorData.supportImage =
+          (typeof editorData.supportImage === "string" &&
+            editorData.supportImage) ||
+          (typeof trophyImage.src === "string" && trophyImage.src) ||
+          "";
+        const existingButton =
+          editorData.supportButton &&
+          typeof editorData.supportButton === "object" &&
+          !Array.isArray(editorData.supportButton)
+            ? (editorData.supportButton as Record<string, unknown>)
+            : {};
+        editorData.supportButton = {
+          label:
+            (typeof existingButton.label === "string" &&
+              existingButton.label) ||
+            (typeof supportCta.text === "string" && supportCta.text) ||
+            "Support Our Mission",
+          href:
+            (typeof existingButton.href === "string" && existingButton.href) ||
+            (typeof supportCta.url === "string" && supportCta.url) ||
+            "/contact-us",
+        };
+      }
+
+      if (awardsLabel === "awards transparency") {
+        editorData.transparencyTitle =
+          (typeof editorData.transparencyTitle === "string" &&
+            editorData.transparencyTitle) ||
+          (typeof transparencyBanner.title === "string" &&
+            transparencyBanner.title) ||
+          "We are committed to transparency and accountability.";
+        editorData.transparencyDesc =
+          (typeof editorData.transparencyDesc === "string" &&
+            editorData.transparencyDesc) ||
+          (typeof transparencyBanner.pretitle === "string" &&
+            transparencyBanner.pretitle) ||
+          "";
+        const existingButton =
+          editorData.transparencyButton &&
+          typeof editorData.transparencyButton === "object" &&
+          !Array.isArray(editorData.transparencyButton)
+            ? (editorData.transparencyButton as Record<string, unknown>)
+            : {};
+        editorData.transparencyButton = {
+          label:
+            (typeof existingButton.label === "string" &&
+              existingButton.label) ||
+            (typeof transparencyCta.text === "string" &&
+              transparencyCta.text) ||
+            "Learn More About Us",
+          href:
+            (typeof existingButton.href === "string" && existingButton.href) ||
+            (typeof transparencyCta.url === "string" && transparencyCta.url) ||
+            "/about-us",
+        };
+      }
+    }
+
+    if (category === "NGO" && activeSectionType === "Careers") {
+      const careersLabel =
+        subsectionScope?.label.trim().toLowerCase() ?? "";
+      const whyWorkWithUs =
+        editorData.whyWorkWithUs &&
+        typeof editorData.whyWorkWithUs === "object" &&
+        !Array.isArray(editorData.whyWorkWithUs)
+          ? (editorData.whyWorkWithUs as Record<string, unknown>)
+          : {};
+      const nestedCta =
+        editorData.cta &&
+        typeof editorData.cta === "object" &&
+        !Array.isArray(editorData.cta)
+          ? (editorData.cta as Record<string, unknown>)
+          : {};
+      const nestedCtaButton =
+        nestedCta.button &&
+        typeof nestedCta.button === "object" &&
+        !Array.isArray(nestedCta.button)
+          ? (nestedCta.button as Record<string, unknown>)
+          : {};
+
+      if (["", "careers overview"].includes(careersLabel)) {
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        editorData.title =
+          currentTitle && currentTitle.toLowerCase() !== "career"
+            ? currentTitle
+            : (typeof whyWorkWithUs.title === "string" &&
+                whyWorkWithUs.title) ||
+              "Why Work With Us?";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof whyWorkWithUs.description === "string" &&
+            whyWorkWithUs.description) ||
+          (typeof editorData.description === "string" &&
+            editorData.description) ||
+          "";
+        const sourceBenefits = Array.isArray(editorData.benefits)
+          ? editorData.benefits
+          : Array.isArray(whyWorkWithUs.benefits)
+            ? whyWorkWithUs.benefits
+            : [];
+        // Keep nested whyWorkWithUs.benefits in sync so canvas/delete
+        // do not fall back to the original nested list.
+        editorData.benefits = sourceBenefits.map((card) => {
+          if (!card || typeof card !== "object" || Array.isArray(card)) {
+            return card;
+          }
+          const item = card as Record<string, unknown>;
+          const description =
+            (typeof item.description === "string" && item.description) ||
+            (typeof item.desc === "string" && item.desc) ||
+            "";
+          return {
+            ...item,
+            icon:
+              (typeof item.icon === "string" && item.icon) ||
+              (typeof item.iconName === "string" && item.iconName) ||
+              "heart",
+            description,
+            desc: description,
+          };
+        });
+      }
+
+      if (careersLabel === "open roles") {
+        editorData.rolesTitle =
+          (typeof editorData.rolesTitle === "string" &&
+            editorData.rolesTitle) ||
+          "Open Positions";
+        editorData.rolesApplyLabel =
+          (typeof editorData.rolesApplyLabel === "string" &&
+            editorData.rolesApplyLabel) ||
+          "Job details";
+        editorData.jobs = Array.isArray(editorData.jobs)
+          ? editorData.jobs
+          : Array.isArray(editorData.roles)
+            ? editorData.roles
+            : [];
+        if (
+          !editorData.applyForm ||
+          typeof editorData.applyForm !== "object" ||
+          Array.isArray(editorData.applyForm)
+        ) {
+          editorData.applyForm = {};
+        }
+      }
+
+      if (careersLabel === "careers cta") {
+        editorData.ctaTitle =
+          (typeof editorData.ctaTitle === "string" && editorData.ctaTitle) ||
+          (typeof nestedCta.title === "string" && nestedCta.title) ||
+          "";
+        editorData.ctaDesc =
+          (typeof editorData.ctaDesc === "string" && editorData.ctaDesc) ||
+          (typeof nestedCta.description === "string" &&
+            nestedCta.description) ||
+          "";
+        const existingButton =
+          editorData.ctaButton &&
+          typeof editorData.ctaButton === "object" &&
+          !Array.isArray(editorData.ctaButton)
+            ? (editorData.ctaButton as Record<string, unknown>)
+            : {};
+        editorData.ctaButton = {
+          label:
+            (typeof existingButton.label === "string" &&
+              existingButton.label) ||
+            (typeof nestedCtaButton.label === "string" &&
+              nestedCtaButton.label) ||
+            "Send Your Resume",
+          href:
+            (typeof existingButton.href === "string" && existingButton.href) ||
+            (typeof nestedCtaButton.href === "string" &&
+              nestedCtaButton.href) ||
+            "/apply-form",
+        };
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Projects" ||
+        activeSectionType === "ProjectsPage") &&
+      Array.isArray(editorData.items)
+    ) {
+      editorData.items = editorData.items.map((card) => {
+        if (!card || typeof card !== "object" || Array.isArray(card)) {
+          return card;
+        }
+        const item = card as Record<string, unknown>;
+        const imageValue = item.image;
+        const imageSrc =
+          typeof imageValue === "string"
+            ? imageValue
+            : imageValue &&
+                typeof imageValue === "object" &&
+                !Array.isArray(imageValue) &&
+                typeof (imageValue as { src?: unknown }).src === "string"
+              ? (imageValue as { src: string }).src
+              : "";
+        const button =
+          item.button &&
+          typeof item.button === "object" &&
+          !Array.isArray(item.button)
+            ? (item.button as Record<string, unknown>)
+            : {};
+        return {
+          ...item,
+          image: imageSrc,
+          button: {
+            label:
+              (typeof button.label === "string" && button.label) ||
+              "Learn More",
+            href:
+              (typeof button.href === "string" && button.href) ||
+              "/project-detail",
+          },
+        };
+      });
     }
 
     if (activeSectionType === "CitiesWeServe") {
@@ -2359,6 +5505,1285 @@ export default function EditSectionModal({
             ? editorData.successButtonLabel
             : "Apply for another role",
       };
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Gallery" &&
+      ["", "gallery", "gallery grid", "gallery content"].includes(
+        subsectionScope?.label.trim().toLowerCase() ?? "",
+      )
+    ) {
+      const badge =
+        editorData.badge &&
+        typeof editorData.badge === "object" &&
+        !Array.isArray(editorData.badge)
+          ? (editorData.badge as Record<string, unknown>)
+          : {};
+      const titleObject =
+        editorData.title &&
+        typeof editorData.title === "object" &&
+        !Array.isArray(editorData.title)
+          ? (editorData.title as Record<string, unknown>)
+          : {};
+      editorData.pretitle =
+        (typeof editorData.pretitle === "string" && editorData.pretitle.trim()) ||
+        (typeof badge.label === "string" && badge.label.trim()) ||
+        "Our Gallery";
+      editorData.title =
+        typeof editorData.title === "string" && editorData.title.trim()
+          ? editorData.title
+          : [titleObject.line1, titleObject.highlight, titleObject.line2]
+              .filter(
+                (part): part is string =>
+                  typeof part === "string" && Boolean(part.trim()),
+              )
+              .join(" ")
+              .trim() || "Moments of Impact";
+      editorData.desc =
+        (typeof editorData.desc === "string" && editorData.desc) ||
+        (typeof editorData.description === "string" && editorData.description) ||
+        "";
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "FAQ" || activeSectionType === "FAQPage") &&
+      ["", "faq", "faqs", "faq content"].includes(
+        subsectionScope?.label.trim().toLowerCase() ?? "",
+      )
+    ) {
+      const badge =
+        editorData.badge &&
+        typeof editorData.badge === "object" &&
+        !Array.isArray(editorData.badge)
+          ? (editorData.badge as Record<string, unknown>)
+          : {};
+      const titleObject =
+        editorData.title &&
+        typeof editorData.title === "object" &&
+        !Array.isArray(editorData.title)
+          ? (editorData.title as Record<string, unknown>)
+          : {};
+      editorData.pretitle =
+        (typeof editorData.pretitle === "string" && editorData.pretitle.trim()) ||
+        (typeof badge.label === "string" && badge.label.trim()) ||
+        "Frequently Asked Questions";
+      editorData.title =
+        typeof editorData.title === "string" && editorData.title.trim()
+          ? editorData.title
+          : [titleObject.line1, titleObject.highlight, titleObject.line2]
+              .filter(
+                (part): part is string =>
+                  typeof part === "string" && Boolean(part.trim()),
+              )
+              .join(" ")
+              .trim() || "Have Any Questions?";
+      editorData.desc =
+        (typeof editorData.desc === "string" && editorData.desc) ||
+        (typeof editorData.description === "string" && editorData.description) ||
+        "";
+      if (!Array.isArray(editorData.questions) || editorData.questions.length === 0) {
+        editorData.questions = Array.isArray(editorData.faqs)
+          ? editorData.faqs
+          : Array.isArray(editorData.items)
+            ? editorData.items
+            : Array.isArray(editorData.faqItems)
+              ? editorData.faqItems
+              : [];
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Partners" || activeSectionType === "PartnersPage") &&
+      ["", "partners", "partners content", "partners list"].includes(
+        subsectionScope?.label.trim().toLowerCase() ?? "",
+      )
+    ) {
+      const badge =
+        editorData.badge &&
+        typeof editorData.badge === "object" &&
+        !Array.isArray(editorData.badge)
+          ? (editorData.badge as Record<string, unknown>)
+          : {};
+      const titleObject =
+        editorData.title &&
+        typeof editorData.title === "object" &&
+        !Array.isArray(editorData.title)
+          ? (editorData.title as Record<string, unknown>)
+          : {};
+      editorData.pretitle =
+        (typeof editorData.pretitle === "string" && editorData.pretitle.trim()) ||
+        (typeof badge.label === "string" && badge.label.trim()) ||
+        "Together We Grow";
+      editorData.title =
+        typeof editorData.title === "string" && editorData.title.trim()
+          ? editorData.title
+          : [titleObject.line1, titleObject.highlight, titleObject.line2]
+              .filter(
+                (part): part is string =>
+                  typeof part === "string" && Boolean(part.trim()),
+              )
+              .join(" ")
+              .trim() || "Partners & Sponsors";
+      editorData.desc =
+        (typeof editorData.desc === "string" && editorData.desc) ||
+        (typeof editorData.description === "string" && editorData.description) ||
+        "";
+      if (!Array.isArray(editorData.partnersList) || editorData.partnersList.length === 0) {
+        editorData.partnersList = Array.isArray(editorData.partners)
+          ? editorData.partners
+          : Array.isArray(editorData.cards)
+            ? editorData.cards
+            : [];
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "CSR" || activeSectionType === "CSRPage")
+    ) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const toPlain = (value: unknown) => {
+        if (typeof value === "string") return value;
+        const rec = asRecord(value);
+        return [rec.part1, rec.part2, rec.plainText, rec.highlightedText, rec.line1, rec.highlight]
+          .filter((part): part is string => typeof part === "string" && Boolean(part.trim()))
+          .join(" ")
+          .trim();
+      };
+      const withIcon = (items: unknown[]) =>
+        items.map((item) => {
+          if (!item || typeof item !== "object" || Array.isArray(item)) return item;
+          const rec = item as Record<string, unknown>;
+          const icon =
+            (typeof rec.icon === "string" && rec.icon) ||
+            (typeof rec.iconName === "string" && rec.iconName) ||
+            "heart";
+          return {
+            ...rec,
+            icon,
+            iconName: icon,
+          };
+        });
+      const csrLabel = subsectionScope?.label.trim().toLowerCase() ?? "";
+      const header = asRecord(editorData.header);
+      const focusAreas = asRecord(editorData.focusAreas);
+      const ourImpact = asRecord(editorData.ourImpact);
+      const csrProjects = asRecord(editorData.csrProjects);
+      const bannerCta = asRecord(editorData.bannerCta);
+      const coreValues = asRecord(editorData.coreValues);
+      const nestedImpactButton = asRecord(ourImpact.ctaButton);
+
+      if (["", "csr intro", "csr overview"].includes(csrLabel)) {
+        const banner = asRecord(editorData.banner);
+        const breadcrumbCurrent =
+          typeof banner.breadcrumbCurrent === "string"
+            ? banner.breadcrumbCurrent.trim()
+            : "";
+        const isBannerTitle = (value: string) => {
+          const normalized = value.trim().toLowerCase();
+          return (
+            !normalized ||
+            normalized === "csr" ||
+            (Boolean(breadcrumbCurrent) &&
+              normalized === breadcrumbCurrent.toLowerCase())
+          );
+        };
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof header.topBadge === "string" && header.topBadge) ||
+          "OUR CSR INITIATIVES";
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        editorData.title =
+          currentTitle && !isBannerTitle(currentTitle)
+            ? currentTitle
+            : toPlain(header.title) ||
+              "We Care. We Act. We Make a Difference.";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof editorData.description === "string" && editorData.description) ||
+          (typeof header.pretitle === "string" && header.pretitle) ||
+          "";
+        editorData.stats = withIcon(
+          Array.isArray(editorData.stats) ? editorData.stats : [],
+        );
+      }
+
+      if (csrLabel === "focus areas") {
+        editorData.focusPretitle =
+          (typeof editorData.focusPretitle === "string" && editorData.focusPretitle) ||
+          (typeof focusAreas.topBadge === "string" && focusAreas.topBadge) ||
+          "OUR FOCUS AREAS";
+        editorData.focusItems = withIcon(
+          Array.isArray(editorData.focusItems) && editorData.focusItems.length
+            ? editorData.focusItems
+            : Array.isArray(focusAreas.items)
+              ? focusAreas.items
+              : [],
+        );
+      }
+
+      if (csrLabel === "our impact") {
+        editorData.impactPretitle =
+          (typeof editorData.impactPretitle === "string" && editorData.impactPretitle) ||
+          (typeof ourImpact.topBadge === "string" && ourImpact.topBadge) ||
+          "OUR IMPACT";
+        editorData.impactDesc =
+          (typeof editorData.impactDesc === "string" && editorData.impactDesc) ||
+          (typeof ourImpact.description === "string" && ourImpact.description) ||
+          "";
+        const existingButton = asRecord(editorData.impactButton);
+        editorData.impactButton = {
+          label:
+            (typeof existingButton.label === "string" && existingButton.label) ||
+            (typeof nestedImpactButton.label === "string" && nestedImpactButton.label) ||
+            (typeof nestedImpactButton.text === "string" && nestedImpactButton.text) ||
+            "Learn More About Our Impact",
+          href:
+            (typeof existingButton.href === "string" && existingButton.href) ||
+            (typeof nestedImpactButton.href === "string" && nestedImpactButton.href) ||
+            "/about-us",
+        };
+        editorData.pillars = withIcon(
+          Array.isArray(editorData.pillars) && editorData.pillars.length
+            ? editorData.pillars
+            : Array.isArray(ourImpact.pillars)
+              ? ourImpact.pillars
+              : [],
+        );
+      }
+
+      if (csrLabel === "csr projects") {
+        editorData.projectsPretitle =
+          (typeof editorData.projectsPretitle === "string" &&
+            editorData.projectsPretitle) ||
+          (typeof csrProjects.topBadge === "string" && csrProjects.topBadge) ||
+          "OUR CSR PROJECTS";
+        editorData.csrProjectItems =
+          Array.isArray(editorData.csrProjectItems) && editorData.csrProjectItems.length
+            ? editorData.csrProjectItems
+            : Array.isArray(csrProjects.items)
+              ? csrProjects.items
+              : [];
+      }
+
+      if (csrLabel === "csr cta") {
+        const existingCta = asRecord(editorData.ctaButton);
+        editorData.ctaTitle =
+          (typeof editorData.ctaTitle === "string" && editorData.ctaTitle) ||
+          (typeof bannerCta.title === "string" && bannerCta.title) ||
+          "Together, We Can Build a Better Tomorrow";
+        editorData.ctaDesc =
+          (typeof editorData.ctaDesc === "string" && editorData.ctaDesc) ||
+          (typeof bannerCta.description === "string" && bannerCta.description) ||
+          "";
+        editorData.ctaButton = {
+          label:
+            (typeof existingCta.label === "string" && existingCta.label) ||
+            (typeof bannerCta.buttonText === "string" && bannerCta.buttonText) ||
+            "Partner With Us",
+          href:
+            (typeof existingCta.href === "string" && existingCta.href) ||
+            (typeof bannerCta.href === "string" && bannerCta.href) ||
+            "/contact-us",
+        };
+      }
+
+      if (csrLabel === "core values") {
+        editorData.coreValueItems = withIcon(
+          Array.isArray(editorData.coreValueItems) && editorData.coreValueItems.length
+            ? editorData.coreValueItems
+            : Array.isArray(coreValues.items)
+              ? coreValues.items
+              : [],
+        );
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Brochure" || activeSectionType === "BrochurePage")
+    ) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const header = asRecord(editorData.header);
+      const sectionTitle = asRecord(editorData.sectionTitle);
+      const ctaSection = asRecord(editorData.ctaSection);
+      const banner = asRecord(editorData.banner);
+      const label = subsectionScope?.label.trim().toLowerCase() ?? "";
+      const breadcrumbCurrent =
+        typeof banner.breadcrumbCurrent === "string"
+          ? banner.breadcrumbCurrent.trim()
+          : "";
+      const isBannerTitle = (value: string) => {
+        const normalized = value.trim().toLowerCase();
+        return (
+          !normalized ||
+          normalized === "brochure" ||
+          (Boolean(breadcrumbCurrent) &&
+            normalized === breadcrumbCurrent.toLowerCase())
+        );
+      };
+
+      if (["", "brochure intro"].includes(label)) {
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof header.label === "string" && header.label) ||
+          "BROCHURES";
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        const heading =
+          (typeof editorData.heading === "string" && editorData.heading.trim()) ||
+          (typeof header.heading === "string" && header.heading.trim()) ||
+          "";
+        editorData.title =
+          currentTitle && !isBannerTitle(currentTitle)
+            ? currentTitle
+            : heading || "Explore Our Brochures";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof editorData.description === "string" && editorData.description) ||
+          (typeof header.description === "string" && header.description) ||
+          "";
+        if (!Array.isArray(editorData.features)) {
+          editorData.features = Array.isArray(header.features)
+            ? header.features
+            : [];
+        }
+      }
+
+      if (["brochures", "brochure list"].includes(label)) {
+        editorData.listPretitle =
+          (typeof editorData.listPretitle === "string" && editorData.listPretitle) ||
+          (typeof sectionTitle.label === "string" && sectionTitle.label) ||
+          "OUR BROCHURES";
+        editorData.listTitle =
+          (typeof editorData.listTitle === "string" && editorData.listTitle) ||
+          (typeof sectionTitle.heading === "string" && sectionTitle.heading) ||
+          "Inform. Inspire. Involve.";
+        if (!Array.isArray(editorData.brochures)) {
+          editorData.brochures = [];
+        }
+      }
+
+      if (["together we can", "brochure cta"].includes(label)) {
+        const primary = asRecord(editorData.ctaPrimaryButton);
+        const nestedPrimary = asRecord(ctaSection.primaryButton);
+        const secondary = asRecord(editorData.ctaSecondaryButton);
+        const nestedSecondary = asRecord(ctaSection.secondaryButton);
+        editorData.ctaPretitle =
+          (typeof editorData.ctaPretitle === "string" && editorData.ctaPretitle) ||
+          (typeof ctaSection.label === "string" && ctaSection.label) ||
+          "TOGETHER WE CAN";
+        editorData.ctaTitle =
+          (typeof editorData.ctaTitle === "string" && editorData.ctaTitle) ||
+          (typeof ctaSection.title === "string" && ctaSection.title) ||
+          "Be a Part of the Change";
+        editorData.ctaDesc =
+          (typeof editorData.ctaDesc === "string" && editorData.ctaDesc) ||
+          (typeof ctaSection.description === "string" && ctaSection.description) ||
+          "";
+        editorData.ctaPrimaryButton = {
+          label:
+            (typeof primary.label === "string" && primary.label) ||
+            (typeof nestedPrimary.label === "string" && nestedPrimary.label) ||
+            "Donate Now",
+          href:
+            (typeof primary.href === "string" && primary.href) ||
+            (typeof nestedPrimary.href === "string" && nestedPrimary.href) ||
+            "/donate",
+        };
+        editorData.ctaSecondaryButton = {
+          label:
+            (typeof secondary.label === "string" && secondary.label) ||
+            (typeof nestedSecondary.label === "string" && nestedSecondary.label) ||
+            "Join Us",
+          href:
+            (typeof secondary.href === "string" && secondary.href) ||
+            (typeof nestedSecondary.href === "string" && nestedSecondary.href) ||
+            "/contact-us",
+        };
+        if (!Array.isArray(editorData.ctaStats) || editorData.ctaStats.length === 0) {
+          editorData.ctaStats = Array.isArray(ctaSection.stats)
+            ? ctaSection.stats
+            : [];
+        }
+      }
+    }
+
+    if (category === "NGO" && activeSectionType === "CaseStudy") {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const badge = asRecord(editorData.badge);
+      const titleObject = asRecord(editorData.title);
+      const nestedCta = asRecord(editorData.cta);
+      const nestedButton = asRecord(nestedCta.button);
+      const existingButton = asRecord(editorData.ctaButton);
+      const label = subsectionScope?.label.trim().toLowerCase() ?? "";
+
+      if (["", "case study overview", "case studies"].includes(label)) {
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof badge.label === "string" && badge.label) ||
+          "Our Causes";
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        const heading =
+          (typeof editorData.heading === "string" && editorData.heading.trim()) ||
+          [titleObject.line1, titleObject.highlight, titleObject.line2]
+            .filter((part): part is string => typeof part === "string" && Boolean(part.trim()))
+            .join(" ");
+        const isBannerTitle = (value: string) => {
+          const normalized = value.trim().toLowerCase();
+          return (
+            !normalized ||
+            normalized === "case study" ||
+            normalized === "case study details"
+          );
+        };
+        editorData.title =
+          currentTitle && !isBannerTitle(currentTitle)
+            ? currentTitle
+            : heading || "The Causes We Care About";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof editorData.description === "string" && editorData.description) ||
+          "";
+        if (!Array.isArray(editorData.items)) {
+          editorData.items = [];
+        }
+      }
+
+      if (label === "case study cta") {
+        editorData.ctaTitle =
+          (typeof editorData.ctaTitle === "string" && editorData.ctaTitle) ||
+          (typeof nestedCta.title === "string" && nestedCta.title) ||
+          "Want You Know How Can Help?";
+        editorData.ctaDesc =
+          (typeof editorData.ctaDesc === "string" && editorData.ctaDesc) ||
+          (typeof nestedCta.description === "string" && nestedCta.description) ||
+          "";
+        editorData.ctaButton = {
+          label:
+            (typeof existingButton.label === "string" && existingButton.label) ||
+            (typeof nestedButton.label === "string" && nestedButton.label) ||
+            "Donate Now",
+          href:
+            (typeof existingButton.href === "string" && existingButton.href) ||
+            (typeof nestedButton.href === "string" && nestedButton.href) ||
+            "/donate",
+        };
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "CaseDetails" ||
+        activeSectionType === "CaseDetailsPage")
+    ) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const mainContent = asRecord(editorData.mainContent);
+      const sidebar = asRecord(editorData.sidebar);
+      const primary = asRecord(mainContent.primaryArticle);
+      const secondary = asRecord(mainContent.secondaryArticle);
+      const nestedImage = asRecord(primary.mainImage);
+      const label = subsectionScope?.label.trim().toLowerCase() ?? "";
+      const isContentEditor =
+        label === "" ||
+        label === "article" ||
+        label === "article content" ||
+        label === "sidebar" ||
+        label === "popular posts";
+
+      if (isContentEditor) {
+        editorData.pageTitle =
+          (typeof editorData.pageTitle === "string" && editorData.pageTitle) ||
+          "Case Study Detail";
+        editorData.primaryTitle =
+          (typeof editorData.primaryTitle === "string" && editorData.primaryTitle) ||
+          (typeof primary.title === "string" && primary.title) ||
+          "";
+        editorData.primaryImage =
+          (typeof editorData.primaryImage === "string" && editorData.primaryImage) ||
+          (typeof nestedImage.src === "string" && nestedImage.src) ||
+          "";
+        editorData.primaryImageAlt =
+          (typeof editorData.primaryImageAlt === "string" &&
+            editorData.primaryImageAlt) ||
+          (typeof nestedImage.alt === "string" && nestedImage.alt) ||
+          "";
+        if (!Array.isArray(editorData.primaryParagraphs)) {
+          editorData.primaryParagraphs = Array.isArray(primary.paragraphs)
+            ? primary.paragraphs
+            : [];
+        }
+        editorData.postedOn =
+          (typeof editorData.postedOn === "string" && editorData.postedOn) ||
+          (typeof secondary.postedOn === "string" && secondary.postedOn) ||
+          "";
+        editorData.secondaryTitle =
+          (typeof editorData.secondaryTitle === "string" &&
+            editorData.secondaryTitle) ||
+          (typeof secondary.title === "string" && secondary.title) ||
+          "";
+        if (!Array.isArray(editorData.secondaryParagraphs)) {
+          editorData.secondaryParagraphs = Array.isArray(secondary.paragraphs)
+            ? secondary.paragraphs
+            : [];
+        }
+        editorData.popularPostsTitle =
+          (typeof editorData.popularPostsTitle === "string" &&
+            editorData.popularPostsTitle) ||
+          (typeof sidebar.popularPostsTitle === "string" &&
+            sidebar.popularPostsTitle) ||
+          "Popular Posts";
+        if (!Array.isArray(editorData.popularPosts)) {
+          const rawPosts = Array.isArray(sidebar.popularPosts)
+            ? sidebar.popularPosts
+            : [];
+          editorData.popularPosts = rawPosts.map((post) => {
+            const record =
+              post && typeof post === "object" && !Array.isArray(post)
+                ? (post as Record<string, unknown>)
+                : {};
+            const image = record.image;
+            const imageSrc =
+              typeof image === "string"
+                ? image
+                : image &&
+                    typeof image === "object" &&
+                    !Array.isArray(image) &&
+                    typeof (image as Record<string, unknown>).src === "string"
+                  ? String((image as Record<string, unknown>).src)
+                  : "";
+            return {
+              ...record,
+              image: imageSrc,
+            };
+          });
+        }
+      }
+    }
+
+    if (category === "NGO" && activeSectionType === "TestimonialsPage") {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const badge = asRecord(editorData.badge);
+      const titleObject = asRecord(editorData.title);
+      const banner = asRecord(editorData.banner);
+      const label = subsectionScope?.label.trim().toLowerCase() ?? "";
+      const breadcrumbCurrent =
+        typeof banner.breadcrumbCurrent === "string"
+          ? banner.breadcrumbCurrent.trim()
+          : "";
+      const isBannerTitle = (value: string) => {
+        const normalized = value.trim().toLowerCase();
+        return (
+          !normalized ||
+          normalized === "testimonial" ||
+          (Boolean(breadcrumbCurrent) &&
+            normalized === breadcrumbCurrent.toLowerCase())
+        );
+      };
+
+      if (
+        [
+          "",
+          "testimonial intro",
+          "testimonial content",
+          "testimonials",
+          "testimonials content",
+        ].includes(label)
+      ) {
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof badge.label === "string" && badge.label) ||
+          "Testimonials";
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        editorData.title =
+          currentTitle && !isBannerTitle(currentTitle)
+            ? currentTitle
+            : (typeof titleObject.line1 === "string" && titleObject.line1.trim()) ||
+              "Don't Believe Us?";
+        editorData.highlight =
+          (typeof editorData.highlight === "string" && editorData.highlight) ||
+          (typeof titleObject.highlight === "string" && titleObject.highlight) ||
+          "See Review";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof editorData.description === "string" && editorData.description) ||
+          "";
+        if (!Array.isArray(editorData.testimonials) || editorData.testimonials.length === 0) {
+          editorData.testimonials = Array.isArray(editorData.items)
+            ? editorData.items
+            : [];
+        }
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Contact" &&
+      subsectionScope?.label.trim().toLowerCase() === "map"
+    ) {
+      const map =
+        editorData.map &&
+        typeof editorData.map === "object" &&
+        !Array.isArray(editorData.map)
+          ? (editorData.map as Record<string, unknown>)
+          : {};
+      editorData.mapEmbedUrl =
+        (typeof editorData.mapEmbedUrl === "string" && editorData.mapEmbedUrl) ||
+        (typeof map.embedUrl === "string" && map.embedUrl) ||
+        "";
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Contact" &&
+      ["", "contact overview", "contact"].includes(
+        subsectionScope?.label.trim().toLowerCase() ?? "",
+      )
+    ) {
+      const office =
+        editorData.office &&
+        typeof editorData.office === "object" &&
+        !Array.isArray(editorData.office)
+          ? (editorData.office as Record<string, unknown>)
+          : {};
+      const asItem = (block: unknown, icon: string, fallbackTitle: string) => {
+        if (!block || typeof block !== "object" || Array.isArray(block)) {
+          return null;
+        }
+        const item = block as Record<string, unknown>;
+        const title =
+          (typeof item.title === "string" && item.title) ||
+          (typeof item.label === "string" && item.label) ||
+          fallbackTitle;
+        const value = typeof item.value === "string" ? item.value : "";
+        return { icon, title, value };
+      };
+      if (!Array.isArray(editorData.contactItems) || editorData.contactItems.length === 0) {
+        editorData.contactItems = [
+          asItem(office.address, "map-pin", "Office Address"),
+          asItem(office.phone, "phone", "Phone Number"),
+          asItem(office.email, "mail", "Email Address"),
+          asItem(office.hours, "clock", "Working Hours"),
+        ].filter(Boolean);
+      } else {
+        editorData.contactItems = editorData.contactItems.map((item) => {
+          if (!item || typeof item !== "object" || Array.isArray(item)) return item;
+          const record = item as Record<string, unknown>;
+          return {
+            ...record,
+            title:
+              (typeof record.title === "string" && record.title) ||
+              (typeof record.label === "string" && record.label) ||
+              "",
+          };
+        });
+      }
+      const form =
+        editorData.form &&
+        typeof editorData.form === "object" &&
+        !Array.isArray(editorData.form)
+          ? (editorData.form as Record<string, unknown>)
+          : {};
+      if (form.fields && !Array.isArray(form.fields) && typeof form.fields === "object") {
+        const fields = form.fields as Record<string, unknown>;
+        editorData.form = {
+          ...form,
+          fields: Object.entries(fields).map(([key, value]) => {
+            const entry =
+              value && typeof value === "object" && !Array.isArray(value)
+                ? (value as Record<string, unknown>)
+                : {};
+            return {
+              name: key,
+              label: typeof entry.label === "string" ? entry.label : key,
+              placeholder:
+                typeof entry.placeholder === "string" ? entry.placeholder : "",
+              type:
+                typeof entry.type === "string"
+                  ? entry.type
+                  : key === "message"
+                    ? "textarea"
+                    : "text",
+              width:
+                typeof entry.width === "string"
+                  ? entry.width
+                  : key === "message"
+                    ? "full"
+                    : "half",
+            };
+          }),
+        };
+      }
+    }
+
+    if (category === "NGO" && isNGOFrenchiseSection) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const header = asRecord(editorData.header);
+      const leftSection = asRecord(editorData.leftSection);
+      const form = asRecord(editorData.form);
+      const processSection = asRecord(editorData.processSection);
+      const contactBanner = asRecord(editorData.contactBanner);
+      const nestedLeftImage = asRecord(leftSection.image);
+      const nestedCtaImage = asRecord(contactBanner.image);
+      const label = subsectionScope?.label.trim().toLowerCase() ?? "";
+      const banner = asRecord(editorData.banner);
+      const breadcrumbCurrent =
+        typeof banner.breadcrumbCurrent === "string"
+          ? banner.breadcrumbCurrent.trim()
+          : "";
+      const isBannerTitle = (value: string) => {
+        const normalized = value.trim().toLowerCase();
+        return (
+          !normalized ||
+          normalized === "franchise" ||
+          normalized === "frenchise" ||
+          (Boolean(breadcrumbCurrent) &&
+            normalized === breadcrumbCurrent.toLowerCase())
+        );
+      };
+
+      if (["", "franchise intro"].includes(label)) {
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof header.label === "string" && header.label) ||
+          "FRANCHISE";
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        const heading =
+          (typeof editorData.heading === "string" && editorData.heading.trim()) ||
+          (typeof header.heading === "string" && header.heading.trim()) ||
+          "";
+        editorData.title =
+          currentTitle && !isBannerTitle(currentTitle)
+            ? currentTitle
+            : heading || "Be a Part of Our Mission. Build a Better Tomorrow.";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof header.description === "string" && header.description) ||
+          "";
+        if (!Array.isArray(editorData.features)) {
+          editorData.features = Array.isArray(header.features)
+            ? header.features
+            : [];
+        }
+      }
+
+      if (label === "franchise form") {
+        editorData.leftPretitle =
+          (typeof editorData.leftPretitle === "string" && editorData.leftPretitle) ||
+          (typeof leftSection.label === "string" && leftSection.label) ||
+          "WHY PARTNER WITH US?";
+        editorData.leftTitle =
+          (typeof editorData.leftTitle === "string" && editorData.leftTitle) ||
+          (typeof leftSection.title === "string" && leftSection.title) ||
+          "";
+        editorData.leftDesc =
+          (typeof editorData.leftDesc === "string" && editorData.leftDesc) ||
+          (typeof leftSection.description === "string" && leftSection.description) ||
+          "";
+        if (!Array.isArray(editorData.leftPoints)) {
+          editorData.leftPoints = Array.isArray(leftSection.points)
+            ? leftSection.points
+            : [];
+        }
+        editorData.leftImage =
+          (typeof editorData.leftImage === "string" && editorData.leftImage) ||
+          (typeof nestedLeftImage.src === "string" && nestedLeftImage.src) ||
+          "";
+        editorData.leftImageAlt =
+          (typeof editorData.leftImageAlt === "string" && editorData.leftImageAlt) ||
+          (typeof nestedLeftImage.alt === "string" && nestedLeftImage.alt) ||
+          "";
+        editorData.formTitle =
+          (typeof editorData.formTitle === "string" && editorData.formTitle) ||
+          (typeof form.title === "string" && form.title) ||
+          "Enquire Now";
+        editorData.formPretitle =
+          (typeof editorData.formPretitle === "string" && editorData.formPretitle) ||
+          (typeof form.pretitle === "string" && form.pretitle) ||
+          "";
+        if (form.fields && !Array.isArray(form.fields) && typeof form.fields === "object") {
+          const fields = form.fields as Record<string, unknown>;
+          editorData.form = {
+            ...form,
+            fields: Object.entries(fields).map(([key, value]) => {
+              const entry = asRecord(value);
+              return {
+                name: key,
+                label: typeof entry.label === "string" ? entry.label : key,
+                placeholder:
+                  typeof entry.placeholder === "string" ? entry.placeholder : "",
+                type: typeof entry.type === "string" ? entry.type : "text",
+                required: Boolean(entry.required),
+                icon: typeof entry.icon === "string" ? entry.icon : "",
+                options: Array.isArray(entry.options) ? entry.options : [],
+              };
+            }),
+          };
+        }
+      }
+
+      if (label === "franchise process") {
+        editorData.processPretitle =
+          (typeof editorData.processPretitle === "string" &&
+            editorData.processPretitle) ||
+          (typeof processSection.label === "string" && processSection.label) ||
+          "OUR FRANCHISE PROCESS";
+        editorData.processTitle =
+          (typeof editorData.processTitle === "string" && editorData.processTitle) ||
+          (typeof processSection.title === "string" && processSection.title) ||
+          "";
+        if (!Array.isArray(editorData.steps)) {
+          editorData.steps = Array.isArray(processSection.steps)
+            ? processSection.steps
+            : [];
+        }
+      }
+
+      if (label === "franchise cta") {
+        editorData.ctaTitle =
+          (typeof editorData.ctaTitle === "string" && editorData.ctaTitle) ||
+          (typeof contactBanner.title === "string" && contactBanner.title) ||
+          "Have Questions?";
+        editorData.ctaPretitle =
+          (typeof editorData.ctaPretitle === "string" && editorData.ctaPretitle) ||
+          (typeof contactBanner.pretitle === "string" && contactBanner.pretitle) ||
+          "";
+        editorData.ctaDesc =
+          (typeof editorData.ctaDesc === "string" && editorData.ctaDesc) ||
+          (typeof contactBanner.description === "string" &&
+            contactBanner.description) ||
+          "";
+        editorData.ctaPhone =
+          (typeof editorData.ctaPhone === "string" && editorData.ctaPhone) ||
+          (typeof contactBanner.phone === "string" && contactBanner.phone) ||
+          "";
+        editorData.ctaEmail =
+          (typeof editorData.ctaEmail === "string" && editorData.ctaEmail) ||
+          (typeof contactBanner.email === "string" && contactBanner.email) ||
+          "";
+        editorData.ctaHours =
+          (typeof editorData.ctaHours === "string" && editorData.ctaHours) ||
+          (typeof contactBanner.workingHours === "string" &&
+            contactBanner.workingHours) ||
+          "";
+        editorData.ctaImage =
+          (typeof editorData.ctaImage === "string" && editorData.ctaImage) ||
+          (typeof nestedCtaImage.src === "string" && nestedCtaImage.src) ||
+          "";
+        editorData.ctaImageAlt =
+          (typeof editorData.ctaImageAlt === "string" && editorData.ctaImageAlt) ||
+          (typeof nestedCtaImage.alt === "string" && nestedCtaImage.alt) ||
+          "";
+      }
+    }
+
+    if (category === "NGO" && isNGOEnquirySection) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const header = asRecord(editorData.header);
+      const leftSection = asRecord(editorData.leftSection);
+      const form = asRecord(editorData.form);
+      const contactSection = asRecord(editorData.contactSection);
+      const footerBanner = asRecord(editorData.footerBanner);
+      const nestedLeftImage = asRecord(leftSection.image);
+      const nestedButton = asRecord(footerBanner.button);
+      const label = subsectionScope?.label.trim().toLowerCase() ?? "";
+      const banner = asRecord(editorData.banner);
+      const breadcrumbCurrent =
+        typeof banner.breadcrumbCurrent === "string"
+          ? banner.breadcrumbCurrent.trim()
+          : "";
+      const isBannerTitle = (value: string) => {
+        const normalized = value.trim().toLowerCase();
+        return (
+          !normalized ||
+          normalized === "enquiry" ||
+          normalized === "enquiry now" ||
+          (Boolean(breadcrumbCurrent) &&
+            normalized === breadcrumbCurrent.toLowerCase())
+        );
+      };
+
+      if (["", "enquiry intro", "enquiry form"].includes(label)) {
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof header.label === "string" && header.label) ||
+          "ENQUIRY NOW";
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        const heading =
+          (typeof editorData.heading === "string" && editorData.heading.trim()) ||
+          (typeof header.heading === "string" && header.heading.trim()) ||
+          "";
+        editorData.title =
+          currentTitle && !isBannerTitle(currentTitle)
+            ? currentTitle
+            : heading || "We're Here to Help You";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof header.description === "string" && header.description) ||
+          "";
+        editorData.leftTitle =
+          (typeof editorData.leftTitle === "string" && editorData.leftTitle) ||
+          (typeof leftSection.title === "string" && leftSection.title) ||
+          "";
+        editorData.leftDesc =
+          (typeof editorData.leftDesc === "string" && editorData.leftDesc) ||
+          (typeof leftSection.description === "string" &&
+            leftSection.description) ||
+          "";
+        if (!Array.isArray(editorData.leftFeatures)) {
+          editorData.leftFeatures = Array.isArray(leftSection.features)
+            ? leftSection.features
+            : [];
+        }
+        editorData.leftImage =
+          (typeof editorData.leftImage === "string" && editorData.leftImage) ||
+          (typeof nestedLeftImage.src === "string" && nestedLeftImage.src) ||
+          "";
+        editorData.leftImageAlt =
+          (typeof editorData.leftImageAlt === "string" &&
+            editorData.leftImageAlt) ||
+          (typeof nestedLeftImage.alt === "string" && nestedLeftImage.alt) ||
+          "";
+        editorData.formTitle =
+          (typeof editorData.formTitle === "string" && editorData.formTitle) ||
+          (typeof form.title === "string" && form.title) ||
+          "Send Us a Message";
+        if (
+          form.fields &&
+          !Array.isArray(form.fields) &&
+          typeof form.fields === "object"
+        ) {
+          const fields = form.fields as Record<string, unknown>;
+          editorData.form = {
+            ...form,
+            fields: Object.entries(fields).map(([key, value]) => {
+              const entry = asRecord(value);
+              return {
+                name: key,
+                label: typeof entry.label === "string" ? entry.label : key,
+                placeholder:
+                  typeof entry.placeholder === "string" ? entry.placeholder : "",
+                type: typeof entry.type === "string" ? entry.type : "text",
+                required: Boolean(entry.required),
+                icon: typeof entry.icon === "string" ? entry.icon : "",
+                options: Array.isArray(entry.options) ? entry.options : [],
+              };
+            }),
+          };
+        }
+      }
+
+      if (label === "enquiry contact") {
+        editorData.contactTitle =
+          (typeof editorData.contactTitle === "string" &&
+            editorData.contactTitle) ||
+          (typeof contactSection.title === "string" && contactSection.title) ||
+          "Prefer to talk?";
+        editorData.contactPretitle =
+          (typeof editorData.contactPretitle === "string" &&
+            editorData.contactPretitle) ||
+          (typeof contactSection.pretitle === "string" &&
+            contactSection.pretitle) ||
+          "";
+        editorData.contactDesc =
+          (typeof editorData.contactDesc === "string" &&
+            editorData.contactDesc) ||
+          (typeof contactSection.description === "string" &&
+            contactSection.description) ||
+          "";
+        if (!Array.isArray(editorData.contactItems)) {
+          editorData.contactItems = Array.isArray(contactSection.items)
+            ? contactSection.items
+            : [];
+        }
+      }
+
+      if (label === "enquiry cta") {
+        editorData.ctaIcon =
+          (typeof editorData.ctaIcon === "string" && editorData.ctaIcon) ||
+          (typeof footerBanner.icon === "string" && footerBanner.icon) ||
+          "shield-check";
+        editorData.ctaText =
+          (typeof editorData.ctaText === "string" && editorData.ctaText) ||
+          (typeof footerBanner.text === "string" && footerBanner.text) ||
+          "";
+        editorData.ctaSubtext =
+          (typeof editorData.ctaSubtext === "string" && editorData.ctaSubtext) ||
+          (typeof footerBanner.subtext === "string" && footerBanner.subtext) ||
+          "";
+        editorData.ctaButtonLabel =
+          (typeof editorData.ctaButtonLabel === "string" &&
+            editorData.ctaButtonLabel) ||
+          (typeof nestedButton.label === "string" && nestedButton.label) ||
+          "Learn More About Us";
+        editorData.ctaButtonHref =
+          (typeof editorData.ctaButtonHref === "string" &&
+            editorData.ctaButtonHref) ||
+          (typeof nestedButton.href === "string" && nestedButton.href) ||
+          "/about";
+        editorData.ctaButtonIcon =
+          (typeof editorData.ctaButtonIcon === "string" &&
+            editorData.ctaButtonIcon) ||
+          (typeof nestedButton.icon === "string" && nestedButton.icon) ||
+          "arrow-right";
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Support" || activeSectionType === "SupportPage")
+    ) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const toPlain = (value: unknown) => {
+        if (typeof value === "string") return value;
+        const rec = asRecord(value);
+        return [rec.plainText, rec.highlightedText, rec.line1, rec.highlight]
+          .filter(
+            (part): part is string =>
+              typeof part === "string" && Boolean(part.trim()),
+          )
+          .join(" ")
+          .trim();
+      };
+      const withIcon = (items: unknown[]) =>
+        items.map((item) => {
+          if (!item || typeof item !== "object" || Array.isArray(item)) {
+            return item;
+          }
+          const rec = item as Record<string, unknown>;
+          const action = asRecord(rec.action);
+          const button = asRecord(rec.button);
+          const href =
+            (typeof button.href === "string" && button.href) ||
+            (typeof action.href === "string" && action.href) ||
+            (typeof action.url === "string" && action.url) ||
+            "";
+          const label =
+            (typeof button.label === "string" && button.label) ||
+            (typeof action.label === "string" && action.label) ||
+            "";
+          return {
+            ...rec,
+            icon:
+              (typeof rec.icon === "string" && rec.icon) ||
+              (typeof rec.iconName === "string" && rec.iconName) ||
+              "heart",
+            ...(label || href
+              ? { button: { label: label || "Learn More", href: href || "#" } }
+              : {}),
+          };
+        });
+      const supportLabel =
+        subsectionScope?.label.trim().toLowerCase() ?? "";
+      const introduction = asRecord(editorData.introduction);
+      const keyValues = asRecord(editorData.keyValues);
+      const waysToSupport = asRecord(editorData.waysToSupport);
+      const impactStats = asRecord(editorData.impactStats);
+      const ctaBanner = asRecord(editorData.ctaBanner);
+      const bannerImage = asRecord(ctaBanner.bannerImage);
+      const primaryAction = asRecord(ctaBanner.primaryAction);
+      const secondaryAction = asRecord(ctaBanner.secondaryAction);
+      const transparencyBar = asRecord(editorData.transparencyBar);
+      const transparencyAction = asRecord(transparencyBar.action);
+
+      if (
+        ["", "support intro", "support overview"].includes(supportLabel)
+      ) {
+        editorData.pretitle =
+          (typeof editorData.pretitle === "string" && editorData.pretitle) ||
+          (typeof introduction.topBadge === "string" &&
+            introduction.topBadge) ||
+          "SUPPORT US";
+        const currentTitle =
+          typeof editorData.title === "string" ? editorData.title.trim() : "";
+        editorData.title =
+          currentTitle && currentTitle.toLowerCase() !== "support"
+            ? currentTitle
+            : toPlain(introduction.heading) ||
+              "Together, We Can Create a Better Tomorrow";
+        editorData.desc =
+          (typeof editorData.desc === "string" && editorData.desc) ||
+          (typeof editorData.description === "string" &&
+            editorData.description) ||
+          (typeof introduction.description === "string" &&
+            introduction.description) ||
+          "";
+        const values = Array.isArray(editorData.values)
+          ? editorData.values
+          : Array.isArray(keyValues.values)
+            ? keyValues.values
+            : [];
+        editorData.values = withIcon(values);
+      }
+
+      if (supportLabel === "ways to support") {
+        editorData.waysPretitle =
+          (typeof editorData.waysPretitle === "string" &&
+            editorData.waysPretitle) ||
+          (typeof waysToSupport.topBadge === "string" &&
+            waysToSupport.topBadge) ||
+          "WAYS TO SUPPORT";
+        editorData.waysTitle =
+          (typeof editorData.waysTitle === "string" &&
+            editorData.waysTitle) ||
+          (typeof waysToSupport.heading === "string" &&
+            waysToSupport.heading) ||
+          "Every Action Helps Us Bring Change";
+        const cards = Array.isArray(editorData.supportCards)
+          ? editorData.supportCards
+          : Array.isArray(waysToSupport.supportCards)
+            ? waysToSupport.supportCards
+            : [];
+        editorData.supportCards = withIcon(cards);
+      }
+
+      if (supportLabel === "impact stats") {
+        editorData.impactPretitle =
+          (typeof editorData.impactPretitle === "string" &&
+            editorData.impactPretitle) ||
+          (typeof impactStats.topBadge === "string" &&
+            impactStats.topBadge) ||
+          "YOUR SUPPORT, REAL IMPACT";
+        editorData.impactTitle =
+          (typeof editorData.impactTitle === "string" &&
+            editorData.impactTitle) ||
+          (typeof impactStats.heading === "string" && impactStats.heading) ||
+          "Changing Lives, Building Futures";
+        const stats = Array.isArray(editorData.stats)
+          ? editorData.stats
+          : Array.isArray(impactStats.stats)
+            ? impactStats.stats
+            : [];
+        editorData.stats = withIcon(stats);
+        editorData.closingText =
+          (typeof editorData.closingText === "string" &&
+            editorData.closingText) ||
+          (typeof impactStats.closingText === "string" &&
+            impactStats.closingText) ||
+          "";
+      }
+
+      if (supportLabel === "support cta") {
+        editorData.ctaPretitle =
+          (typeof editorData.ctaPretitle === "string" &&
+            editorData.ctaPretitle) ||
+          (typeof ctaBanner.topBadge === "string" && ctaBanner.topBadge) ||
+          "BE A PART OF THE CHANGE";
+        editorData.ctaTitle =
+          (typeof editorData.ctaTitle === "string" && editorData.ctaTitle) ||
+          toPlain(ctaBanner.heading) ||
+          "Your Support Can Change a Life Today";
+        editorData.ctaDesc =
+          (typeof editorData.ctaDesc === "string" && editorData.ctaDesc) ||
+          (typeof ctaBanner.description === "string" &&
+            ctaBanner.description) ||
+          "";
+        editorData.ctaImage =
+          (typeof editorData.ctaImage === "string" && editorData.ctaImage) ||
+          (typeof bannerImage.src === "string" && bannerImage.src) ||
+          "";
+        const existingPrimary = asRecord(editorData.ctaPrimaryButton);
+        const existingSecondary = asRecord(editorData.ctaSecondaryButton);
+        editorData.ctaPrimaryButton = {
+          label:
+            (typeof existingPrimary.label === "string" &&
+              existingPrimary.label) ||
+            (typeof primaryAction.label === "string" && primaryAction.label) ||
+            "Donate Now",
+          href:
+            (typeof existingPrimary.href === "string" &&
+              existingPrimary.href) ||
+            (typeof primaryAction.href === "string" && primaryAction.href) ||
+            (typeof primaryAction.url === "string" && primaryAction.url) ||
+            "/donate",
+        };
+        editorData.ctaSecondaryButton = {
+          label:
+            (typeof existingSecondary.label === "string" &&
+              existingSecondary.label) ||
+            (typeof secondaryAction.label === "string" &&
+              secondaryAction.label) ||
+            "Be Member",
+          href:
+            (typeof existingSecondary.href === "string" &&
+              existingSecondary.href) ||
+            (typeof secondaryAction.href === "string" &&
+              secondaryAction.href) ||
+            (typeof secondaryAction.url === "string" &&
+              secondaryAction.url) ||
+            "/team",
+        };
+      }
+
+      if (supportLabel === "transparency") {
+        editorData.transparencyIcon =
+          (typeof editorData.transparencyIcon === "string" &&
+            editorData.transparencyIcon) ||
+          (typeof transparencyBar.iconName === "string" &&
+            transparencyBar.iconName) ||
+          "shield-check";
+        editorData.transparencyTitle =
+          (typeof editorData.transparencyTitle === "string" &&
+            editorData.transparencyTitle) ||
+          (typeof transparencyBar.title === "string" &&
+            transparencyBar.title) ||
+          "We are committed to transparency and accountability.";
+        editorData.transparencyDesc =
+          (typeof editorData.transparencyDesc === "string" &&
+            editorData.transparencyDesc) ||
+          (typeof transparencyBar.pretitle === "string" &&
+            transparencyBar.pretitle) ||
+          "";
+        const existingButton = asRecord(editorData.transparencyButton);
+        editorData.transparencyButton = {
+          label:
+            (typeof existingButton.label === "string" &&
+              existingButton.label) ||
+            (typeof transparencyAction.label === "string" &&
+              transparencyAction.label) ||
+            "Learn More About Us",
+          href:
+            (typeof existingButton.href === "string" &&
+              existingButton.href) ||
+            (typeof transparencyAction.href === "string" &&
+              transparencyAction.href) ||
+            (typeof transparencyAction.url === "string" &&
+              transparencyAction.url) ||
+            "/about-us",
+        };
+      }
     }
 
     return editorData;
@@ -2568,10 +6993,7 @@ export default function EditSectionModal({
     ...eventsCareersBannerFields,
     ...eventsCareersOverviewFields,
     ...eventsCareersRolesFields,
-    "benefits",
-    "culture",
     "applyForm",
-    "whyJoinUs",
     ...eventsCareersQuoteFields,
   ];
   const eventsCareersStatsCardFields = ["value", "label"];
@@ -2580,7 +7002,6 @@ export default function EditSectionModal({
     "location",
     "type",
     "description",
-    "applyHref",
   ];
   const eventsCareersApplyBannerFields = [
     "backgroundImage",
@@ -2617,8 +7038,13 @@ export default function EditSectionModal({
     "pretitle",
     "title",
     "desc",
-    "description",
-    "leftContent",
+    "leftBadge",
+    "leftTitle",
+    "leftTitleHighlight",
+    "leftDesc",
+    "features",
+    "ctaLabel",
+    "ctaHref",
     "form",
   ];
   const eventsContactPageBannerFields = [
@@ -2636,7 +7062,7 @@ export default function EditSectionModal({
     ...eventsContactOverviewFields,
     ...eventsContactMapFields,
   ];
-  const eventsContactPageCardFields = ["icon", "label", "value"];
+  const eventsContactPageCardFields = ["icon", "label", "value", "value2"];
   const eventsCaseStudyBannerFields = [
     "title",
     "subtitle",
@@ -2705,6 +7131,19 @@ export default function EditSectionModal({
     ...eventsLegalContentFields,
   ];
   const eventsLegalSectionCardFields = ["title", "content"];
+  const eventsAboutPageAboutContentFields = [
+    "pretitle",
+    "description",
+    "description1",
+    "quote",
+    "image",
+    "imageAlt",
+    "description2",
+    "description3",
+    "quoteRole",
+    "image2",
+    "image2Alt",
+  ];
   const eventsAboutPageContentFields = [
     "pretitle",
     "title",
@@ -2713,16 +7152,9 @@ export default function EditSectionModal({
     "breadcrumb",
     "textColor",
     "backgroundColor",
-    "description",
-    "description1",
-    "description2",
-    "description3",
-    "quote",
-    "quoteRole",
-    "image",
-    "imageAlt",
-    "image2",
-    "image2Alt",
+    ...eventsAboutPageAboutContentFields.filter(
+      (field) => field !== "pretitle",
+    ),
     "stats",
     "values",
     "cta",
@@ -2738,7 +7170,418 @@ export default function EditSectionModal({
     "buttons",
     "stats",
   ];
+  const ngoBreadcrumbContentFields = [
+    "breadcrumbBackgroundType",
+    "breadcrumbColorBackgroundType",
+    "backgroundImage",
+    "breadcrumb",
+    "textColor",
+    "backgroundColor",
+    "breadcrumbGradientColor",
+  ];
+  const ngoAboutContentFields = [
+    "badge",
+    "title",
+    "desc",
+    "buttons",
+    "trustBadges",
+    "gallery",
+    "statistics",
+    "background",
+  ];
+  const ngoMissionContentFields = [
+    "badge",
+    "title",
+    "tabs",
+    "imageSection",
+  ];
+  const ngoWhyChooseUsContentFields = [
+    "badge",
+    "title",
+    "desc",
+    "image",
+    "imageAlt",
+    "imageOverlay",
+    "cards",
+  ];
+  const ngoMissionTabCardFields = visibleCardFieldsByCollection.ngoMissionTabItems;
+  const ngoMissionFeatureCardFields =
+    visibleCardFieldsByCollection.ngoMissionFeatures;
+  const ngoWhyChooseUsCardFields = ["icon", "title", "desc"];
+  const ngoServicesContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+  ];
+  const ngoServicesCardFields = [
+    "image",
+    "icon",
+    "title",
+    "description",
+    "link",
+    "label",
+  ];
+  const ngoServicesCtaContentFields = ["callToAction"];
+  const ngoTeamContentFields = ["pretitle", "title", "desc", "members"];
+  const ngoTeamCardFields = [
+    "image",
+    "name",
+    "designation",
+    "description",
+    "socials",
+  ];
+  const ngoTeamCtaContentFields = ["cta"];
+  const ngoTeamDetailProfileFields = [
+    "name",
+    "role",
+    "bio",
+    "image",
+    "stats",
+    "contactInfo",
+    "socialLinks",
+  ];
+  const ngoTeamDetailAboutFields = ["about", "skills"];
+  const ngoTeamDetailSkillCardFields = ["skill", "percentage"];
+  const ngoTeamDetailExperienceFields = ["experience"];
+  const ngoTeamDetailExperienceCardFields = [
+    "period",
+    "role",
+    "organization",
+    "description",
+  ];
+  const ngoTeamDetailAchievementsFields = ["achievements"];
+  const ngoTeamDetailAchievementCardFields = ["title", "description"];
+  const ngoTeamDetailStatCardFields = ["value", "label"];
+  const ngoMediaContentFields = ["sectionTitle", "mediaCards"];
+  const ngoMediaCardFields = ["image", "title", "articleUrl"];
+  const ngoIndustryContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "sectionTag",
+    "sectors",
+  ];
+  const ngoIndustryCardFields = ["image", "icon", "title", "description"];
+  const ngoIndustryPartnerFields = [
+    "partnerTitle",
+    "partnerTitleHighlight",
+    "partnerDesc",
+    "partnerButton",
+    "metrics",
+  ];
+  const ngoIndustryMetricCardFields = ["icon", "value", "label"];
+  const ngoBranchesContentFields = ["pretitle", "title", "desc", "stats"];
+  const ngoBranchesStatCardFields = ["icon", "value", "label", "subLabel"];
+  const ngoBranchesLocationsFields = [
+    "locationsLabel",
+    "locationsTitle",
+    "branches",
+    "mapImage",
+  ];
+  const ngoBranchesLocationCardFields = ["city", "address", "phone"];
+  const ngoBranchesCtaFields = [
+    "ctaLabel",
+    "ctaTitle",
+    "ctaDesc",
+    "ctaPrimaryButton",
+    "ctaSecondaryButton",
+    "ctaImage",
+  ];
+  const ngoBranchesContactFields = ["contactItems"];
+  const ngoBranchesContactCardFields = ["icon", "label", "value"];
+  const ngoAwardsContentFields = ["pretitle", "title", "desc", "stats"];
+  const ngoAwardsStatCardFields = ["icon", "value", "label"];
+  const ngoAwardsGridFields = ["awardsLabel", "awardsTitle", "awards"];
+  const ngoAwardsCardFields = ["image", "title", "description", "year"];
+  const ngoAwardsSupportFields = [
+    "supportLabel",
+    "supportTitle",
+    "supportTitleHighlight",
+    "supportDesc",
+    "supportButton",
+    "supportImage",
+  ];
+  const ngoAwardsTransparencyFields = [
+    "transparencyTitle",
+    "transparencyDesc",
+    "transparencyButton",
+  ];
+  const ngoCareersOverviewFields = ["title", "desc", "benefits"];
+  const ngoCareersBenefitCardFields = ["icon", "title", "description"];
+  const ngoCareersRolesFields = ["rolesTitle", "rolesApplyLabel", "jobs"];
+  const ngoCareersJobCardFields = [
+    "title",
+    "description",
+    "location",
+    "employmentType",
+  ];
+  const ngoCareersCtaFields = ["ctaTitle", "ctaDesc", "ctaButton"];
+  const ngoCausesContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+    "exploreButton",
+    "showExploreButton",
+  ];
+  const ngoCtaContentFields = ["title", "desc", "button"];
+  const ngoProjectsContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+    "exploreButton",
+    "showExploreButton",
+  ];
+  const ngoProjectsPageContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+  ];
+  const ngoProjectsCardFields = [
+    "image",
+    "icon",
+    "category",
+    "title",
+    "description",
+    "button",
+  ];
+  const ngoEventsContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "events",
+    "exploreButton",
+    "showExploreButton",
+  ];
+  const ngoEventsCardFields = [
+    "image",
+    "title",
+    "href",
+    "button",
+  ];
+  const ngoTestimonialContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "testimonials",
+  ];
+  const ngoTestimonialsPageFields = [
+    "pretitle",
+    "title",
+    "highlight",
+    "desc",
+    "testimonials",
+  ];
+  const ngoTestimonialCardFields = [
+    "image",
+    "name",
+    "designation",
+    "rating",
+    "message",
+  ];
+  const ngoBlogContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "articles",
+    "exploreButton",
+    "showExploreButton",
+  ];
+  const ngoBlogCardFields = [
+    "image",
+    "category",
+    "date",
+    "title",
+    "description",
+    "href",
+  ];
+  const ngoGalleryContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "categories",
+    "images",
+  ];
+  const ngoGalleryCardFields = ["image", "src", "category"];
+  const ngoContactOverviewFields = ["office", "contactItems", "form"];
+  const ngoContactFeaturesFields = ["cards"];
+  const ngoContactMapFields = ["mapEmbedUrl"];
+  const ngoFrenchiseIntroFields = ["pretitle", "title", "desc", "features"];
+  const ngoFrenchiseIntroCardFields = ["icon", "title", "description"];
+  const ngoFrenchiseFormFields = [
+    "leftPretitle",
+    "leftTitle",
+    "leftDesc",
+    "leftPoints",
+    "leftImage",
+    "leftImageAlt",
+    "formTitle",
+    "formPretitle",
+    "form",
+  ];
+  const ngoFrenchiseProcessFields = ["processPretitle", "processTitle", "steps"];
+  const ngoFrenchiseProcessCardFields = ["icon", "title", "description"];
+  const ngoFrenchiseCtaFields = [
+    "ctaTitle",
+    "ctaPretitle",
+    "ctaDesc",
+    "ctaPhone",
+    "ctaEmail",
+    "ctaHours",
+    "ctaImage",
+    "ctaImageAlt",
+  ];
+  const ngoEnquiryFormFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "leftTitle",
+    "leftDesc",
+    "leftFeatures",
+    "leftImage",
+    "leftImageAlt",
+    "formTitle",
+    "form",
+  ];
+  const ngoEnquiryFormCardFields = ["icon", "title", "description"];
+  const ngoEnquiryContactFields = [
+    "contactTitle",
+    "contactPretitle",
+    "contactDesc",
+    "contactItems",
+  ];
+  const ngoEnquiryContactCardFields = ["icon", "label", "value"];
+  const ngoEnquiryCtaFields = [
+    "ctaIcon",
+    "ctaText",
+    "ctaSubtext",
+    "ctaButtonLabel",
+    "ctaButtonHref",
+    "ctaButtonIcon",
+  ];
+  const ngoContactFeatureCardFields = ["icon", "title", "description"];
+  const ngoSupportIntroFields = ["pretitle", "title", "desc", "values"];
+  const ngoSupportValueCardFields = ["icon", "title", "description"];
+  const ngoSupportWaysFields = ["waysPretitle", "waysTitle", "supportCards"];
+  const ngoSupportCardFields = ["icon", "title", "description", "button"];
+  const ngoSupportImpactFields = [
+    "impactPretitle",
+    "impactTitle",
+    "stats",
+    "closingText",
+  ];
+  const ngoSupportStatCardFields = ["icon", "value", "label"];
+  const ngoSupportCtaFields = [
+    "ctaPretitle",
+    "ctaTitle",
+    "ctaDesc",
+    "ctaImage",
+    "ctaPrimaryButton",
+    "ctaSecondaryButton",
+  ];
+  const ngoSupportTransparencyFields = [
+    "transparencyIcon",
+    "transparencyTitle",
+    "transparencyDesc",
+    "transparencyButton",
+  ];
+  const ngoFaqContentFields = ["pretitle", "title", "desc", "questions"];
+  const ngoFaqCardFields = ["question", "answer"];
+  const ngoPartnersContentFields = ["pretitle", "title", "desc", "partnersList"];
+  const ngoPartnersCardFields = ["logo", "name", "website"];
+  const ngoCsrIntroFields = ["pretitle", "title", "desc", "stats"];
+  const ngoCsrIntroCardFields = ["icon", "value", "label"];
+  const ngoCsrFocusFields = ["focusPretitle", "focusItems"];
+  const ngoCsrFocusCardFields = ["image", "icon", "title", "description"];
+  const ngoCsrImpactFields = [
+    "impactPretitle",
+    "impactDesc",
+    "impactButton",
+    "pillars",
+  ];
+  const ngoCsrImpactCardFields = ["icon", "title", "description"];
+  const ngoCsrProjectsFields = ["projectsPretitle", "csrProjectItems"];
+  const ngoCsrProjectsCardFields = ["image", "title", "description"];
+  const ngoCsrCtaFields = ["ctaTitle", "ctaDesc", "ctaButton"];
+  const ngoCsrValuesFields = ["coreValueItems"];
+  const ngoCsrValuesCardFields = ["icon", "title", "description"];
+  const ngoBrochureIntroFields = ["pretitle", "title", "desc", "features"];
+  const ngoBrochureIntroCardFields = ["icon", "title", "description"];
+  const ngoBrochureListFields = ["listPretitle", "listTitle", "brochures"];
+  const ngoBrochureCardFields = [
+    "image",
+    "name",
+    "description",
+    "downloadlabel",
+    "downloadUrl",
+  ];
+  const ngoBrochureCtaFields = [
+    "ctaPretitle",
+    "ctaTitle",
+    "ctaDesc",
+    "ctaPrimaryButton",
+    "ctaSecondaryButton",
+    "ctaStats",
+  ];
+  const ngoBrochureCtaCardFields = ["icon", "value", "label"];
+  const ngoCaseStudyContentFields = [
+    "pretitle",
+    "title",
+    "desc",
+    "items",
+  ];
+  const ngoCaseStudyCtaFields = ["ctaTitle", "ctaDesc", "ctaButton"];
+  const ngoCaseDetailsArticleFields = [
+    "pageTitle",
+    "primaryTitle",
+    "primaryImage",
+    "primaryImageAlt",
+    "primaryParagraphs",
+    "postedOn",
+    "secondaryTitle",
+    "secondaryParagraphs",
+    "popularPostsTitle",
+    "popularPosts",
+  ];
+  const ngoCaseDetailsSidebarFields = [
+    "popularPostsTitle",
+    "popularPosts",
+  ];
+  const ngoCaseDetailsSidebarCardFields = [
+    "image",
+    "date",
+    "category",
+    "title",
+    "slug",
+  ];
+  const ngoFooterRecentNewsCardFields = [
+    "image",
+    "date",
+    "title",
+    "href",
+  ];
   const eventsAboutCardFields = ["value", "label"];
+  const ngoAboutCardFields = [
+    "label",
+    "href",
+    "variant",
+    "icon",
+    "text",
+    "desc",
+    "value",
+  ];
+  const ngoCausesCardFields = [
+    "image",
+    "icon",
+    "category",
+    "title",
+    "titleLink",
+    "description",
+    "button",
+  ];
   const eventsAboutPageCardFields = [
     "icon",
     "value",
@@ -2792,31 +7635,42 @@ export default function EditSectionModal({
     "description",
     "text",
   ];
-  const eventsTeamsPageContentFields = [
+  const eventsTeamsBannerFields = [
     "title",
     "subtitle",
     "backgroundImage",
     "breadcrumb",
     "textColor",
     "backgroundColor",
-    "departments",
-    "members",
+  ];
+  const eventsTeamsTabsFields = ["departments"];
+  const eventsTeamsMembersContentFields = ["members"];
+  const eventsTeamsJoinCtaFields = [
     "joinTitle",
     "joinDescription",
     "joinButton1",
   ];
-  const eventsTeamsPageCardFields = [
-    "label",
-    "value",
+  const eventsTeamsPageContentFields = [
+    ...eventsTeamsBannerFields,
+    ...eventsTeamsTabsFields,
+    ...eventsTeamsMembersContentFields,
+    ...eventsTeamsJoinCtaFields,
+  ];
+  const eventsTeamsDepartmentCardFields = ["label", "value"];
+  const eventsTeamsMemberCardFields = [
     "image",
     "name",
     "role",
     "department",
     "bio",
-    "email",
-    "phone",
-    "longBio",
-    "skills",
+    "social",
+  ];
+  const eventsTeamHomeMemberCardFields = [
+    "image",
+    "name",
+    "role",
+    "department",
+    "bio",
     "social",
   ];
   const eventsTeamDetailContentFields = [
@@ -2895,8 +7749,6 @@ export default function EditSectionModal({
     "image",
     "imageAlt",
     "href",
-    "value",
-    "label",
   ];
   const eventsEventDetailContentFields = [
     "title",
@@ -3034,16 +7886,384 @@ export default function EditSectionModal({
                   : category === "Events" &&
                       (activeSectionType === "AboutPage" ||
                         activeSectionType === "AboutUsPage")
-                    ? eventsAboutPageContentFields
+                    ? subsectionScope?.label.trim().toLowerCase() ===
+                      "about content"
+                      ? eventsAboutPageAboutContentFields
+                      : eventsAboutPageContentFields
                     : category === "Events" && activeSectionType === "About"
                       ? eventsAboutContentFields
+                    : category === "NGO" && isBreadcrumbSubsection
+                      ? ngoBreadcrumbContentFields
+                    : category === "NGO" &&
+                        (activeSectionType === "AboutPage" ||
+                          activeSectionType === "AboutUsPage") &&
+                        (subsectionScope?.label.trim().toLowerCase() ===
+                          "mission" ||
+                          subsectionScope?.label.trim().toLowerCase() ===
+                            "mission vision")
+                      ? ngoMissionContentFields
+                    : category === "NGO" &&
+                        (activeSectionType === "AboutPage" ||
+                          activeSectionType === "AboutUsPage") &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "why choose us"
+                      ? ngoWhyChooseUsContentFields
+                    : category === "NGO" &&
+                        (activeSectionType === "AboutPage" ||
+                          activeSectionType === "AboutUsPage") &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "about content"
+                      ? ngoAboutContentFields
+                    : category === "NGO" && activeSectionType === "About"
+                      ? ngoAboutContentFields
+                    : category === "NGO" &&
+                        (activeSectionType === "Services" ||
+                          activeSectionType === "ServicesPage") &&
+                        (subsectionScope?.label.trim().toLowerCase() ===
+                          "services cta")
+                      ? ngoServicesCtaContentFields
+                    : category === "NGO" &&
+                        (activeSectionType === "Services" ||
+                          activeSectionType === "ServicesPage") &&
+                        ["services", "services content"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoServicesContentFields
+                    : category === "NGO" &&
+                        (activeSectionType === "Teams" ||
+                          activeSectionType === "TeamsPage") &&
+                        (subsectionScope?.label.trim().toLowerCase() ===
+                          "team cta")
+                      ? ngoTeamCtaContentFields
+                    : category === "NGO" &&
+                        (activeSectionType === "Teams" ||
+                          activeSectionType === "TeamsPage") &&
+                        ["team", "team members"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoTeamContentFields
+                    : category === "NGO" &&
+                        activeSectionType === "TeamDetail" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "team profile"
+                      ? ngoTeamDetailProfileFields
+                    : category === "NGO" &&
+                        activeSectionType === "TeamDetail" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "about & skills"
+                      ? ngoTeamDetailAboutFields
+                    : category === "NGO" &&
+                        activeSectionType === "TeamDetail" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "experience"
+                      ? ngoTeamDetailExperienceFields
+                    : category === "NGO" &&
+                        activeSectionType === "TeamDetail" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "achievements"
+                      ? ngoTeamDetailAchievementsFields
+                    : category === "NGO" &&
+                        activeSectionType === "Media" &&
+                        ["media", "media content"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoMediaContentFields
+                    : category === "NGO" &&
+                        activeSectionType === "Industry" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "industry partner"
+                      ? ngoIndustryPartnerFields
+                    : category === "NGO" &&
+                        activeSectionType === "Industry" &&
+                        [
+                          "",
+                          "industry",
+                          "industry content",
+                        ].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoIndustryContentFields
+                    : category === "NGO" &&
+                        activeSectionType === "Branches" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "branch locations"
+                      ? ngoBranchesLocationsFields
+                    : category === "NGO" &&
+                        activeSectionType === "Branches" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "branches cta"
+                      ? ngoBranchesCtaFields
+                    : category === "NGO" &&
+                        activeSectionType === "Branches" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "branches contact"
+                      ? ngoBranchesContactFields
+                    : category === "NGO" &&
+                        activeSectionType === "Branches" &&
+                        ["", "branches", "branches content"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoBranchesContentFields
+                    : category === "NGO" &&
+                        activeSectionType === "AwardsPage" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "awards grid"
+                      ? ngoAwardsGridFields
+                    : category === "NGO" &&
+                        activeSectionType === "AwardsPage" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "awards support"
+                      ? ngoAwardsSupportFields
+                    : category === "NGO" &&
+                        activeSectionType === "AwardsPage" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "awards transparency"
+                      ? ngoAwardsTransparencyFields
+                    : category === "NGO" &&
+                        activeSectionType === "AwardsPage" &&
+                        ["", "awards", "awards content"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoAwardsContentFields
+                    : category === "NGO" &&
+                        activeSectionType === "Careers" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "open roles"
+                      ? ngoCareersRolesFields
+                    : category === "NGO" &&
+                        activeSectionType === "Careers" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "careers cta"
+                      ? ngoCareersCtaFields
+                    : category === "NGO" &&
+                        activeSectionType === "Careers" &&
+                        ["", "careers overview"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoCareersOverviewFields
+                    : category === "NGO" && activeSectionType === "Causes"
+                      ? ngoCausesContentFields
+                    : category === "NGO" &&
+                        activeSectionType === "ProjectsPage" &&
+                        ["", "projects", "projects grid", "projects content"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoProjectsPageContentFields
+                    : category === "NGO" && activeSectionType === "Projects"
+                      ? ngoProjectsContentFields
+                    : category === "NGO" && activeSectionType === "Events"
+                      ? ngoEventsContentFields
+                    : category === "NGO" &&
+                        activeSectionType === "EventsPage" &&
+                        ["events", "events list", "events content"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoEventsContentFields
+                    : category === "NGO" && activeSectionType === "Testimonial"
+                      ? ngoTestimonialContentFields
+                    : category === "NGO" &&
+                        isNGOTestimonialsPageSection &&
+                        [
+                          "",
+                          "testimonial intro",
+                          "testimonial content",
+                          "testimonials",
+                          "testimonials content",
+                        ].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoTestimonialsPageFields
+                    : category === "NGO" &&
+                        activeSectionType === "Blog" &&
+                        (!isPageSection ||
+                          ["blog", "blog posts", "blog content"].includes(
+                            subsectionScope?.label.trim().toLowerCase() ?? "",
+                          ))
+                      ? ngoBlogContentFields
+                    : category === "NGO" &&
+                        activeSectionType === "Gallery" &&
+                        ["", "gallery", "gallery grid", "gallery content"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoGalleryContentFields
+                    : category === "NGO" &&
+                        activeSectionType === "Contact" &&
+                        ["contact overview", "contact"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoContactOverviewFields
+                    : category === "NGO" &&
+                        activeSectionType === "Contact" &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "contact features"
+                      ? ngoContactFeaturesFields
+                    : category === "NGO" &&
+                        activeSectionType === "Contact" &&
+                        subsectionScope?.label.trim().toLowerCase() === "map"
+                      ? ngoContactMapFields
+                    : category === "NGO" &&
+                        isNGOFrenchiseSection &&
+                        ["", "franchise intro"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoFrenchiseIntroFields
+                    : category === "NGO" &&
+                        isNGOFrenchiseSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "franchise form"
+                      ? ngoFrenchiseFormFields
+                    : category === "NGO" &&
+                        isNGOFrenchiseSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "franchise process"
+                      ? ngoFrenchiseProcessFields
+                    : category === "NGO" &&
+                        isNGOFrenchiseSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "franchise cta"
+                      ? ngoFrenchiseCtaFields
+                    : category === "NGO" &&
+                        isNGOEnquirySection &&
+                        [
+                          "",
+                          "enquiry intro",
+                          "enquiry form",
+                        ].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoEnquiryFormFields
+                    : category === "NGO" &&
+                        isNGOEnquirySection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "enquiry contact"
+                      ? ngoEnquiryContactFields
+                    : category === "NGO" &&
+                        isNGOEnquirySection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "enquiry cta"
+                      ? ngoEnquiryCtaFields
+                    : category === "NGO" &&
+                        isNGOSupportSection &&
+                        ["", "support intro", "support overview"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoSupportIntroFields
+                    : category === "NGO" &&
+                        isNGOSupportSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "ways to support"
+                      ? ngoSupportWaysFields
+                    : category === "NGO" &&
+                        isNGOSupportSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "impact stats"
+                      ? ngoSupportImpactFields
+                    : category === "NGO" &&
+                        isNGOSupportSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "support cta"
+                      ? ngoSupportCtaFields
+                    : category === "NGO" &&
+                        isNGOSupportSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "transparency"
+                      ? ngoSupportTransparencyFields
+                    : category === "NGO" &&
+                        isNGOFAQSection &&
+                        ["", "faq", "faqs", "faq content"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoFaqContentFields
+                    : category === "NGO" &&
+                        isNGOPartnersSection &&
+                        ["", "partners", "partners content", "partners list"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoPartnersContentFields
+                    : category === "NGO" &&
+                        isNGOCsrSection &&
+                        ["", "csr intro", "csr overview"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoCsrIntroFields
+                    : category === "NGO" &&
+                        isNGOCsrSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "focus areas"
+                      ? ngoCsrFocusFields
+                    : category === "NGO" &&
+                        isNGOCsrSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "our impact"
+                      ? ngoCsrImpactFields
+                    : category === "NGO" &&
+                        isNGOCsrSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "csr projects"
+                      ? ngoCsrProjectsFields
+                    : category === "NGO" &&
+                        isNGOCsrSection &&
+                        subsectionScope?.label.trim().toLowerCase() === "csr cta"
+                      ? ngoCsrCtaFields
+                    : category === "NGO" &&
+                        isNGOCsrSection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "core values"
+                      ? ngoCsrValuesFields
+                    : category === "NGO" &&
+                        isNGOBrochureSection &&
+                        ["", "brochure intro"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoBrochureIntroFields
+                    : category === "NGO" &&
+                        isNGOBrochureSection &&
+                        ["brochures", "brochure list"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoBrochureListFields
+                    : category === "NGO" &&
+                        isNGOBrochureSection &&
+                        ["together we can", "brochure cta"].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoBrochureCtaFields
+                    : category === "NGO" &&
+                        isNGOCaseStudySection &&
+                        [
+                          "",
+                          "case study overview",
+                          "case studies",
+                        ].includes(
+                          subsectionScope?.label.trim().toLowerCase() ?? "",
+                        )
+                      ? ngoCaseStudyContentFields
+                    : category === "NGO" &&
+                        isNGOCaseStudySection &&
+                        subsectionScope?.label.trim().toLowerCase() ===
+                          "case study cta"
+                      ? ngoCaseStudyCtaFields
+                    : category === "NGO" &&
+                        isNGOCaseDetailsSection &&
+                        !isBreadcrumbSubsection
+                      ? ngoCaseDetailsArticleFields
+                    : category === "NGO" && activeSectionType === "Cta"
+                      ? ngoCtaContentFields
                     : category === "Events" && activeSectionType === "OurStory"
                       ? eventsOurStoryContentFields
                       : category === "Events" &&
                           activeSectionType === "VisionMission"
                         ? eventsVisionPageContentFields
                         : category === "Events" && activeSectionType === "Teams"
-                          ? eventsTeamsPageContentFields
+                          ? subsectionScope?.label.trim().toLowerCase() ===
+                              "team members"
+                            ? eventsTeamsMembersContentFields
+                            : subsectionScope?.label.trim().toLowerCase() ===
+                                "join cta"
+                              ? eventsTeamsJoinCtaFields
+                              : isBreadcrumbSubsection
+                                ? eventsTeamsBannerFields
+                                : eventsTeamsPageContentFields
                           : category === "Events" &&
                               activeSectionType === "TeamDetail"
                             ? eventsTeamDetailContentFields
@@ -3082,13 +8302,345 @@ export default function EditSectionModal({
             ...resolvedComponentContentFields,
             "textColor",
             "backgroundColor",
+            "breadcrumbBackgroundType",
+            "breadcrumbColorBackgroundType",
+            "breadcrumbGradientColor",
           ]),
         )
-      : resolvedComponentContentFields;
+      : category === "NGO" &&
+          isBreadcrumbSubsection &&
+          resolvedComponentContentFields
+        ? Array.from(
+            new Set([
+              ...resolvedComponentContentFields,
+              "textColor",
+              "backgroundColor",
+              "breadcrumbBackgroundType",
+              "breadcrumbColorBackgroundType",
+              "breadcrumbGradientColor",
+            ]),
+          )
+        : resolvedComponentContentFields;
+  const eventsScopedCardFields = (() => {
+    if (category !== "Events") return undefined;
+    const subsectionLabel = subsectionScope?.label.trim().toLowerCase() ?? "";
+
+    if (isEventsHomeContact) return ["icon", "title", "description"];
+    if (
+      activeSectionType === "Contact" &&
+      subsectionLabel === "contact overview"
+    ) {
+      return ["icon", "label", "value", "value2"];
+    }
+    if (activeSectionType === "OurStory") {
+      if (subsectionLabel === "milestones") {
+        return ["year", "title", "description"];
+      }
+      if (subsectionLabel === "stats") return ["value", "label"];
+    }
+    if (activeSectionType === "VisionMission") {
+      if (subsectionLabel === "core beliefs") {
+        return ["icon", "title", "description"];
+      }
+      if (subsectionLabel === "vision" || subsectionLabel === "mission") {
+        return ["icon", "text"];
+      }
+    }
+    if (activeSectionType === "AwardsPage") {
+      if (subsectionLabel === "trophy wall") {
+        return ["year", "title", "body", "category", "icon", "description"];
+      }
+      if (subsectionLabel === "stats") return ["value", "label"];
+    }
+    if (activeSectionType === "EventCategories") {
+      if (subsectionLabel === "event categories") {
+        return ["badge", "title", "description", "image", "imageAlt", "href"];
+      }
+      if (subsectionLabel === "cta") return ["value", "label"];
+    }
+    if (
+      activeSectionType === "Gallery" &&
+      (subsectionLabel === "gallery grid" ||
+        activeVariant === "EventsGalleryPage1")
+    ) {
+      return ["image", "imageAlt", "badge"];
+    }
+    if (activeSectionType === "Careers") {
+      if (subsectionLabel === "open roles") {
+        return ["title", "location", "type", "description"];
+      }
+      if (subsectionLabel === "careers overview") {
+        return ["value", "label"];
+      }
+    }
+    if (
+      activeSectionType === "CareersApply" &&
+      subsectionLabel === "why join us"
+    ) {
+      return ["icon", "title", "description"];
+    }
+    if (activeSectionType === "Teams") {
+      if (subsectionLabel === "team members") {
+        return eventsTeamsMemberCardFields;
+      }
+    }
+    if (activeSectionType === "Team") {
+      return eventsTeamHomeMemberCardFields;
+    }
+    if (activeSectionType === "TeamDetail") {
+      return eventsTeamDetailCardFields;
+    }
+    return undefined;
+  })();
   const activeCardFields =
+    eventsScopedCardFields ??
     subsectionScope?.cardFields ??
     (category === "Events" && activeSectionType === "About"
       ? eventsAboutCardFields
+      : category === "NGO" &&
+          (activeSectionType === "AboutPage" ||
+            activeSectionType === "AboutUsPage") &&
+          (subsectionScope?.label.trim().toLowerCase() === "mission" ||
+            subsectionScope?.label.trim().toLowerCase() === "mission vision")
+        ? undefined
+      : category === "NGO" &&
+          (activeSectionType === "AboutPage" ||
+            activeSectionType === "AboutUsPage") &&
+          subsectionScope?.label.trim().toLowerCase() === "why choose us"
+        ? ngoWhyChooseUsCardFields
+      : category === "NGO" &&
+          (activeSectionType === "Services" ||
+            activeSectionType === "ServicesPage") &&
+          ["services", "services content"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoServicesCardFields
+      : category === "NGO" &&
+          (activeSectionType === "Teams" ||
+            activeSectionType === "TeamsPage") &&
+          ["team", "team members"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoTeamCardFields
+      : category === "NGO" &&
+          activeSectionType === "TeamDetail" &&
+          subsectionScope?.label.trim().toLowerCase() === "team profile"
+        ? ngoTeamDetailStatCardFields
+      : category === "NGO" &&
+          activeSectionType === "TeamDetail" &&
+          subsectionScope?.label.trim().toLowerCase() === "about & skills"
+        ? ngoTeamDetailSkillCardFields
+      : category === "NGO" &&
+          activeSectionType === "TeamDetail" &&
+          subsectionScope?.label.trim().toLowerCase() === "experience"
+        ? ngoTeamDetailExperienceCardFields
+      : category === "NGO" &&
+          activeSectionType === "TeamDetail" &&
+          subsectionScope?.label.trim().toLowerCase() === "achievements"
+        ? ngoTeamDetailAchievementCardFields
+      : category === "NGO" &&
+          activeSectionType === "Media" &&
+          ["media", "media content"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoMediaCardFields
+      : category === "NGO" &&
+          activeSectionType === "Industry" &&
+          subsectionScope?.label.trim().toLowerCase() === "industry partner"
+        ? ngoIndustryMetricCardFields
+      : category === "NGO" &&
+          activeSectionType === "Industry" &&
+          ["", "industry", "industry content"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoIndustryCardFields
+      : category === "NGO" &&
+          activeSectionType === "Branches" &&
+          subsectionScope?.label.trim().toLowerCase() === "branch locations"
+        ? ngoBranchesLocationCardFields
+      : category === "NGO" &&
+          activeSectionType === "Branches" &&
+          subsectionScope?.label.trim().toLowerCase() === "branches contact"
+        ? ngoBranchesContactCardFields
+      : category === "NGO" &&
+          activeSectionType === "Branches" &&
+          ["", "branches", "branches content"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoBranchesStatCardFields
+      : category === "NGO" &&
+          activeSectionType === "AwardsPage" &&
+          subsectionScope?.label.trim().toLowerCase() === "awards grid"
+        ? ngoAwardsCardFields
+      : category === "NGO" &&
+          activeSectionType === "AwardsPage" &&
+          ["", "awards", "awards content"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoAwardsStatCardFields
+      : category === "NGO" &&
+          activeSectionType === "Careers" &&
+          subsectionScope?.label.trim().toLowerCase() === "open roles"
+        ? ngoCareersJobCardFields
+      : category === "NGO" &&
+          activeSectionType === "Careers" &&
+          ["", "careers overview"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoCareersBenefitCardFields
+      : category === "NGO" && activeSectionType === "About"
+        ? undefined
+      : category === "NGO" &&
+          (activeSectionType === "AboutPage" ||
+            activeSectionType === "AboutUsPage") &&
+          subsectionScope?.label.trim().toLowerCase() === "about content"
+        ? ngoAboutCardFields
+      : category === "NGO" && activeSectionType === "Causes"
+        ? ngoCausesCardFields
+      : category === "NGO" &&
+          (activeSectionType === "Projects" ||
+            (activeSectionType === "ProjectsPage" &&
+              ["projects", "projects grid", "projects content"].includes(
+                subsectionScope?.label.trim().toLowerCase() ?? "",
+              )))
+        ? ngoProjectsCardFields
+      : category === "NGO" &&
+          (activeSectionType === "Events" ||
+            (activeSectionType === "EventsPage" &&
+              ["events", "events list", "events content"].includes(
+                subsectionScope?.label.trim().toLowerCase() ?? "",
+              )))
+        ? ngoEventsCardFields
+      : category === "NGO" &&
+          (activeSectionType === "Testimonial" ||
+            (activeSectionType === "TestimonialsPage" &&
+              [
+                "",
+                "testimonial intro",
+                "testimonial content",
+                "testimonials",
+                "testimonials content",
+              ].includes(
+                subsectionScope?.label.trim().toLowerCase() ?? "",
+              )))
+        ? ngoTestimonialCardFields
+      : category === "NGO" &&
+          activeSectionType === "Blog" &&
+          (!isPageSection ||
+            ["blog", "blog posts", "blog content"].includes(
+              subsectionScope?.label.trim().toLowerCase() ?? "",
+            ))
+        ? ngoBlogCardFields
+      : category === "NGO" &&
+          activeSectionType === "Gallery" &&
+          ["", "gallery", "gallery grid", "gallery content"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoGalleryCardFields
+      : category === "NGO" &&
+          activeSectionType === "Contact" &&
+          subsectionScope?.label.trim().toLowerCase() === "contact features"
+        ? ngoContactFeatureCardFields
+      : category === "NGO" &&
+          isNGOFrenchiseSection &&
+          ["", "franchise intro"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoFrenchiseIntroCardFields
+      : category === "NGO" &&
+          isNGOFrenchiseSection &&
+          subsectionScope?.label.trim().toLowerCase() === "franchise process"
+        ? ngoFrenchiseProcessCardFields
+      : category === "NGO" &&
+          isNGOEnquirySection &&
+          ["enquiry form", "enquiry intro"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoEnquiryFormCardFields
+      : category === "NGO" &&
+          isNGOEnquirySection &&
+          subsectionScope?.label.trim().toLowerCase() === "enquiry contact"
+        ? ngoEnquiryContactCardFields
+      : category === "NGO" &&
+          isNGOSupportSection &&
+          ["", "support intro", "support overview"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoSupportValueCardFields
+      : category === "NGO" &&
+          isNGOSupportSection &&
+          subsectionScope?.label.trim().toLowerCase() === "ways to support"
+        ? ngoSupportCardFields
+      : category === "NGO" &&
+          isNGOSupportSection &&
+          subsectionScope?.label.trim().toLowerCase() === "impact stats"
+        ? ngoSupportStatCardFields
+      : category === "NGO" &&
+          isNGOFAQSection &&
+          ["", "faq", "faqs", "faq content"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoFaqCardFields
+      : category === "NGO" &&
+          isNGOPartnersSection &&
+          ["", "partners", "partners content", "partners list"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoPartnersCardFields
+      : category === "NGO" &&
+          isNGOCsrSection &&
+          ["", "csr intro", "csr overview"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoCsrIntroCardFields
+      : category === "NGO" &&
+          isNGOCsrSection &&
+          subsectionScope?.label.trim().toLowerCase() === "focus areas"
+        ? ngoCsrFocusCardFields
+      : category === "NGO" &&
+          isNGOCsrSection &&
+          subsectionScope?.label.trim().toLowerCase() === "our impact"
+        ? ngoCsrImpactCardFields
+      : category === "NGO" &&
+          isNGOCsrSection &&
+          subsectionScope?.label.trim().toLowerCase() === "csr projects"
+        ? ngoCsrProjectsCardFields
+      : category === "NGO" &&
+          isNGOCsrSection &&
+          subsectionScope?.label.trim().toLowerCase() === "core values"
+        ? ngoCsrValuesCardFields
+      : category === "NGO" &&
+          isNGOBrochureSection &&
+          ["", "brochure intro"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoBrochureIntroCardFields
+      : category === "NGO" &&
+          isNGOBrochureSection &&
+          ["brochures", "brochure list"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoBrochureCardFields
+      : category === "NGO" &&
+          isNGOBrochureSection &&
+          ["together we can", "brochure cta"].includes(
+            subsectionScope?.label.trim().toLowerCase() ?? "",
+          )
+        ? ngoBrochureCtaCardFields
+      : category === "NGO" &&
+          isNGOCaseStudySection &&
+          [
+            "",
+            "case study overview",
+            "case studies",
+          ].includes(subsectionScope?.label.trim().toLowerCase() ?? "")
+        ? ngoCausesCardFields
+      : category === "NGO" &&
+          isNGOCaseDetailsSection &&
+          !isBreadcrumbSubsection
+        ? ngoCaseDetailsSidebarCardFields
+      : category === "NGO" && activeSectionType === "Footer"
+        ? ngoFooterRecentNewsCardFields
       : category === "Events" && activeSectionType === "Testimonial"
       ? eventsTestimonialCardFields
       : category === "Events" && activeSectionType === "WhyChooseUs"
@@ -3100,21 +8652,55 @@ export default function EditSectionModal({
               activeSectionType === "AboutUsPage")
           ? eventsAboutPageCardFields
           : category === "Events" && activeSectionType === "OurStory"
-            ? eventsOurStoryCardFields
+            ? subsectionScope?.label.trim().toLowerCase() === "milestones"
+              ? ["year", "title", "description"]
+              : subsectionScope?.label.trim().toLowerCase() === "stats"
+                ? ["value", "label"]
+                : eventsOurStoryCardFields
             : category === "Events" && activeSectionType === "VisionMission"
-              ? eventsVisionPageCardFields
+              ? subsectionScope?.label.trim().toLowerCase() === "core beliefs"
+                ? ["icon", "title", "description"]
+                : ["icon", "text"]
               : category === "Events" && activeSectionType === "Teams"
-                ? eventsTeamsPageCardFields
+                ? subsectionScope?.label.trim().toLowerCase() === "team members"
+                  ? eventsTeamsMemberCardFields
+                  : undefined
+                : category === "Events" && activeSectionType === "Team"
+                  ? eventsTeamHomeMemberCardFields
                 : category === "Events" && activeSectionType === "TeamDetail"
                   ? eventsTeamDetailCardFields
                 : category === "Events" && activeSectionType === "AwardsPage"
-                  ? eventsAwardsPageCardFields
+                  ? subsectionScope?.label.trim().toLowerCase() ===
+                      "trophy wall"
+                    ? [
+                        "year",
+                        "title",
+                        "body",
+                        "category",
+                        "icon",
+                        "description",
+                      ]
+                    : subsectionScope?.label.trim().toLowerCase() === "stats"
+                      ? ["value", "label"]
+                      : eventsAwardsPageCardFields
                   : category === "Events" &&
                       activeSectionType === "GlobalPresence"
                     ? eventsGlobalPresenceCardFields
                     : category === "Events" &&
                         activeSectionType === "EventCategories"
-                      ? eventsEventPageCardFields
+                      ? subsectionScope?.label.trim().toLowerCase() ===
+                          "event categories"
+                        ? [
+                            "badge",
+                            "title",
+                            "description",
+                            "image",
+                            "imageAlt",
+                            "href",
+                          ]
+                        : subsectionScope?.label.trim().toLowerCase() === "cta"
+                          ? ["value", "label"]
+                          : eventsEventPageCardFields
                       : category === "Events" &&
                           activeSectionType === "EventDetail"
                         ? eventsEventDetailCardFields
@@ -3138,23 +8724,22 @@ export default function EditSectionModal({
                             : subsectionScope?.label.trim().toLowerCase() ===
                                 "careers overview"
                               ? eventsCareersStatsCardFields
-                              : [
-                                  ...eventsCareersStatsCardFields,
-                                  ...eventsCareersRolesCardFields,
-                                ]
+                              : undefined
                         : category === "Events" &&
                             activeSectionType === "CareersApply"
                           ? subsectionScope?.label.trim().toLowerCase() ===
                               "why join us"
                             ? eventsCareersApplyWhyJoinCardFields
                             : undefined
-                        : category === "Events" &&
-                            activeSectionType === "Contact" &&
-                            activeVariant === "EventsContactPage1"
-                          ? subsectionScope?.label.trim().toLowerCase() ===
+        : isEventsHomeContact
+          ? ["icon", "title", "description"]
+        : category === "Events" &&
+            activeSectionType === "Contact" &&
+            activeVariant === "EventsContactPage1"
+                          ? subsectionScope?.label.trim().toLowerCase() !==
                               "contact overview"
-                            ? eventsContactPageCardFields
-                            : undefined
+                            ? undefined
+                            : eventsContactPageCardFields
                         : category === "Events" &&
                             activeSectionType === "CaseStudy"
                           ? subsectionScope?.label.trim().toLowerCase() ===
@@ -3182,18 +8767,323 @@ export default function EditSectionModal({
                               activeSectionType === "TermsCondition")
                           ? eventsLegalSectionCardFields
             : undefined);
+  const isEventsBreadcrumbEditor =
+    category === "Events" && isBreadcrumbSubsection;
+  const isNGOBreadcrumbEditor =
+    category === "NGO" && isBreadcrumbSubsection;
+  const isBreadcrumbEditor =
+    isEventsBreadcrumbEditor || isNGOBreadcrumbEditor;
+  const breadcrumbDefaultSolid =
+    category === "NGO" ? "#120a1a" : "#111827";
+  const breadcrumbDefaultGradient =
+    category === "NGO" ? "#ff541b" : "#d61b58";
+  const breadcrumbBackgroundType =
+    activeGenericEditorData?.breadcrumbBackgroundType === "color"
+      ? "color"
+      : "image";
+  const breadcrumbColorBackgroundType =
+    activeGenericEditorData?.breadcrumbColorBackgroundType === "gradient"
+      ? "gradient"
+      : "solid";
+  const breadcrumbSolidColor =
+    activeGenericEditorData?.backgroundColor || breadcrumbDefaultSolid;
+  const breadcrumbGradientColor =
+    activeGenericEditorData?.breadcrumbGradientColor ||
+    breadcrumbDefaultGradient;
+  const breadcrumbTextColor =
+    activeGenericEditorData?.textColor || "#ffffff";
+  const ngoBreadcrumbBanner =
+    activeGenericEditorData?.banner &&
+    typeof activeGenericEditorData.banner === "object" &&
+    !Array.isArray(activeGenericEditorData.banner)
+      ? (activeGenericEditorData.banner as Record<string, unknown>)
+      : {};
+  const ngoBreadcrumbTitle =
+    typeof ngoBreadcrumbBanner.breadcrumbCurrent === "string"
+      ? ngoBreadcrumbBanner.breadcrumbCurrent
+      : typeof activeGenericEditorData?.title === "string"
+        ? activeGenericEditorData.title
+        : "";
+  const activeCareersApplyForm = resolveEventsCareersApplyForm(
+    activeGenericEditorData?.applyForm as SectionData["applyForm"],
+  );
   const isContentFieldVisible = (field: string) => {
     const allowEventsBreadcrumb =
       category === "Events" && field === "breadcrumb" && isPageSection;
+    const allowNGOBreadcrumb =
+      isNGOBreadcrumbEditor && field === "breadcrumb";
 
     if (
-      (nonVisualContentFields.has(field) && !allowEventsBreadcrumb) ||
+      isBreadcrumbEditor &&
+      eventsBreadcrumbManagedFields.has(field)
+    ) {
+      return false;
+    }
+
+    if (
+      isNGOBreadcrumbEditor &&
+      (field === "title" ||
+        field === "subtitle" ||
+        field === "desc" ||
+        field === "description" ||
+        field === "banner")
+    ) {
+      return false;
+    }
+
+    if (
+      (nonVisualContentFields.has(field) &&
+        !allowEventsBreadcrumb &&
+        !allowNGOBreadcrumb) ||
       field === "boxesPerRow" ||
       field === "boxLayoutByField" ||
       field === "hiddenSubsections" ||
       field === "subsectionOrder" ||
       field === "type" ||
-      field === "icon"
+      field === "icon" ||
+      field === "hideExploreControls"
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Gallery" &&
+      (field === "videos" ||
+        field === "banner" ||
+        field === "backgroundImage" ||
+        field === "badge" ||
+        field === "description")
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "FAQ" || activeSectionType === "FAQPage") &&
+      (field === "badge" ||
+        field === "description" ||
+        field === "banner" ||
+        field === "backgroundImage" ||
+        field === "image" ||
+        field === "faqs" ||
+        field === "faqItems" ||
+        field === "items")
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Partners" || activeSectionType === "PartnersPage") &&
+      (field === "badge" ||
+        field === "description" ||
+        field === "banner" ||
+        field === "backgroundImage" ||
+        field === "partners" ||
+        field === "cards")
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "CSR" || activeSectionType === "CSRPage") &&
+      (field === "header" ||
+        field === "focusAreas" ||
+        field === "ourImpact" ||
+        field === "csrProjects" ||
+        field === "bannerCta" ||
+        field === "coreValues" ||
+        field === "banner" ||
+        (!isNGOBreadcrumbEditor && field === "backgroundImage") ||
+        (!isNGOBreadcrumbEditor && field === "breadcrumb"))
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "TestimonialsPage" &&
+      (field === "badge" ||
+        field === "description" ||
+        field === "banner" ||
+        (!isNGOBreadcrumbEditor && field === "backgroundImage") ||
+        (!isNGOBreadcrumbEditor && field === "breadcrumb"))
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Brochure" || activeSectionType === "BrochurePage") &&
+      (field === "header" ||
+        field === "sectionTitle" ||
+        field === "ctaSection" ||
+        field === "heading" ||
+        field === "banner" ||
+        (!isNGOBreadcrumbEditor && field === "backgroundImage") ||
+        (!isNGOBreadcrumbEditor && field === "breadcrumb"))
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "CaseStudy" &&
+      (field === "badge" ||
+        field === "cta" ||
+        field === "heading" ||
+        field === "titleLine1" ||
+        field === "titleLine2" ||
+        field === "highlight" ||
+        field === "description" ||
+        field === "banner" ||
+        field === "mainContent" ||
+        field === "sidebar" ||
+        field === "pageTitle" ||
+        (!isNGOBreadcrumbEditor && field === "backgroundImage") ||
+        (!isNGOBreadcrumbEditor && field === "breadcrumb"))
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "CaseDetails" ||
+        activeSectionType === "CaseDetailsPage") &&
+      (field === "mainContent" ||
+        field === "sidebar" ||
+        field === "banner" ||
+        field === "searchPlaceholder" ||
+        (!isNGOBreadcrumbEditor && field === "backgroundImage") ||
+        (!isNGOBreadcrumbEditor && field === "breadcrumb") ||
+        (!isNGOBreadcrumbEditor && field === "title"))
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Contact" || activeSectionType === "ContactPage") &&
+      (field === "title" ||
+        field === "badge" ||
+        field === "description" ||
+        field === "banner" ||
+        field === "backgroundImage" ||
+        field === "map" ||
+        field === "features")
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      isNGOFrenchiseSection &&
+      (field === "header" ||
+        field === "leftSection" ||
+        field === "processSection" ||
+        field === "contactBanner" ||
+        field === "heading" ||
+        field === "banner" ||
+        (!isNGOBreadcrumbEditor && field === "backgroundImage") ||
+        (!isNGOBreadcrumbEditor && field === "breadcrumb"))
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      isNGOEnquirySection &&
+      (field === "header" ||
+        field === "leftSection" ||
+        field === "contactSection" ||
+        field === "footerBanner" ||
+        field === "heading" ||
+        field === "leftPretitle" ||
+        field === "formPretitle" ||
+        field === "banner" ||
+        (!isNGOBreadcrumbEditor && field === "backgroundImage") ||
+        (!isNGOBreadcrumbEditor && field === "breadcrumb"))
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Support" || activeSectionType === "SupportPage") &&
+      (field === "introduction" ||
+        field === "keyValues" ||
+        field === "waysToSupport" ||
+        field === "impactStats" ||
+        field === "ctaBanner" ||
+        field === "transparencyBar" ||
+        field === "hero" ||
+        field === "banner" ||
+        field === "backgroundImage" ||
+        field === "breadcrumb")
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "ProjectsPage" &&
+      (field === "showExploreButton" || field === "exploreButton")
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Industry" &&
+      (field === "header" ||
+        field === "partnerBanner" ||
+        field === "industries" ||
+        field === "banner" ||
+        field === "backgroundImage" ||
+        field === "titleHighlight")
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Branches" &&
+      (field === "header" ||
+        field === "locationsSection" ||
+        field === "ctaBanner" ||
+        field === "contactBar" ||
+        field === "banner" ||
+        field === "backgroundImage")
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "AwardsPage" &&
+      (field === "header" ||
+        field === "awardsSection" ||
+        field === "supportBanner" ||
+        field === "transparencyBanner" ||
+        field === "banner" ||
+        field === "backgroundImage")
+    ) {
+      return false;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Careers" &&
+      (field === "whyWorkWithUs" ||
+        field === "heading" ||
+        field === "badge" ||
+        field === "roles" ||
+        field === "cta" ||
+        field === "banner" ||
+        field === "backgroundImage" ||
+        field === "description")
     ) {
       return false;
     }
@@ -3210,7 +9100,14 @@ export default function EditSectionModal({
       return false;
     }
 
-    if (subsectionScope && !scopedContentFields?.has(field)) {
+    if (
+      subsectionScope &&
+      !scopedContentFields?.has(field) &&
+      !(
+        showEventsCareersFormTab &&
+        activeTab === EVENTS_CAREERS_FORM_TAB
+      )
+    ) {
       return false;
     }
 
@@ -3269,6 +9166,26 @@ export default function EditSectionModal({
       if (activeTab === "CareerPage Content" && isFormField) return false;
     }
 
+    if (showEventsCareersFormTab) {
+      const isCareerFormField = eventsCareersFormContentFields.has(field);
+
+      if (activeTab === EVENTS_CAREERS_FORM_TAB && !isCareerFormField) {
+        return false;
+      }
+
+      if (
+        activeTab !== EVENTS_CAREERS_FORM_TAB &&
+        isCareerFormField
+      ) {
+        return false;
+      }
+    }
+
+    if (showEventsTeamTabsTab) {
+      if (activeTab === "Tabs") return field === "departments";
+      if (field === "departments") return false;
+    }
+
     if (hasScopedContentAndFormTabs) {
       const isFormField = scopedFormFields.includes(field);
 
@@ -3276,11 +9193,76 @@ export default function EditSectionModal({
       if (activeTab === scopedContentTab && isFormField) return false;
     }
 
+    if (isEventsHomeContact) {
+      if (activeTab === "Form") return field === "form";
+      if (activeTab.endsWith("Content") && field === "form") return false;
+    }
+
+    if (
+      showEventsCareersFormTab &&
+      activeTab === EVENTS_CAREERS_FORM_TAB &&
+      eventsCareersFormContentFields.has(field)
+    ) {
+      return true;
+    }
+
     return (
       !activeComponentContentFields ||
       activeComponentContentFields.includes(field)
     );
   };
+  const ngoGalleryCategorySelectOptions = (
+    Array.isArray(activeGenericEditorData?.categories)
+      ? activeGenericEditorData.categories
+      : []
+  )
+    .flatMap((item) => {
+      if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+      const record = item as Record<string, unknown>;
+      const value = typeof record.value === "string" ? record.value.trim() : "";
+      const optionLabel =
+        typeof record.label === "string" && record.label.trim()
+          ? record.label.trim()
+          : value;
+      if (!value || value === "all") return [];
+      return [{ value, label: optionLabel }];
+    });
+  const eventsGalleryTabSelectOptions = (
+    Array.isArray(activeGenericEditorData?.tabs)
+      ? activeGenericEditorData.tabs
+      : Array.isArray(activeGenericData?.tabs)
+        ? activeGenericData.tabs
+        : []
+  ).flatMap((item) => {
+    if (typeof item !== "string" || !item.trim()) return [];
+    return [{ value: item, label: item }];
+  });
+  const eventsTeamDepartmentSelectOptions = (
+    Array.isArray(activeGenericEditorData?.departments)
+      ? activeGenericEditorData.departments
+      : Array.isArray(activeGenericData?.departments)
+        ? activeGenericData.departments
+        : []
+  ).flatMap((item) => {
+    if (!item || typeof item !== "object" || Array.isArray(item)) return [];
+    const record = item as Record<string, unknown>;
+    const value = typeof record.value === "string" ? record.value.trim() : "";
+    const optionLabel =
+      typeof record.label === "string" && record.label.trim()
+        ? record.label.trim()
+        : value;
+    if (!value || value === "all") return [];
+    return [{ value, label: optionLabel }];
+  });
+  const galleryCategorySelectOptions =
+    category === "Events" && activeSectionType === "Gallery"
+      ? eventsGalleryTabSelectOptions
+      : ngoGalleryCategorySelectOptions;
+  const activeCategorySelectOptions =
+    category === "Events" &&
+    (activeSectionType === "Teams" || activeSectionType === "Team")
+      ? eventsTeamDepartmentSelectOptions
+      : galleryCategorySelectOptions;
   const visibleGenericContentEntries = Object.entries(
   activeGenericEditorData ?? {},
 )
@@ -3292,6 +9274,163 @@ export default function EditSectionModal({
     // Collections must always use actual saved section data,
     // never defaults / subsection fieldValues.
     if (Array.isArray(storedValue)) {
+      if (
+        category === "NGO" &&
+        activeSectionType === "Industry" &&
+        (field === "sectors" || field === "metrics") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        activeSectionType === "Branches" &&
+        (field === "stats" ||
+          field === "branches" ||
+          field === "contactItems") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        activeSectionType === "AwardsPage" &&
+        (field === "stats" || field === "awards") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        activeSectionType === "Careers" &&
+        (field === "benefits" || field === "jobs") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        (activeSectionType === "Support" || activeSectionType === "SupportPage") &&
+        (field === "values" ||
+          field === "supportCards" ||
+          field === "stats") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        (activeSectionType === "FAQ" || activeSectionType === "FAQPage") &&
+        field === "questions" &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        (activeSectionType === "Partners" || activeSectionType === "PartnersPage") &&
+        field === "partnersList" &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        (activeSectionType === "CSR" || activeSectionType === "CSRPage") &&
+        (field === "stats" ||
+          field === "focusItems" ||
+          field === "pillars" ||
+          field === "csrProjectItems" ||
+          field === "coreValueItems") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        activeSectionType === "TestimonialsPage" &&
+        field === "testimonials" &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        (activeSectionType === "Brochure" || activeSectionType === "BrochurePage") &&
+        (field === "features" ||
+          field === "brochures" ||
+          field === "ctaStats") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        activeSectionType === "CaseStudy" &&
+        field === "items" &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        (activeSectionType === "CaseDetails" ||
+          activeSectionType === "CaseDetailsPage") &&
+        (field === "popularPosts" ||
+          field === "primaryParagraphs" ||
+          field === "secondaryParagraphs") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        isNGOFrenchiseSection &&
+        (field === "features" ||
+          field === "leftPoints" ||
+          field === "steps") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "NGO" &&
+        isNGOEnquirySection &&
+        (field === "leftFeatures" || field === "contactItems") &&
+        Array.isArray(value)
+      ) {
+        return [field, value] as const;
+      }
+      if (
+        category === "Events" &&
+        activeSectionType === "Contact" &&
+        isPageSection &&
+        field === "contactItems"
+      ) {
+        return [
+          field,
+          storedValue.map((item) => {
+            if (!item || typeof item !== "object" || Array.isArray(item)) {
+              return item;
+            }
+            const record = item as Record<string, unknown>;
+            if (typeof record.value2 === "string") {
+              const firstLine = String(record.value ?? "").split("\n")[0] ?? "";
+              return {
+                ...record,
+                value: firstLine,
+                value2: record.value2,
+              };
+            }
+            const lines = String(record.value ?? "").split("\n");
+            return {
+              ...record,
+              value: lines[0] ?? "",
+              value2: lines.slice(1).join("\n"),
+            };
+          }),
+        ] as const;
+      }
       return [field, storedValue] as const;
     }
 
@@ -3300,13 +9439,31 @@ export default function EditSectionModal({
     .filter(([field]) =>
       activeSectionType === "PopularEvents" && field === "tabs"
         ? false
-        : isContentFieldVisible(field),
+        : showEventsTeamTabsTab && field === "departments"
+          ? false
+          : isContentFieldVisible(field),
     )
     .sort(([leftField, leftValue], [rightField, rightValue]) => {
+      if (
+        (category === "NGO" || isEventsHomeContact) &&
+        activeComponentContentFields?.length
+      ) {
+        const leftIndex = activeComponentContentFields.indexOf(leftField);
+        const rightIndex = activeComponentContentFields.indexOf(rightField);
+        const leftOrder =
+          leftIndex >= 0 ? leftIndex : activeComponentContentFields.length;
+        const rightOrder =
+          rightIndex >= 0 ? rightIndex : activeComponentContentFields.length;
+        return leftOrder - rightOrder;
+      }
+
       const getGroup = (field: string, value: unknown) => {
         const headingIndex = headingContentFieldOrder.indexOf(field);
         if (headingIndex >= 0) return headingIndex;
-        if (field === "tabs") return 50;
+        if (field === "tabs" || field === "departments") return 50;
+        // Contact overview: details first, then form (form is object so would otherwise sort above arrays).
+        if (field === "contactItems") return 90;
+        if (field === "form") return 110;
         if (Array.isArray(value)) return 200;
         return 100;
       };
@@ -3314,14 +9471,18 @@ export default function EditSectionModal({
         getGroup(leftField, leftValue) - getGroup(rightField, rightValue);
 
       if (groupDifference !== 0) return groupDifference;
-      if (!activeComponentContentFields) return 0;
+      const fieldOrderSource =
+        subsectionScope?.fields?.length
+          ? subsectionScope.fields
+          : activeComponentContentFields;
+      if (!fieldOrderSource) return 0;
 
-      const leftIndex = activeComponentContentFields.indexOf(leftField);
-      const rightIndex = activeComponentContentFields.indexOf(rightField);
+      const leftIndex = fieldOrderSource.indexOf(leftField);
+      const rightIndex = fieldOrderSource.indexOf(rightField);
       const leftOrder =
-        leftIndex >= 0 ? leftIndex : activeComponentContentFields.length;
+        leftIndex >= 0 ? leftIndex : fieldOrderSource.length;
       const rightOrder =
-        rightIndex >= 0 ? rightIndex : activeComponentContentFields.length;
+        rightIndex >= 0 ? rightIndex : fieldOrderSource.length;
 
       return leftOrder - rightOrder;
     })
@@ -3571,22 +9732,34 @@ export default function EditSectionModal({
   const menuItems = activeHeaderData?.menu ?? [];
   const topbarBackgroundType =
     activeTopbarData?.topbarBackgroundType ?? "solid";
-  const topbarType = activeTopbarData?.topbarType ?? "scroll";
-  const topbarSolidColor = activeTopbarData?.topbarBackgroundColor ?? "#245c6e";
+  const topbarType =
+    activeTopbarData?.topbarType ?? (category === "NGO" ? "sticky" : "scroll");
+  const topbarSolidColor =
+    activeTopbarData?.topbarBackgroundColor ??
+    (category === "NGO" ? "#ffffff" : "#245c6e");
   const topbarGradientColor =
-    activeTopbarData?.topbarGradientColor ?? "#0668ff";
-  const topbarTextColor = activeTopbarData?.topbarTextColor ?? "#ffffff";
+    activeTopbarData?.topbarGradientColor ??
+    (category === "NGO" ? "#ff541b" : "#0668ff");
+  const topbarTextColor =
+    activeTopbarData?.topbarTextColor ??
+    (category === "NGO" ? "#0f172a" : "#ffffff");
   const topbarPreviewBackground =
     topbarBackgroundType === "gradient"
       ? `linear-gradient(90deg, ${topbarSolidColor}, ${topbarGradientColor})`
       : topbarSolidColor;
   const headerBackgroundType =
     activeHeaderData?.headerBackgroundType ?? "solid";
-  const headerType = activeHeaderData?.headerType ?? "scroll";
-  const headerSolidColor = activeHeaderData?.headerBackgroundColor ?? "#245c6e";
+  const headerType =
+    activeHeaderData?.headerType ?? (category === "NGO" ? "sticky" : "scroll");
+  const headerSolidColor =
+    activeHeaderData?.headerBackgroundColor ??
+    (category === "NGO" ? "#3d376d" : "#245c6e");
   const headerGradientColor =
-    activeHeaderData?.headerGradientColor ?? "#0668ff";
-  const headerTextColor = activeHeaderData?.headerTextColor ?? "#ffffff";
+    activeHeaderData?.headerGradientColor ??
+    (category === "NGO" ? "#ff541b" : "#0668ff");
+  const headerTextColor =
+    activeHeaderData?.headerTextColor ??
+    (category === "NGO" ? "#f8fafc" : "#ffffff");
   const headerPreviewBackground =
     headerBackgroundType === "gradient"
       ? `linear-gradient(90deg, ${headerSolidColor}, ${headerGradientColor})`
@@ -3612,15 +9785,21 @@ export default function EditSectionModal({
   const hasBannerSlidesField = Array.isArray(activeBannerData?.bannerSlides);
   const isSliderBanner = hasBannerSlidesField;
   const isVideoSliderBanner = activeVariant === "Banner-4";
+  const isEventsSliderBanner = category === "Events" && isSliderBanner;
+  const isNGOSliderBanner = category === "NGO" && isSliderBanner;
+  const isTemplateSliderBanner = isEventsSliderBanner || isNGOSliderBanner;
   const visibleBannerButtons = (activeBannerData?.buttons ?? [])
     .map((button, index) => ({ button, index }))
-    .filter(({ index }) => !isSliderBanner || index === 1);
+    .filter(({ index }) =>
+      isTemplateSliderBanner ? false : !isSliderBanner || index === 1,
+    );
 
   const activeFooterData = currentSection?.data?.[activeVariant] as
     | {
       logo?: string;
       logoImage?: string;
       logoImageTitle?: string;
+      logoType?: "image" | "text" | "image-text";
       footerColumns?: { title: string; links: { label: string; href: string }[] }[];
       footerBackgroundType?: FooterBackgroundType;
       footerBackgroundColor?: string;
@@ -3672,10 +9851,54 @@ export default function EditSectionModal({
   const footerVariantsWithoutLegalExtras = ["EventsFooter1"];
   const showFooterLegalExtras =
     category !== "Events" &&
+    category !== "NGO" &&
     !footerVariantsWithoutLegalExtras.includes(activeVariant);
   const isEventsHeader =
     category === "Events" &&
     (activeVariant === "EventsHeader1" || activeSectionType === "Header");
+  const isNGOHeader =
+    category === "NGO" &&
+    (activeVariant === "NGOHeader2" || activeSectionType === "Header");
+  const isNGOFooter =
+    category === "NGO" &&
+    (activeVariant === "NGOFooter2" || activeSectionType === "Footer");
+  const isEventsFooter =
+    category === "Events" &&
+    (activeVariant === "EventsFooter1" || activeSectionType === "Footer");
+  const usesTypedFooterLogo = isNGOFooter || isEventsFooter;
+  const resolvedFooterLogoType: "image" | "text" | "image-text" =
+    activeFooterData?.logoType === "image" ||
+    activeFooterData?.logoType === "text" ||
+    activeFooterData?.logoType === "image-text"
+      ? activeFooterData.logoType
+      : activeFooterData?.logoImage && activeFooterData?.logo
+        ? "image-text"
+        : activeFooterData?.logoImage
+          ? "image"
+          : "text";
+  const showFooterLogoText =
+    resolvedFooterLogoType === "text" ||
+    resolvedFooterLogoType === "image-text";
+  const showFooterLogoImage =
+    resolvedFooterLogoType === "image" ||
+    resolvedFooterLogoType === "image-text";
+  const isSingleCtaHeader = isEventsHeader;
+  const resolvedHeaderLogoType: "image" | "text" | "image-text" =
+    activeHeaderData?.logoType === "image" ||
+    activeHeaderData?.logoType === "text" ||
+    activeHeaderData?.logoType === "image-text"
+      ? activeHeaderData.logoType
+      : activeHeaderData?.logoImage && activeHeaderData?.logo
+        ? "image-text"
+        : activeHeaderData?.logoImage
+          ? "image"
+          : "text";
+  const showHeaderLogoText =
+    resolvedHeaderLogoType === "text" ||
+    resolvedHeaderLogoType === "image-text";
+  const showHeaderLogoImage =
+    resolvedHeaderLogoType === "image" ||
+    resolvedHeaderLogoType === "image-text";
   const topbarSocialLinks = getVisibleSocialLinks(
     activeTopbarData?.socialLinks,
   );
@@ -3694,9 +9917,17 @@ export default function EditSectionModal({
   const pageLayoutOptions = discoveredPageLayoutOptions.length
     ? discoveredPageLayoutOptions
     : pageLayoutsBySection[activeSectionType] ?? [];
+  // Homepage Contact: home layouts only (EventsContact1, EventsContact2, ... when added).
+  // Contact page variants (EventsContactPage1, EventsContactPage2, ...) stay off home.
+  // Contact page uses page layout; Layout tab is hidden there for Events.
   const sectionLayoutOptions = isPageSection
     ? pageLayoutOptions
-    : categoryLayoutOptions;
+    : category === "Events" && activeSectionType === "Contact"
+      ? categoryLayoutOptions.filter((layout) => {
+          const variant = String(layout.componentVariant ?? layout.id);
+          return !/ContactPage\d*$/i.test(variant) && !/Page\d+$/i.test(variant);
+        })
+      : categoryLayoutOptions;
   const layoutOptions = sectionLayoutOptions;
   const visibleLayoutOptions =
     activeSectionType === "Gallery" && layoutOptions.length > 4
@@ -3706,9 +9937,22 @@ export default function EditSectionModal({
           layoutOptions[(galleryLayoutStart + index) % layoutOptions.length],
       )
       : layoutOptions;
-  const activeAboutLayouts = isPageSection
-    ? pageLayoutOptions
-    : categoryLayoutOptions;
+  const activeAboutLayouts =
+    isEventsInnerPageSubsection && subsectionScope
+      ? getEventsSubsectionLayouts(activeVariant, subsectionScope.label)
+      : isNGOAboutPageSubsection && subsectionScope
+        ? getNGOSubsectionLayouts(activeVariant, subsectionScope.label)
+      : isPageSection
+        ? pageLayoutOptions
+        : categoryLayoutOptions;
+  const isEventsInnerSubsectionLayout =
+    isEventsInnerPageSubsection &&
+    Boolean(subsectionScope) &&
+    activeAboutLayouts.length > 0;
+  const isNGOAboutPageLayout =
+    isNGOAboutPageSubsection &&
+    Boolean(subsectionScope) &&
+    activeAboutLayouts.length > 0;
   const generationText = bannerGenerationType
     ? `generating ${bannerGenerationType}`
     : layoutGenerationActive
@@ -3891,11 +10135,293 @@ export default function EditSectionModal({
     });
   };
 
+  const getNgoMediaNestedContent = (): Record<string, unknown> =>
+    activeGenericData?.content &&
+    typeof activeGenericData.content === "object" &&
+    !Array.isArray(activeGenericData.content)
+      ? (activeGenericData.content as Record<string, unknown>)
+      : {};
+
+  const getNgoCareersWhyWorkWithUs = () => {
+    const nested =
+      activeGenericData?.whyWorkWithUs &&
+      typeof activeGenericData.whyWorkWithUs === "object" &&
+      !Array.isArray(activeGenericData.whyWorkWithUs)
+        ? (activeGenericData.whyWorkWithUs as Record<string, unknown>)
+        : {};
+    return nested;
+  };
+
+  const getNgoSupportNested = (key: string) => {
+    const nested = (activeGenericData as Record<string, unknown> | undefined)?.[
+      key
+    ];
+    return nested && typeof nested === "object" && !Array.isArray(nested)
+      ? (nested as Record<string, unknown>)
+      : {};
+  };
+
+  const syncSupportCards = (items: unknown[]) =>
+    items.map((item) => {
+      if (!item || typeof item !== "object" || Array.isArray(item)) return item;
+      const rec = item as Record<string, unknown>;
+      const button =
+        rec.button && typeof rec.button === "object" && !Array.isArray(rec.button)
+          ? (rec.button as Record<string, unknown>)
+          : {};
+      const action =
+        rec.action && typeof rec.action === "object" && !Array.isArray(rec.action)
+          ? (rec.action as Record<string, unknown>)
+          : {};
+      const label =
+        (typeof button.label === "string" && button.label) ||
+        (typeof action.label === "string" && action.label) ||
+        "Learn More";
+      const href =
+        (typeof button.href === "string" && button.href) ||
+        (typeof action.href === "string" && action.href) ||
+        (typeof action.url === "string" && action.url) ||
+        "#";
+      return {
+        ...rec,
+        icon:
+          (typeof rec.icon === "string" && rec.icon) ||
+          (typeof rec.iconName === "string" && rec.iconName) ||
+          "heart",
+        iconName:
+          (typeof rec.iconName === "string" && rec.iconName) ||
+          (typeof rec.icon === "string" && rec.icon) ||
+          "heart",
+        button: { label, href },
+        action: { label, url: href, href },
+      };
+    });
+
+  const getGenericCollectionItems = (field: string): unknown[] | undefined => {
+    if (
+      category === "NGO" &&
+      activeSectionType === "Careers" &&
+      field === "benefits"
+    ) {
+      const nestedBenefits = getNgoCareersWhyWorkWithUs().benefits;
+      if (Array.isArray(nestedBenefits)) return nestedBenefits;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Support" || activeSectionType === "SupportPage")
+    ) {
+      if (field === "values") {
+        const nested = getNgoSupportNested("keyValues").values;
+        if (Array.isArray(nested)) return nested;
+      }
+      if (field === "supportCards") {
+        const nested = getNgoSupportNested("waysToSupport").supportCards;
+        if (Array.isArray(nested)) return nested;
+      }
+      if (field === "stats") {
+        const nested = getNgoSupportNested("impactStats").stats;
+        if (Array.isArray(nested)) return nested;
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "CSR" || activeSectionType === "CSRPage")
+    ) {
+      const nested =
+        field === "focusItems"
+          ? getNgoSupportNested("focusAreas").items
+          : field === "pillars"
+            ? getNgoSupportNested("ourImpact").pillars
+            : field === "csrProjectItems"
+              ? getNgoSupportNested("csrProjects").items
+              : field === "coreValueItems"
+                ? getNgoSupportNested("coreValues").items
+                : undefined;
+      if (Array.isArray(nested)) return nested;
+    }
+
+    const topLevel = (activeGenericData as Record<string, unknown> | undefined)?.[
+      field
+    ];
+    if (Array.isArray(topLevel)) return topLevel;
+
+    const editorItems = (
+      activeGenericEditorData as Record<string, unknown> | undefined
+    )?.[field];
+    if (Array.isArray(editorItems)) return editorItems;
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Media" &&
+      field === "mediaCards"
+    ) {
+      const nestedCards = getNgoMediaNestedContent().mediaCards;
+      if (Array.isArray(nestedCards)) return nestedCards;
+    }
+
+    return undefined;
+  };
+
+  const persistGenericCollection = (field: string, nextItems: unknown[]) => {
+    if (
+      category === "NGO" &&
+      activeSectionType === "Media" &&
+      field === "mediaCards"
+    ) {
+      updateActiveGenericData({
+        mediaCards: nextItems,
+        content: {
+          ...getNgoMediaNestedContent(),
+          mediaCards: nextItems,
+        },
+      });
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Careers" &&
+      field === "benefits"
+    ) {
+      updateActiveGenericData({
+        benefits: nextItems,
+        whyWorkWithUs: {
+          ...getNgoCareersWhyWorkWithUs(),
+          benefits: nextItems,
+        },
+      });
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Support" || activeSectionType === "SupportPage")
+    ) {
+      if (field === "values") {
+        updateActiveGenericData({
+          values: nextItems,
+          keyValues: {
+            ...getNgoSupportNested("keyValues"),
+            values: nextItems,
+          },
+        });
+        return;
+      }
+      if (field === "supportCards") {
+        const synced = syncSupportCards(nextItems);
+        updateActiveGenericData({
+          supportCards: synced,
+          waysToSupport: {
+            ...getNgoSupportNested("waysToSupport"),
+            supportCards: synced,
+          },
+        });
+        return;
+      }
+      if (field === "stats") {
+        updateActiveGenericData({
+          stats: nextItems,
+          impactStats: {
+            ...getNgoSupportNested("impactStats"),
+            stats: nextItems,
+          },
+        });
+        return;
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "CSR" || activeSectionType === "CSRPage")
+    ) {
+      if (field === "stats") {
+        updateActiveGenericData({ stats: nextItems });
+        return;
+      }
+      if (field === "focusItems") {
+        updateActiveGenericData({
+          focusItems: nextItems,
+          focusAreas: {
+            ...getNgoSupportNested("focusAreas"),
+            items: nextItems,
+          },
+        });
+        return;
+      }
+      if (field === "pillars") {
+        updateActiveGenericData({
+          pillars: nextItems,
+          ourImpact: {
+            ...getNgoSupportNested("ourImpact"),
+            pillars: nextItems,
+          },
+        });
+        return;
+      }
+      if (field === "csrProjectItems") {
+        updateActiveGenericData({
+          csrProjectItems: nextItems,
+          csrProjects: {
+            ...getNgoSupportNested("csrProjects"),
+            items: nextItems,
+          },
+        });
+        return;
+      }
+      if (field === "coreValueItems") {
+        updateActiveGenericData({
+          coreValueItems: nextItems,
+          coreValues: {
+            ...getNgoSupportNested("coreValues"),
+            items: nextItems,
+          },
+        });
+        return;
+      }
+    }
+
+    if (isEventsHomeContact && field === "features") {
+      const currentLeft =
+        activeGenericData?.leftContent &&
+        typeof activeGenericData.leftContent === "object" &&
+        !Array.isArray(activeGenericData.leftContent)
+          ? (activeGenericData.leftContent as Record<string, unknown>)
+          : {};
+      updateActiveGenericData({
+        features: nextItems,
+        leftContent: {
+          ...currentLeft,
+          features: nextItems,
+        },
+      });
+      return;
+    }
+
+    updateActiveGenericData({
+      [field]: nextItems,
+    });
+  };
+
   const updateActiveGenericData = (newData: Record<string, unknown>) => {
     if (!currentSection || !activeGenericData) return;
 
     setHasChanges(true);
     setLastChangedSection(activeSectionKey);
+    if (ngoAboutNestedKey && pageVariantData) {
+      onUpdateSectionData(activeSectionKey, {
+        ...currentSection.data,
+        [activeVariant]: {
+          ...pageVariantData,
+          [ngoAboutNestedKey]: {
+            ...(nestedNgoAboutData ?? {}),
+            ...newData,
+          },
+        },
+      });
+      return;
+    }
     onUpdateSectionData(activeSectionKey, {
       ...currentSection.data,
       [activeVariant]: {
@@ -3905,7 +10431,144 @@ export default function EditSectionModal({
     });
   };
 
+  const updateCareersApplyForm = (
+    patch: Record<string, unknown>,
+  ) => {
+    updateActiveGenericData({
+      applyForm: {
+        ...(activeGenericEditorData?.applyForm ?? {}),
+        ...patch,
+      },
+    });
+  };
+
+  const updateCareersApplyFormItemField = (
+    index: number,
+    key: string,
+    value: unknown,
+  ) => {
+    const nextFields = activeCareersApplyForm.fields.map((field, fieldIndex) =>
+      fieldIndex === index ? { ...field, [key]: value } : field,
+    );
+    updateCareersApplyForm({ fields: nextFields });
+  };
+
+  const moveCareersApplyFormField = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= activeCareersApplyForm.fields.length) {
+      return;
+    }
+
+    const nextFields = [...activeCareersApplyForm.fields];
+    const [movedField] = nextFields.splice(fromIndex, 1);
+    nextFields.splice(toIndex, 0, movedField);
+    updateCareersApplyForm({ fields: nextFields });
+  };
+
+  const addCareersApplyFormField = () => {
+    if (activeCareersApplyForm.fields.length >= MAX_EVENTS_CAREERS_FORM_FIELDS) {
+      return;
+    }
+
+    updateCareersApplyForm({
+      fields: [
+        ...activeCareersApplyForm.fields,
+        {
+          name: `field-${Date.now()}`,
+          label: "New Field",
+          placeholder: "Enter value",
+          type: "text",
+          required: false,
+          width: "half",
+        },
+      ],
+    });
+  };
+
+  const deleteCareersApplyFormField = (index: number) => {
+    if (activeCareersApplyForm.fields.length <= 1) {
+      return;
+    }
+
+    updateCareersApplyForm({
+      fields: activeCareersApplyForm.fields.filter(
+        (_, fieldIndex) => fieldIndex !== index,
+      ),
+    });
+    setPendingCareersFormFieldDeleteIndex(null);
+  };
+
   const updateGenericField = (path: GenericFieldPath, value: unknown) => {
+    if (
+      isEventsHomeContact &&
+      path.length === 1 &&
+      typeof path[0] === "string"
+    ) {
+      const field = path[0];
+      const asRecord = (item: unknown): Record<string, unknown> =>
+        item && typeof item === "object" && !Array.isArray(item)
+          ? (item as Record<string, unknown>)
+          : {};
+      const currentLeft = asRecord(activeGenericData?.leftContent);
+      const currentCta = asRecord(currentLeft.cta);
+
+      if (
+        field === "leftBadge" ||
+        field === "leftTitle" ||
+        field === "leftTitleHighlight" ||
+        field === "leftDesc" ||
+        field === "features" ||
+        field === "ctaLabel" ||
+        field === "ctaHref"
+      ) {
+        const currentMain =
+          typeof activeGenericData?.leftTitle === "string"
+            ? String(activeGenericData.leftTitle).split("\n")[0]
+            : typeof currentLeft.title === "string"
+              ? currentLeft.title.split("\n")[0]
+              : "";
+        const currentHighlight =
+          typeof activeGenericData?.leftTitleHighlight === "string"
+            ? activeGenericData.leftTitleHighlight
+            : typeof currentLeft.title === "string"
+              ? currentLeft.title.split("\n").slice(1).join("\n")
+              : "";
+        const nextMain =
+          field === "leftTitle" ? String(value ?? "") : currentMain;
+        const nextHighlight =
+          field === "leftTitleHighlight"
+            ? String(value ?? "")
+            : currentHighlight;
+        const joinedTitle = [nextMain, nextHighlight]
+          .filter((part) => part.length > 0)
+          .join("\n");
+
+        updateActiveGenericData({
+          [field]: field === "leftTitle" ? nextMain : value,
+          ...(field === "leftTitle" || field === "leftTitleHighlight"
+            ? {
+                leftTitle: nextMain,
+                leftTitleHighlight: nextHighlight,
+              }
+            : {}),
+          leftContent: {
+            ...currentLeft,
+            ...(field === "leftBadge" ? { badge: value } : {}),
+            ...(field === "leftTitle" || field === "leftTitleHighlight"
+              ? { title: joinedTitle }
+              : {}),
+            ...(field === "leftDesc" ? { description: value } : {}),
+            ...(field === "features" ? { features: value } : {}),
+            cta: {
+              ...currentCta,
+              ...(field === "ctaLabel" ? { label: value } : {}),
+              ...(field === "ctaHref" ? { href: value } : {}),
+            },
+          },
+        });
+        return;
+      }
+    }
+
     let sourcePath = path;
 
     if (
@@ -3993,7 +10656,7 @@ export default function EditSectionModal({
     if (typeof field !== "string" || !activeGenericData) return;
 
     const storedSourceValue = activeGenericData[field as keyof SectionData];
-    const sourceValue =
+    let sourceValue =
       activeSectionType === "CareerPage" &&
         field === "formFields" &&
         !Array.isArray(storedSourceValue)
@@ -4007,6 +10670,50 @@ export default function EditSectionModal({
           : storedSourceValue === undefined
             ? (activeGenericEditorData as Record<string, unknown>)[field]
             : storedSourceValue;
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Contact" ||
+        isNGOFrenchiseSection ||
+        isNGOEnquirySection) &&
+      field === "form" &&
+      sourceValue &&
+      typeof sourceValue === "object" &&
+      !Array.isArray(sourceValue)
+    ) {
+      const form = sourceValue as Record<string, unknown>;
+      if (form.fields && !Array.isArray(form.fields) && typeof form.fields === "object") {
+        const fields = form.fields as Record<string, unknown>;
+        sourceValue = {
+          ...form,
+          fields: Object.entries(fields).map(([key, value]) => {
+            const entry =
+              value && typeof value === "object" && !Array.isArray(value)
+                ? (value as Record<string, unknown>)
+                : {};
+            return {
+              name: key,
+              label: typeof entry.label === "string" ? entry.label : key,
+              placeholder:
+                typeof entry.placeholder === "string" ? entry.placeholder : "",
+              type:
+                typeof entry.type === "string"
+                  ? entry.type
+                  : key === "message"
+                    ? "textarea"
+                    : "text",
+              width:
+                typeof entry.width === "string"
+                  ? entry.width
+                  : key === "message"
+                    ? "full"
+                    : "half",
+            };
+          }),
+        };
+      }
+    }
+
     const nextValue = setValueAtPath(
       sourceValue,
       nestedPath,
@@ -4074,6 +10781,924 @@ export default function EditSectionModal({
         events: nextEvents,
       });
       return;
+    }
+
+    if (
+      category === "Events" &&
+      activeSectionType === "Contact" &&
+      isPageSection &&
+      field === "contactItems" &&
+      Array.isArray(nextValue)
+    ) {
+      updateActiveGenericData({
+        contactItems: nextValue.map((item) => {
+          if (!item || typeof item !== "object" || Array.isArray(item)) {
+            return item;
+          }
+          const record = item as Record<string, unknown>;
+          const lines = String(record.value ?? "").split("\n");
+          const value2 =
+            typeof record.value2 === "string"
+              ? record.value2
+              : lines.slice(1).join("\n");
+          return {
+            ...record,
+            value: lines[0] ?? "",
+            value2,
+          };
+        }),
+      });
+      return;
+    }
+
+    if (
+      category === "Events" &&
+      activeSectionType === "Gallery" &&
+      field === "cards" &&
+      typeof nestedPath[0] === "number" &&
+      nestedPath[1] === "badge" &&
+      Array.isArray(nextValue)
+    ) {
+      const cardIndex = nestedPath[0];
+      updateActiveGenericData({
+        cards: nextValue.map((item, index) => {
+          if (
+            index !== cardIndex ||
+            !item ||
+            typeof item !== "object" ||
+            Array.isArray(item)
+          ) {
+            return item;
+          }
+
+          const record = item as Record<string, unknown>;
+          return {
+            ...record,
+            subtitle: record.badge,
+          };
+        }),
+      });
+      return;
+    }
+
+    if (isEventsHomeContact && field === "features") {
+      const currentLeft =
+        activeGenericData.leftContent &&
+        typeof activeGenericData.leftContent === "object" &&
+        !Array.isArray(activeGenericData.leftContent)
+          ? (activeGenericData.leftContent as Record<string, unknown>)
+          : {};
+      updateActiveGenericData({
+        features: nextValue,
+        leftContent: {
+          ...currentLeft,
+          features: nextValue,
+        },
+      });
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Media" &&
+      (field === "mediaCards" || field === "sectionTitle")
+    ) {
+      const nestedContent = getNgoMediaNestedContent();
+      updateActiveGenericData({
+        [field]: nextValue,
+        content: {
+          ...nestedContent,
+          [field]: nextValue,
+        },
+      });
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Careers" &&
+      (field === "title" || field === "desc" || field === "benefits")
+    ) {
+      const nestedWhy = getNgoCareersWhyWorkWithUs();
+      updateActiveGenericData({
+        [field]: nextValue,
+        whyWorkWithUs: {
+          ...nestedWhy,
+          ...(field === "title" ? { title: nextValue } : {}),
+          ...(field === "desc" ? { description: nextValue } : {}),
+          ...(field === "benefits" ? { benefits: nextValue } : {}),
+        },
+      });
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Support" || activeSectionType === "SupportPage")
+    ) {
+      const asAction = (value: unknown) => {
+        const rec =
+          value && typeof value === "object" && !Array.isArray(value)
+            ? (value as Record<string, unknown>)
+            : {};
+        const label = typeof rec.label === "string" ? rec.label : "";
+        const href =
+          (typeof rec.href === "string" && rec.href) ||
+          (typeof rec.url === "string" && rec.url) ||
+          "";
+        return { label, href, url: href };
+      };
+
+      if (
+        field === "pretitle" ||
+        field === "title" ||
+        field === "desc" ||
+        field === "values"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          introduction: {
+            ...getNgoSupportNested("introduction"),
+            ...(field === "pretitle" ? { topBadge: nextValue } : {}),
+            ...(field === "title" ? { heading: nextValue } : {}),
+            ...(field === "desc" ? { description: nextValue } : {}),
+          },
+          ...(field === "desc" ? { description: nextValue } : {}),
+          ...(field === "values"
+            ? {
+                keyValues: {
+                  ...getNgoSupportNested("keyValues"),
+                  values: nextValue,
+                },
+              }
+            : {}),
+        });
+        return;
+      }
+
+      if (
+        field === "waysPretitle" ||
+        field === "waysTitle" ||
+        field === "supportCards"
+      ) {
+        const cards = Array.isArray(nextValue)
+          ? syncSupportCards(nextValue)
+          : nextValue;
+        updateActiveGenericData({
+          [field]: field === "supportCards" ? cards : nextValue,
+          waysToSupport: {
+            ...getNgoSupportNested("waysToSupport"),
+            ...(field === "waysPretitle" ? { topBadge: nextValue } : {}),
+            ...(field === "waysTitle" ? { heading: nextValue } : {}),
+            ...(field === "supportCards" ? { supportCards: cards } : {}),
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "impactPretitle" ||
+        field === "impactTitle" ||
+        field === "stats" ||
+        field === "closingText"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          impactStats: {
+            ...getNgoSupportNested("impactStats"),
+            ...(field === "impactPretitle" ? { topBadge: nextValue } : {}),
+            ...(field === "impactTitle" ? { heading: nextValue } : {}),
+            ...(field === "stats" ? { stats: nextValue } : {}),
+            ...(field === "closingText" ? { closingText: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "ctaPretitle" ||
+        field === "ctaTitle" ||
+        field === "ctaDesc" ||
+        field === "ctaImage" ||
+        field === "ctaPrimaryButton" ||
+        field === "ctaSecondaryButton"
+      ) {
+        const currentCta = getNgoSupportNested("ctaBanner");
+        const currentImage =
+          currentCta.bannerImage &&
+          typeof currentCta.bannerImage === "object" &&
+          !Array.isArray(currentCta.bannerImage)
+            ? (currentCta.bannerImage as Record<string, unknown>)
+            : {};
+        updateActiveGenericData({
+          [field]: nextValue,
+          ctaBanner: {
+            ...currentCta,
+            ...(field === "ctaPretitle" ? { topBadge: nextValue } : {}),
+            ...(field === "ctaTitle" ? { heading: nextValue } : {}),
+            ...(field === "ctaDesc" ? { description: nextValue } : {}),
+            ...(field === "ctaImage"
+              ? {
+                  bannerImage: {
+                    ...currentImage,
+                    src: nextValue,
+                  },
+                }
+              : {}),
+            ...(field === "ctaPrimaryButton"
+              ? { primaryAction: asAction(nextValue) }
+              : {}),
+            ...(field === "ctaSecondaryButton"
+              ? { secondaryAction: asAction(nextValue) }
+              : {}),
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "transparencyIcon" ||
+        field === "transparencyTitle" ||
+        field === "transparencyDesc" ||
+        field === "transparencyButton"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          transparencyBar: {
+            ...getNgoSupportNested("transparencyBar"),
+            ...(field === "transparencyIcon" ? { iconName: nextValue } : {}),
+            ...(field === "transparencyTitle" ? { title: nextValue } : {}),
+            ...(field === "transparencyDesc" ? { pretitle: nextValue } : {}),
+            ...(field === "transparencyButton"
+              ? { action: asAction(nextValue) }
+              : {}),
+          },
+        });
+        return;
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Gallery" &&
+      (field === "pretitle" || field === "title" || field === "desc")
+    ) {
+      const currentBadge =
+        activeGenericData.badge &&
+        typeof activeGenericData.badge === "object" &&
+        !Array.isArray(activeGenericData.badge)
+          ? (activeGenericData.badge as Record<string, unknown>)
+          : {};
+      updateActiveGenericData({
+        [field]: nextValue,
+        ...(field === "pretitle"
+          ? { badge: { ...currentBadge, label: nextValue } }
+          : {}),
+        ...(field === "desc" ? { description: nextValue } : {}),
+      });
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "FAQ" || activeSectionType === "FAQPage") &&
+      (field === "pretitle" || field === "title" || field === "desc")
+    ) {
+      const currentBadge =
+        activeGenericData.badge &&
+        typeof activeGenericData.badge === "object" &&
+        !Array.isArray(activeGenericData.badge)
+          ? (activeGenericData.badge as Record<string, unknown>)
+          : {};
+      updateActiveGenericData({
+        [field]: nextValue,
+        ...(field === "pretitle"
+          ? { badge: { ...currentBadge, label: nextValue } }
+          : {}),
+        ...(field === "desc" ? { description: nextValue } : {}),
+      });
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Partners" || activeSectionType === "PartnersPage") &&
+      (field === "pretitle" || field === "title" || field === "desc")
+    ) {
+      const currentBadge =
+        activeGenericData.badge &&
+        typeof activeGenericData.badge === "object" &&
+        !Array.isArray(activeGenericData.badge)
+          ? (activeGenericData.badge as Record<string, unknown>)
+          : {};
+      updateActiveGenericData({
+        [field]: nextValue,
+        ...(field === "pretitle"
+          ? { badge: { ...currentBadge, label: nextValue } }
+          : {}),
+        ...(field === "desc" ? { description: nextValue } : {}),
+      });
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Contact" &&
+      field === "mapEmbedUrl"
+    ) {
+      const currentMap =
+        activeGenericData.map &&
+        typeof activeGenericData.map === "object" &&
+        !Array.isArray(activeGenericData.map)
+          ? (activeGenericData.map as Record<string, unknown>)
+          : {};
+      updateActiveGenericData({
+        mapEmbedUrl: nextValue,
+        map: {
+          ...currentMap,
+          embedUrl: nextValue,
+        },
+      });
+      return;
+    }
+
+    if (category === "NGO" && isNGOFrenchiseSection) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const currentHeader = asRecord(activeGenericData.header);
+      const currentLeft = asRecord(activeGenericData.leftSection);
+      const currentForm = asRecord(activeGenericData.form);
+      const currentProcess = asRecord(activeGenericData.processSection);
+      const currentBanner = asRecord(activeGenericData.contactBanner);
+      const currentLeftImage = asRecord(currentLeft.image);
+      const currentCtaImage = asRecord(currentBanner.image);
+
+      if (field === "pretitle" || field === "title" || field === "desc") {
+        updateActiveGenericData({
+          ...(field === "title" ? { heading: nextValue } : { [field]: nextValue }),
+          ...(field === "desc" ? { description: nextValue } : {}),
+          header: {
+            ...currentHeader,
+            ...(field === "pretitle" ? { label: nextValue } : {}),
+            ...(field === "title" ? { heading: nextValue } : {}),
+            ...(field === "desc" ? { description: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "leftPretitle" ||
+        field === "leftTitle" ||
+        field === "leftDesc" ||
+        field === "leftPoints" ||
+        field === "leftImage" ||
+        field === "leftImageAlt"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          leftSection: {
+            ...currentLeft,
+            ...(field === "leftPretitle" ? { label: nextValue } : {}),
+            ...(field === "leftTitle" ? { title: nextValue } : {}),
+            ...(field === "leftDesc" ? { description: nextValue } : {}),
+            ...(field === "leftPoints" ? { points: nextValue } : {}),
+            image: {
+              ...currentLeftImage,
+              ...(field === "leftImage" ? { src: nextValue } : {}),
+              ...(field === "leftImageAlt" ? { alt: nextValue } : {}),
+            },
+          },
+        });
+        return;
+      }
+
+      if (field === "formTitle" || field === "formPretitle") {
+        updateActiveGenericData({
+          [field]: nextValue,
+          form: {
+            ...currentForm,
+            ...(field === "formTitle" ? { title: nextValue } : {}),
+            ...(field === "formPretitle" ? { pretitle: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (field === "processPretitle" || field === "processTitle" || field === "steps") {
+        updateActiveGenericData({
+          [field]: nextValue,
+          processSection: {
+            ...currentProcess,
+            ...(field === "processPretitle" ? { label: nextValue } : {}),
+            ...(field === "processTitle" ? { title: nextValue } : {}),
+            ...(field === "steps" ? { steps: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "ctaTitle" ||
+        field === "ctaPretitle" ||
+        field === "ctaDesc" ||
+        field === "ctaPhone" ||
+        field === "ctaEmail" ||
+        field === "ctaHours" ||
+        field === "ctaImage" ||
+        field === "ctaImageAlt"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          contactBanner: {
+            ...currentBanner,
+            ...(field === "ctaTitle" ? { title: nextValue } : {}),
+            ...(field === "ctaPretitle" ? { pretitle: nextValue } : {}),
+            ...(field === "ctaDesc" ? { description: nextValue } : {}),
+            ...(field === "ctaPhone" ? { phone: nextValue } : {}),
+            ...(field === "ctaEmail" ? { email: nextValue } : {}),
+            ...(field === "ctaHours" ? { workingHours: nextValue } : {}),
+            image: {
+              ...currentCtaImage,
+              ...(field === "ctaImage" ? { src: nextValue } : {}),
+              ...(field === "ctaImageAlt" ? { alt: nextValue } : {}),
+            },
+          },
+        });
+        return;
+      }
+    }
+
+    if (category === "NGO" && isNGOEnquirySection) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const currentHeader = asRecord(activeGenericData.header);
+      const currentLeft = asRecord(activeGenericData.leftSection);
+      const currentForm = asRecord(activeGenericData.form);
+      const currentContact = asRecord(activeGenericData.contactSection);
+      const currentFooter = asRecord(activeGenericData.footerBanner);
+      const currentLeftImage = asRecord(currentLeft.image);
+      const currentButton = asRecord(currentFooter.button);
+
+      if (field === "pretitle" || field === "title" || field === "desc") {
+        updateActiveGenericData({
+          [field]: nextValue,
+          ...(field === "title" ? { heading: nextValue } : {}),
+          ...(field === "desc" ? { description: nextValue } : {}),
+          header: {
+            ...currentHeader,
+            ...(field === "pretitle" ? { label: nextValue } : {}),
+            ...(field === "title" ? { heading: nextValue } : {}),
+            ...(field === "desc" ? { description: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "leftTitle" ||
+        field === "leftDesc" ||
+        field === "leftFeatures" ||
+        field === "leftImage" ||
+        field === "leftImageAlt"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          leftSection: {
+            ...currentLeft,
+            ...(field === "leftTitle" ? { title: nextValue } : {}),
+            ...(field === "leftDesc" ? { description: nextValue } : {}),
+            ...(field === "leftFeatures" ? { features: nextValue } : {}),
+            image: {
+              ...currentLeftImage,
+              ...(field === "leftImage" ? { src: nextValue } : {}),
+              ...(field === "leftImageAlt" ? { alt: nextValue } : {}),
+            },
+          },
+        });
+        return;
+      }
+
+      if (field === "formTitle") {
+        updateActiveGenericData({
+          formTitle: nextValue,
+          form: {
+            ...currentForm,
+            title: nextValue,
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "contactTitle" ||
+        field === "contactPretitle" ||
+        field === "contactDesc" ||
+        field === "contactItems"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          contactSection: {
+            ...currentContact,
+            ...(field === "contactTitle" ? { title: nextValue } : {}),
+            ...(field === "contactPretitle" ? { pretitle: nextValue } : {}),
+            ...(field === "contactDesc" ? { description: nextValue } : {}),
+            ...(field === "contactItems" ? { items: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "ctaIcon" ||
+        field === "ctaText" ||
+        field === "ctaSubtext" ||
+        field === "ctaButtonLabel" ||
+        field === "ctaButtonHref" ||
+        field === "ctaButtonIcon"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          footerBanner: {
+            ...currentFooter,
+            ...(field === "ctaIcon" ? { icon: nextValue } : {}),
+            ...(field === "ctaText" ? { text: nextValue } : {}),
+            ...(field === "ctaSubtext" ? { subtext: nextValue } : {}),
+            button: {
+              ...currentButton,
+              ...(field === "ctaButtonLabel" ? { label: nextValue } : {}),
+              ...(field === "ctaButtonHref" ? { href: nextValue } : {}),
+              ...(field === "ctaButtonIcon" ? { icon: nextValue } : {}),
+            },
+          },
+        });
+        return;
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "CSR" || activeSectionType === "CSRPage")
+    ) {
+      const asAction = (value: unknown) => {
+        const rec =
+          value && typeof value === "object" && !Array.isArray(value)
+            ? (value as Record<string, unknown>)
+            : {};
+        const label =
+          (typeof rec.label === "string" && rec.label) ||
+          (typeof rec.text === "string" && rec.text) ||
+          "";
+        const href =
+          (typeof rec.href === "string" && rec.href) ||
+          (typeof rec.url === "string" && rec.url) ||
+          "";
+        return { label, href, text: label };
+      };
+
+      if (
+        field === "pretitle" ||
+        field === "title" ||
+        field === "desc" ||
+        field === "stats"
+      ) {
+        const currentHeader = getNgoSupportNested("header");
+        const currentTitle = currentHeader.title;
+        const syncedStats = Array.isArray(nextValue)
+          ? nextValue.map((item) => {
+              if (!item || typeof item !== "object" || Array.isArray(item)) {
+                return item;
+              }
+              const rec = item as Record<string, unknown>;
+              const icon =
+                (typeof rec.icon === "string" && rec.icon) ||
+                (typeof rec.iconName === "string" && rec.iconName) ||
+                "heart";
+              return { ...rec, icon, iconName: icon };
+            })
+          : nextValue;
+        updateActiveGenericData({
+          ...(field === "title"
+            ? {}
+            : { [field]: field === "stats" ? syncedStats : nextValue }),
+          ...(field === "desc" ? { description: nextValue } : {}),
+          header: {
+            ...currentHeader,
+            ...(field === "pretitle" ? { topBadge: nextValue } : {}),
+            ...(field === "title"
+              ? {
+                  title:
+                    typeof nextValue === "string"
+                      ? nextValue
+                      : currentTitle,
+                }
+              : {}),
+            ...(field === "desc" ? { pretitle: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (field === "focusPretitle" || field === "focusItems") {
+        updateActiveGenericData({
+          [field]: nextValue,
+          focusAreas: {
+            ...getNgoSupportNested("focusAreas"),
+            ...(field === "focusPretitle" ? { topBadge: nextValue } : {}),
+            ...(field === "focusItems" ? { items: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "impactPretitle" ||
+        field === "impactDesc" ||
+        field === "impactButton" ||
+        field === "pillars"
+      ) {
+        const currentImpact = getNgoSupportNested("ourImpact");
+        updateActiveGenericData({
+          [field]: nextValue,
+          ourImpact: {
+            ...currentImpact,
+            ...(field === "impactPretitle" ? { topBadge: nextValue } : {}),
+            ...(field === "impactDesc" ? { description: nextValue } : {}),
+            ...(field === "impactButton"
+              ? { ctaButton: asAction(nextValue) }
+              : {}),
+            ...(field === "pillars" ? { pillars: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (field === "projectsPretitle" || field === "csrProjectItems") {
+        updateActiveGenericData({
+          [field]: nextValue,
+          csrProjects: {
+            ...getNgoSupportNested("csrProjects"),
+            ...(field === "projectsPretitle" ? { topBadge: nextValue } : {}),
+            ...(field === "csrProjectItems" ? { items: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (field === "ctaTitle" || field === "ctaDesc" || field === "ctaButton") {
+        const currentCta = getNgoSupportNested("bannerCta");
+        const action = field === "ctaButton" ? asAction(nextValue) : null;
+        updateActiveGenericData({
+          [field]: nextValue,
+          bannerCta: {
+            ...currentCta,
+            ...(field === "ctaTitle" ? { title: nextValue } : {}),
+            ...(field === "ctaDesc" ? { description: nextValue } : {}),
+            ...(action
+              ? { buttonText: action.label, href: action.href }
+              : {}),
+          },
+        });
+        return;
+      }
+
+      if (field === "coreValueItems") {
+        updateActiveGenericData({
+          coreValueItems: nextValue,
+          coreValues: {
+            ...getNgoSupportNested("coreValues"),
+            items: nextValue,
+          },
+        });
+        return;
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "TestimonialsPage"
+    ) {
+      if (
+        field === "pretitle" ||
+        field === "title" ||
+        field === "highlight" ||
+        field === "desc"
+      ) {
+        const currentBadge =
+          activeGenericData.badge &&
+          typeof activeGenericData.badge === "object" &&
+          !Array.isArray(activeGenericData.badge)
+            ? (activeGenericData.badge as Record<string, unknown>)
+            : {};
+        const currentTitle =
+          activeGenericData.title &&
+          typeof activeGenericData.title === "object" &&
+          !Array.isArray(activeGenericData.title)
+            ? (activeGenericData.title as Record<string, unknown>)
+            : {};
+        const line1 =
+          field === "title"
+            ? nextValue
+            : (typeof currentTitle.line1 === "string" && currentTitle.line1) ||
+              (typeof activeGenericData.title === "string"
+                ? activeGenericData.title
+                : "Don't Believe Us?");
+        const highlight =
+          field === "highlight"
+            ? nextValue
+            : (typeof currentTitle.highlight === "string" &&
+                currentTitle.highlight) ||
+              (typeof activeGenericData.highlight === "string"
+                ? activeGenericData.highlight
+                : "See Review");
+        updateActiveGenericData({
+          [field]: nextValue,
+          ...(field === "desc" ? { description: nextValue } : {}),
+          ...(field === "pretitle"
+            ? { badge: { ...currentBadge, label: nextValue } }
+            : {}),
+          ...(field === "title" || field === "highlight"
+            ? { title: { ...currentTitle, line1, highlight } }
+            : {}),
+        });
+        return;
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "Brochure" || activeSectionType === "BrochurePage")
+    ) {
+      if (field === "pretitle" || field === "title" || field === "desc") {
+        const currentHeader =
+          activeGenericData.header &&
+          typeof activeGenericData.header === "object" &&
+          !Array.isArray(activeGenericData.header)
+            ? (activeGenericData.header as Record<string, unknown>)
+            : {};
+        updateActiveGenericData({
+          ...(field === "title" ? { heading: nextValue } : { [field]: nextValue }),
+          ...(field === "desc" ? { description: nextValue } : {}),
+          header: {
+            ...currentHeader,
+            ...(field === "pretitle" ? { label: nextValue } : {}),
+            ...(field === "title" ? { heading: nextValue } : {}),
+            ...(field === "desc" ? { description: nextValue } : {}),
+          },
+        });
+        return;
+      }
+
+      if (field === "listPretitle" || field === "listTitle") {
+        const currentSectionTitle =
+          activeGenericData.sectionTitle &&
+          typeof activeGenericData.sectionTitle === "object" &&
+          !Array.isArray(activeGenericData.sectionTitle)
+            ? (activeGenericData.sectionTitle as Record<string, unknown>)
+            : {};
+        updateActiveGenericData({
+          [field]: nextValue,
+          sectionTitle: {
+            ...currentSectionTitle,
+            ...(field === "listPretitle" ? { label: nextValue } : {}),
+            ...(field === "listTitle" ? { heading: nextValue } : {}),
+          },
+        });
+        return;
+      }
+    }
+
+    if (category === "NGO" && activeSectionType === "CaseStudy") {
+      if (
+        field === "pretitle" ||
+        field === "title" ||
+        field === "desc"
+      ) {
+        const currentBadge =
+          activeGenericData.badge &&
+          typeof activeGenericData.badge === "object" &&
+          !Array.isArray(activeGenericData.badge)
+            ? (activeGenericData.badge as Record<string, unknown>)
+            : {};
+        updateActiveGenericData({
+          ...(field === "title" ? { heading: nextValue } : { [field]: nextValue }),
+          ...(field === "desc" ? { description: nextValue } : {}),
+          ...(field === "pretitle"
+            ? { badge: { ...currentBadge, label: nextValue } }
+            : {}),
+        });
+        return;
+      }
+
+      if (field === "ctaTitle" || field === "ctaDesc" || field === "ctaButton") {
+        const currentCta =
+          activeGenericData.cta &&
+          typeof activeGenericData.cta === "object" &&
+          !Array.isArray(activeGenericData.cta)
+            ? (activeGenericData.cta as Record<string, unknown>)
+            : {};
+        const action =
+          field === "ctaButton" &&
+          nextValue &&
+          typeof nextValue === "object" &&
+          !Array.isArray(nextValue)
+            ? (nextValue as Record<string, unknown>)
+            : {};
+        updateActiveGenericData({
+          [field]: nextValue,
+          cta: {
+            ...currentCta,
+            ...(field === "ctaTitle" ? { title: nextValue } : {}),
+            ...(field === "ctaDesc" ? { description: nextValue } : {}),
+            ...(field === "ctaButton"
+              ? {
+                  button: {
+                    label:
+                      (typeof action.label === "string" && action.label) || "",
+                    href: (typeof action.href === "string" && action.href) || "",
+                  },
+                }
+              : {}),
+          },
+        });
+        return;
+      }
+    }
+
+    if (
+      category === "NGO" &&
+      (activeSectionType === "CaseDetails" ||
+        activeSectionType === "CaseDetailsPage")
+    ) {
+      const asRecord = (value: unknown): Record<string, unknown> =>
+        value && typeof value === "object" && !Array.isArray(value)
+          ? (value as Record<string, unknown>)
+          : {};
+      const currentMain = asRecord(activeGenericData.mainContent);
+      const currentPrimary = asRecord(currentMain.primaryArticle);
+      const currentSecondary = asRecord(currentMain.secondaryArticle);
+      const currentImage = asRecord(currentPrimary.mainImage);
+      const currentSidebar = asRecord(activeGenericData.sidebar);
+
+      if (
+        field === "pageTitle" ||
+        field === "primaryTitle" ||
+        field === "primaryImage" ||
+        field === "primaryImageAlt" ||
+        field === "primaryParagraphs" ||
+        field === "postedOn" ||
+        field === "secondaryTitle" ||
+        field === "secondaryParagraphs"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          mainContent: {
+            ...currentMain,
+            primaryArticle: {
+              ...currentPrimary,
+              ...(field === "primaryTitle" ? { title: nextValue } : {}),
+              ...(field === "primaryParagraphs"
+                ? { paragraphs: nextValue }
+                : {}),
+              mainImage: {
+                ...currentImage,
+                ...(field === "primaryImage" ? { src: nextValue } : {}),
+                ...(field === "primaryImageAlt" ? { alt: nextValue } : {}),
+              },
+            },
+            secondaryArticle: {
+              ...currentSecondary,
+              ...(field === "postedOn" ? { postedOn: nextValue } : {}),
+              ...(field === "secondaryTitle" ? { title: nextValue } : {}),
+              ...(field === "secondaryParagraphs"
+                ? { paragraphs: nextValue }
+                : {}),
+            },
+          },
+        });
+        return;
+      }
+
+      if (
+        field === "popularPostsTitle" ||
+        field === "popularPosts"
+      ) {
+        updateActiveGenericData({
+          [field]: nextValue,
+          sidebar: {
+            ...currentSidebar,
+            ...(field === "popularPostsTitle"
+              ? { popularPostsTitle: nextValue }
+              : {}),
+            ...(field === "popularPosts" ? { popularPosts: nextValue } : {}),
+          },
+        });
+        return;
+      }
     }
 
     updateActiveGenericData({
@@ -4148,6 +11773,120 @@ export default function EditSectionModal({
       return;
     }
 
+    if (
+      path.length === 1 &&
+      field === "leftFeatures" &&
+      isNGOEnquirySection
+    ) {
+      if (visibleItems.length >= MAX_NGO_ENQUIRY_LEFT_FEATURES) return;
+      updateGenericField(path, [
+        ...visibleItems,
+        {
+          icon: "users",
+          title: "New Feature",
+          description: "Add a short feature description.",
+        },
+      ]);
+      return;
+    }
+
+    if (path.length === 1 && field === "features" && isEventsHomeContact) {
+      updateGenericField(path, [
+        ...visibleItems,
+        {
+          icon: "shield",
+          title: "New Feature",
+          description: "Add a short description.",
+        },
+      ]);
+      return;
+    }
+
+    if (
+      path.length === 1 &&
+      field === "contactItems" &&
+      isNGOEnquirySection
+    ) {
+      if (visibleItems.length >= MAX_NGO_ENQUIRY_CONTACT_ITEMS) return;
+      updateGenericField(path, [
+        ...visibleItems,
+        {
+          icon: "phone",
+          label: "New Contact",
+          value: "Add contact details.",
+        },
+      ]);
+      return;
+    }
+
+    if (
+      path.length === 2 &&
+      path[0] === "form" &&
+      path[1] === "fields" &&
+      (activeSectionType === "Contact" ||
+        isNGOFrenchiseSection ||
+        isNGOEnquirySection)
+    ) {
+      if (
+        isNGOFrenchiseSection &&
+        visibleItems.length >= MAX_NGO_FRENCHISE_FORM_FIELDS
+      ) {
+        return;
+      }
+      if (
+        isNGOEnquirySection &&
+        visibleItems.length >= MAX_NGO_ENQUIRY_FORM_FIELDS
+      ) {
+        return;
+      }
+      if (
+        category === "Events" &&
+        activeSectionType === "Contact" &&
+        visibleItems.length >= MAX_EVENTS_CONTACT_FORM_FIELDS
+      ) {
+        return;
+      }
+      if (
+        category === "NGO" &&
+        (activeSectionType === "Contact" ||
+          activeSectionType === "ContactPage") &&
+        !isNGOFrenchiseSection &&
+        !isNGOEnquirySection &&
+        visibleItems.length >= MAX_NGO_CONTACT_FORM_FIELDS
+      ) {
+        return;
+      }
+      updateGenericField(path, [
+        ...visibleItems,
+        category === "NGO"
+          ? {
+              label: "New Field",
+              placeholder: "Enter value",
+              type: "text",
+              width: "half",
+            }
+          : { placeholder: "New field *", type: "text", width: "half" },
+      ]);
+      return;
+    }
+
+    if (
+      path.length === 2 &&
+      path[0] === "leftContent" &&
+      path[1] === "features" &&
+      activeSectionType === "Contact"
+    ) {
+      updateGenericField(path, [
+        ...visibleItems,
+        {
+          icon: "shield",
+          title: "New Card Title",
+          description: "Add card description here.",
+        },
+      ]);
+      return;
+    }
+
     // Nested string lists inside a card (e.g. sections[0].content)
     if (
       (path.length > 1 || field === "tabs") &&
@@ -4158,11 +11897,12 @@ export default function EditSectionModal({
       return;
     }
 
-    const items = (activeGenericData as
-      | Record<string, unknown>
-      | undefined)?.[field];
-
-    if (!Array.isArray(items)) return;
+    const storedItems = getGenericCollectionItems(field);
+    const items = Array.isArray(storedItems)
+      ? storedItems
+      : Array.isArray(visibleItems)
+        ? visibleItems
+        : [];
     if (
       activeSectionType === "PropertyProcess" &&
       field === "steps" &&
@@ -4189,6 +11929,80 @@ export default function EditSectionModal({
       activeSectionType === "About" &&
       field === "stats" &&
       items.length >= 1
+    ) {
+      return;
+    }
+    if (
+      category === "Events" &&
+      activeSectionType === "About" &&
+      field === "buttons" &&
+      items.length >= 1
+    ) {
+      return;
+    }
+    if (
+      category === "NGO" &&
+      (activeSectionType === "About" ||
+        activeSectionType === "AboutPage" ||
+        activeSectionType === "AboutUsPage") &&
+      field === "buttons" &&
+      items.length >= 2
+    ) {
+      return;
+    }
+    if (
+      category === "NGO" &&
+      (activeSectionType === "About" ||
+        activeSectionType === "AboutPage" ||
+        activeSectionType === "AboutUsPage") &&
+      field === "trustBadges" &&
+      items.length >= 3
+    ) {
+      return;
+    }
+    if (
+      category === "NGO" &&
+      (activeSectionType === "About" ||
+        activeSectionType === "AboutPage" ||
+        activeSectionType === "AboutUsPage") &&
+      field === "statistics" &&
+      items.length >= 4
+    ) {
+      return;
+    }
+    if (
+      category === "NGO" &&
+      (activeSectionType === "AboutPage" ||
+        activeSectionType === "AboutUsPage") &&
+      field === "tabs" &&
+      items.length >= 4
+    ) {
+      return;
+    }
+    if (
+      category === "NGO" &&
+      (activeSectionType === "AboutPage" ||
+        activeSectionType === "AboutUsPage") &&
+      field === "cards" &&
+      items.length >= 6
+    ) {
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Causes" &&
+      field === "items" &&
+      items.length >= 6
+    ) {
+      return;
+    }
+
+    if (
+      category === "NGO" &&
+      activeSectionType === "Footer" &&
+      field === "recentNews" &&
+      items.length >= 3
     ) {
       return;
     }
@@ -4232,9 +12046,46 @@ export default function EditSectionModal({
         question: "New question",
         answer: "Add the answer here.",
       },
+      questions: {
+        question: "New question",
+        answer: "Add the answer here.",
+      },
+      partnersList: {
+        name: "New Partner",
+        logo: "",
+        website: "https://",
+      },
+      focusItems: {
+        image: "",
+        icon: "heart",
+        iconName: "heart",
+        title: "New Focus Area",
+        description: "Add a short description.",
+      },
+      csrProjectItems: {
+        image: "",
+        title: "New CSR Project",
+        description: "Add a short project description.",
+      },
+      pillars: {
+        icon: "heart",
+        iconName: "heart",
+        title: "New Pillar",
+        description: "Add a short description.",
+      },
+      coreValueItems: {
+        icon: "heart",
+        iconName: "heart",
+        title: "New Value",
+        description: "Add a short description.",
+      },
       sections: {
         title: "New section",
         content: ["Add section details here."],
+      },
+      conditions: {
+        title: "New Refund Condition",
+        content: "Add refund policy details here.",
       },
       galleryItems: {
         image: "",
@@ -4261,9 +12112,40 @@ export default function EditSectionModal({
         label: "New statistic",
         desc: "Add a short description.",
       },
+      statistics: {
+        icon: "children",
+        value: "100+",
+        label: "New statistic",
+      },
+      trustBadges: {
+        icon: "check",
+        text: "New badge",
+        desc: "Short support text",
+      },
+      buttons: {
+        label: "View More",
+        href: "/about",
+        variant: "primary",
+        icon: "heart",
+      },
+      contactItems: {
+        icon: "location",
+        label: "NEW DETAIL",
+        value: "Add contact detail here.",
+      },
       skills: {
         title: "New skill",
         description: "A key part of the experience I bring to every project.",
+      },
+      experience: {
+        period: "2020 - Present",
+        role: "New Role",
+        organization: "Organization",
+        description: "Add a short description.",
+      },
+      achievements: {
+        title: "New Achievement",
+        description: "Add a short description.",
       },
       listings: {
         image: "",
@@ -4324,6 +12206,384 @@ export default function EditSectionModal({
         image: "",
         alt: "Item image",
       },
+      ...(category === "NGO" && activeSectionType === "Causes"
+        ? {
+            items: {
+              image: { src: "", alt: "Cause image" },
+              icon: "education",
+              category: "#Education",
+              title: "New Cause",
+              titleLink: "/case-details",
+              description: "Add cause description here.",
+              button: { label: "Donate Now", href: "/donate" },
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "CaseStudy"
+        ? {
+            items: {
+              image: { src: "", alt: "Case study image" },
+              icon: "education",
+              category: "#Education",
+              title: "New Case Study",
+              titleLink: "/case-details",
+              description: "Add a short case study description.",
+              button: { label: "Read More", href: "/case-details" },
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "Services" ||
+        activeSectionType === "ServicesPage")
+        ? {
+            items: {
+              id: `service-${Date.now()}`,
+              title: "New Service",
+              description: "Add a short service description.",
+              image: "",
+              icon: "heart",
+              link: "/services",
+              label: "Learn More",
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "Teams" ||
+        activeSectionType === "TeamsPage")
+        ? {
+            members: {
+              name: "New Member",
+              textLink: "/team-detail",
+              designation: "Role",
+              description: "Add a short bio.",
+              image: "",
+              socials: [
+                { icon: "facebook", href: "#" },
+                { icon: "linkedin", href: "#" },
+                { icon: "instagram", href: "#" },
+              ],
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "TeamDetail"
+        ? {
+            skills: {
+              skill: "New Skill",
+              percentage: 80,
+            },
+            stats: {
+              value: "10+",
+              label: "New Stat",
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "Media"
+        ? {
+            mediaCards: {
+              title: "New Media",
+              image: "",
+              articleUrl: "",
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "Industry"
+        ? {
+            sectors: {
+              image: "",
+              icon: "heart",
+              iconName: "heart",
+              title: "New Industry",
+              description: "Add a short industry description.",
+            },
+            metrics: {
+              icon: "heart",
+              value: "100+",
+              label: "New Metric",
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "Branches"
+        ? {
+            stats: {
+              icon: "building",
+              value: "10+",
+              label: "New Stat",
+              subLabel: "Add a short note.",
+            },
+            branches: {
+              city: "New City",
+              address: "Add branch address here.",
+              phone: "+91 00000 00000",
+            },
+            contactItems: {
+              icon: "mail",
+              label: "New Contact",
+              value: "info@ngo.org",
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "AwardsPage"
+        ? {
+            stats: {
+              icon: "trophy",
+              value: "10+",
+              label: "New Stat",
+            },
+            awards: {
+              image: "",
+              title: "New Award",
+              description: "Add a short award description.",
+              year: String(new Date().getFullYear()),
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "Careers"
+        ? {
+            benefits: {
+              icon: "heart",
+              title: "New Benefit",
+              description: "Add a short benefit description.",
+              desc: "Add a short benefit description.",
+            },
+            jobs: {
+              title: "New Role",
+              description: "Add a short job description.",
+              location: "New Delhi, India",
+              employmentType: "Full Time",
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "Support" || activeSectionType === "SupportPage")
+        ? {
+            values: {
+              icon: "heart",
+              iconName: "heart",
+              title: "New Value",
+              description: "Add a short value description.",
+            },
+            supportCards: {
+              icon: "heart",
+              iconName: "heart",
+              title: "New Way to Support",
+              description: "Add a short description.",
+              button: { label: "Learn More", href: "#" },
+              action: { label: "Learn More", url: "#" },
+            },
+            stats: {
+              icon: "heart",
+              iconName: "heart",
+              value: "100+",
+              label: "New Impact",
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "Projects" ||
+        activeSectionType === "ProjectsPage")
+        ? {
+            items: {
+              image: "",
+              icon: "book",
+              category: "Education",
+              title: "New Project",
+              description: "Add project description here.",
+              button: { label: "Learn More", href: "/project-detail" },
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "Events" ||
+        activeSectionType === "EventsPage")
+        ? {
+            events: {
+              image: "",
+              title: "New Event",
+              href: "/event-details",
+              button: { label: "Join Now", href: "/contact-us" },
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "Testimonial" ||
+        activeSectionType === "TestimonialsPage")
+        ? {
+            testimonials: {
+              image: "",
+              name: "New Reviewer",
+              designation: "Supporter",
+              rating: 5,
+              message: "Add the testimonial here.",
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "Blog"
+        ? {
+            articles: {
+              image: "",
+              category: "News",
+              date: "22 January",
+              title: "New Blog Post",
+              description: "Add a short blog summary.",
+              href: "/blog-detail",
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "Gallery"
+        ? {
+            categories: {
+              label: "New Category",
+              value: `category-${Date.now()}`,
+            },
+            images: {
+              image: "",
+              category: "",
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "FAQ" || activeSectionType === "FAQPage")
+        ? {
+            questions: {
+              question: "New question",
+              answer: "Add the answer here.",
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "Partners" || activeSectionType === "PartnersPage")
+        ? {
+            partnersList: {
+              name: "New Partner",
+              logo: "",
+              website: "#",
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "CSR" || activeSectionType === "CSRPage")
+        ? {
+            stats: {
+              icon: "heart",
+              iconName: "heart",
+              value: "100+",
+              label: "New Stat",
+            },
+            focusItems: {
+              image: "",
+              icon: "heart",
+              iconName: "heart",
+              title: "New Focus Area",
+              description: "Add a short description.",
+            },
+            pillars: {
+              icon: "heart",
+              iconName: "heart",
+              title: "New Pillar",
+              description: "Add a short description.",
+            },
+            csrProjectItems: {
+              image: "",
+              title: "New CSR Project",
+              description: "Add a short project description.",
+            },
+            coreValueItems: {
+              icon: "heart",
+              iconName: "heart",
+              title: "New Value",
+              description: "Add a short description.",
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "Brochure" || activeSectionType === "BrochurePage")
+        ? {
+            features: {
+              icon: "file-text",
+              title: "New Feature",
+              description: "Add a short feature description.",
+            },
+            brochures: {
+              name: "New Brochure",
+              description: "Add a short brochure description.",
+              image: "",
+              downloadUrl: "/brochures/overview.pdf",
+              downloadlabel: "Download",
+            },
+            ctaStats: {
+              icon: "users",
+              value: "100+",
+              label: "New Stat",
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "CaseStudy"
+        ? {
+            items: {
+              image: { src: "", alt: "Case study image" },
+              icon: "education",
+              category: "#Education",
+              title: "New Case Study",
+              titleLink: "/case-details",
+              description: "Add a short case study description.",
+              button: { label: "Read More", href: "/case-details" },
+            },
+          }
+        : {}),
+      ...(category === "NGO" &&
+      (activeSectionType === "CaseDetails" ||
+        activeSectionType === "CaseDetailsPage")
+        ? {
+            popularPosts: {
+              image: "",
+              date: "June 30, 2025",
+              category: "Poor",
+              title: "New Popular Post",
+              slug: "/blog-details",
+            },
+            primaryParagraphs: "New paragraph.",
+            secondaryParagraphs: "New paragraph.",
+          }
+        : {}),
+      ...(category === "NGO" && isNGOFrenchiseSection
+        ? {
+            features: {
+              icon: "handshake",
+              title: "New Feature",
+              description: "Add a short feature description.",
+            },
+            leftPoints: "New partnership benefit.",
+            steps: {
+              icon: "handshake",
+              title: "New Step",
+              description: "Add a short process description.",
+            },
+          }
+        : {}),
+      ...(category === "NGO" && isNGOEnquirySection
+        ? {
+            leftFeatures: {
+              icon: "users",
+              title: "New Feature",
+              description: "Add a short feature description.",
+            },
+            contactItems: {
+              icon: "phone",
+              label: "New Contact",
+              value: "Add contact details.",
+            },
+          }
+        : {}),
+      ...(category === "NGO" && activeSectionType === "Footer"
+        ? {
+            recentNews: {
+              image: "",
+              date: "22 January 2026",
+              title: "New Blog Post",
+              href: "/blog-detail",
+            },
+          }
+        : {}),
       steps: {
         title: "New step",
         desc: "Describe this process step.",
@@ -4341,8 +12601,10 @@ export default function EditSectionModal({
         image: "",
       },
       benefits: {
-        title: "New benefit",
-        desc: "Describe this benefit.",
+        icon: "heart",
+        title: "New Benefit",
+        description: "Add a short benefit description.",
+        desc: "Add a short benefit description.",
       },
       culture: {
         title: "New culture value",
@@ -4482,7 +12744,26 @@ export default function EditSectionModal({
       )
       : [];
     const newItem =
-      field === "events" &&
+      field === "cards" &&
+      category === "NGO" &&
+      (activeSectionType === "AboutPage" ||
+        activeSectionType === "AboutUsPage")
+        ? {
+          icon: "target",
+          title: "New Card",
+          desc: "Add a short description.",
+        }
+      : field === "cards" &&
+        category === "Events" &&
+        activeSectionType === "Gallery"
+        ? {
+          image: "",
+          imageAlt: "",
+          badge: eventsGalleryTabSelectOptions[0]?.value ?? "WEDDINGS",
+          subtitle: eventsGalleryTabSelectOptions[0]?.value ?? "WEDDINGS",
+        }
+      : field === "events" &&
+      category !== "NGO" &&
       baseNewItem &&
       typeof baseNewItem === "object" &&
       !Array.isArray(baseNewItem)
@@ -4495,6 +12776,87 @@ export default function EditSectionModal({
               : "Wedding Events"),
           id: `event-${Date.now()}`,
         }
+        : field === "items" &&
+            category === "NGO" &&
+            activeSectionType === "Causes"
+          ? {
+            image: { src: "", alt: "Cause image" },
+            icon: "education",
+            category: "#Education",
+            title: "New Cause",
+            titleLink: "/case-details",
+            description: "Add a short description.",
+            button: { label: "Donate Now", href: "/donate" },
+          }
+        : field === "items" &&
+            category === "NGO" &&
+            activeSectionType === "CaseStudy"
+          ? {
+            image: { src: "", alt: "Case study image" },
+            icon: "education",
+            category: "#Education",
+            title: "New Case Study",
+            titleLink: "/case-details",
+            description: "Add a short description.",
+            button: { label: "Read More", href: "/case-details" },
+          }
+        : field === "popularPosts" &&
+            category === "NGO" &&
+            (activeSectionType === "CaseDetails" ||
+              activeSectionType === "CaseDetailsPage")
+          ? {
+            image: "",
+            date: "June 30, 2025",
+            category: "Poor",
+            title: "New Popular Post",
+            slug: "/blog-details",
+          }
+        : field === "primaryParagraphs" &&
+            category === "NGO" &&
+            (activeSectionType === "CaseDetails" ||
+              activeSectionType === "CaseDetailsPage")
+          ? "New paragraph."
+        : field === "secondaryParagraphs" &&
+            category === "NGO" &&
+            (activeSectionType === "CaseDetails" ||
+              activeSectionType === "CaseDetailsPage")
+          ? "New paragraph."
+        : field === "features" &&
+            category === "NGO" &&
+            isNGOFrenchiseSection
+          ? {
+            icon: "handshake",
+            title: "New Feature",
+            description: "Add a short feature description.",
+          }
+        : field === "leftPoints" &&
+            category === "NGO" &&
+            isNGOFrenchiseSection
+          ? "New partnership benefit."
+        : field === "steps" &&
+            category === "NGO" &&
+            isNGOFrenchiseSection
+          ? {
+            icon: "handshake",
+            title: "New Step",
+            description: "Add a short process description.",
+          }
+        : field === "leftFeatures" &&
+            category === "NGO" &&
+            isNGOEnquirySection
+          ? {
+            icon: "users",
+            title: "New Feature",
+            description: "Add a short feature description.",
+          }
+        : field === "contactItems" &&
+            category === "NGO" &&
+            isNGOEnquirySection
+          ? {
+            icon: "phone",
+            label: "New Contact",
+            value: "Add contact details.",
+          }
         : field === "items" &&
             activeSectionType === "Awards"
           ? {
@@ -4525,7 +12887,8 @@ export default function EditSectionModal({
             rating: "5",
           }
         : field === "stats" && category === "Events"
-          ? activeSectionType === "OurStory"
+          ? activeSectionType === "OurStory" ||
+              activeSectionType === "AwardsPage"
             ? { value: "100+", label: "New statistic" }
             : {
               value: "100+",
@@ -4547,22 +12910,37 @@ export default function EditSectionModal({
           }
         : field === "roles" &&
             category === "Events" &&
-            (activeSectionType === "Careers" || activeSectionType === "CareersApply")
+            activeSectionType === "Careers"
           ? {
             id: `role-${Date.now()}`,
             title: "New role",
             location: "Location",
             type: "Full-time",
             description: "Describe this open role.",
-            applyHref: "/careers/apply/new-role",
           }
         : field === "whyJoinUs" &&
             category === "Events" &&
-            activeSectionType === "CareersApply"
+            activeSectionType === "Careers"
           ? {
             icon: "IconSparkles",
             title: "New benefit",
             description: "Describe why candidates should join.",
+          }
+        : field === "members" &&
+            category === "NGO" &&
+            (activeSectionType === "Teams" ||
+              activeSectionType === "TeamsPage")
+          ? {
+            name: "New Member",
+            textLink: "/team-detail",
+            designation: "Role",
+            description: "Add a short bio.",
+            image: "",
+            socials: [
+              { icon: "facebook", href: "#" },
+              { icon: "linkedin", href: "#" },
+              { icon: "instagram", href: "#" },
+            ],
           }
         : field === "members" &&
             category === "Events" &&
@@ -4571,7 +12949,8 @@ export default function EditSectionModal({
             image: "",
             name: "New member",
             role: "Role",
-            department: "management",
+            department:
+              eventsTeamDepartmentSelectOptions[0]?.value ?? "management",
             bio: "Add a short bio.",
             social: {
               linkedin: "#",
@@ -4579,11 +12958,177 @@ export default function EditSectionModal({
               instagram: "#",
             },
           }
+        : field === "jobs" &&
+            category === "NGO" &&
+            activeSectionType === "Careers"
+          ? {
+            title: "New Role",
+            description: "Add a short job description.",
+            location: "New Delhi, India",
+            employmentType: "Full Time",
+          }
+        : field === "values" &&
+            category === "NGO" &&
+            (activeSectionType === "Support" ||
+              activeSectionType === "SupportPage")
+          ? {
+            icon: "heart",
+            iconName: "heart",
+            title: "New Value",
+            description: "Add a short value description.",
+          }
+        : field === "supportCards" &&
+            category === "NGO" &&
+            (activeSectionType === "Support" ||
+              activeSectionType === "SupportPage")
+          ? {
+            icon: "heart",
+            iconName: "heart",
+            title: "New Way to Support",
+            description: "Add a short description.",
+            button: { label: "Learn More", href: "#" },
+            action: { label: "Learn More", url: "#" },
+          }
+        : field === "stats" &&
+            category === "NGO" &&
+            (activeSectionType === "Support" ||
+              activeSectionType === "SupportPage")
+          ? {
+            icon: "heart",
+            iconName: "heart",
+            value: "100+",
+            label: "New Impact",
+          }
+        : field === "categories" &&
+            category === "NGO" &&
+            activeSectionType === "Gallery"
+          ? {
+            label: "New Category",
+            value: `category-${Date.now()}`,
+          }
+        : field === "images" &&
+            category === "NGO" &&
+            activeSectionType === "Gallery"
+          ? {
+            image: "",
+            category: Array.isArray(activeGenericData?.categories)
+              ? (
+                  (activeGenericData.categories as unknown[])
+                    .map((item) => {
+                      if (!item || typeof item !== "object" || Array.isArray(item)) {
+                        return "";
+                      }
+                      const record = item as Record<string, unknown>;
+                      const value =
+                        typeof record.value === "string" ? record.value.trim() : "";
+                      return value === "all" ? "" : value;
+                    })
+                    .find(Boolean) ?? ""
+                )
+              : "",
+          }
+        : field === "partnersList"
+          ? {
+            name: "New Partner",
+            logo: "",
+            website: "https://",
+          }
+        : field === "focusItems" &&
+            category === "NGO"
+          ? {
+            image: "",
+            icon: "heart",
+            iconName: "heart",
+            title: "New Focus Area",
+            description: "Add a short description.",
+          }
+        : field === "csrProjectItems" &&
+            category === "NGO"
+          ? {
+            image: "",
+            title: "New CSR Project",
+            description: "Add a short project description.",
+          }
+        : field === "pillars" &&
+            category === "NGO"
+          ? {
+            icon: "heart",
+            iconName: "heart",
+            title: "New Pillar",
+            description: "Add a short description.",
+          }
+        : field === "coreValueItems" &&
+            category === "NGO"
+          ? {
+            icon: "heart",
+            iconName: "heart",
+            title: "New Value",
+            description: "Add a short description.",
+          }
+        : field === "brochures" &&
+            category === "NGO"
+          ? {
+            name: "New Brochure",
+            description: "Add a short brochure description.",
+            image: "",
+            downloadUrl: "/brochures/overview.pdf",
+            downloadlabel: "Download",
+          }
+        : field === "ctaStats" &&
+            category === "NGO"
+          ? {
+            icon: "users",
+            value: "100+",
+            label: "New Stat",
+          }
+        : field === "stats" &&
+            category === "NGO" &&
+            (activeSectionType === "CSR" || activeSectionType === "CSRPage")
+          ? {
+            icon: "heart",
+            iconName: "heart",
+            value: "100+",
+            label: "New Stat",
+          }
+        : field === "questions" &&
+            category === "NGO"
+          ? {
+            question: "New question",
+            answer: "Add the answer here.",
+          }
+        : field === "contactItems" &&
+            category === "NGO" &&
+            activeSectionType === "Contact"
+          ? {
+            icon: "phone",
+            title: "New Detail",
+            value: "Add contact detail here.",
+          }
+        : field === "cards" &&
+            category === "NGO" &&
+            activeSectionType === "Contact"
+          ? {
+            icon: "headset",
+            title: "New Feature",
+            description: "Add a short feature description.",
+          }
         : baseNewItem;
 
-    updateActiveGenericData({
-      [field]: [...items, newItem],
-    });
+    const cardFieldsForNewItem =
+      field === "partnersList"
+        ? ["logo", "name", "website"]
+        : field === "questions" || field === "faqItems"
+          ? ["question", "answer"]
+          : [];
+    const nextItem =
+      newItem && typeof newItem === "object" && !Array.isArray(newItem)
+        ? cardFieldsForNewItem.reduce<Record<string, unknown>>((acc, key) => {
+            if (!(key in acc)) acc[key] = "";
+            return acc;
+          }, { ...(newItem as Record<string, unknown>) })
+        : newItem;
+
+    persistGenericCollection(field, [...items, nextItem]);
   };
 
   const deleteGenericCollectionItem = (
@@ -4619,6 +13164,19 @@ export default function EditSectionModal({
       return;
     }
 
+    if (
+      path.length === 2 &&
+      ((path[0] === "form" && path[1] === "fields") ||
+        (path[0] === "leftContent" && path[1] === "features")) &&
+      activeSectionType === "Contact"
+    ) {
+      updateGenericField(
+        path,
+        visibleItems.filter((_, itemIndex) => itemIndex !== index),
+      );
+      return;
+    }
+
     // Nested string lists inside a card (e.g. sections[0].content)
     if (
       (path.length > 1 || field === "tabs") &&
@@ -4632,9 +13190,7 @@ export default function EditSectionModal({
       return;
     }
 
-    const items = (activeGenericData as
-      | Record<string, unknown>
-      | undefined)?.[field];
+    const items = getGenericCollectionItems(field);
 
     if (!Array.isArray(items)) return;
 
@@ -4676,9 +13232,7 @@ export default function EditSectionModal({
     const nextItems = items.filter(
       (_, itemIndex) => itemIndex !== sourceIndex,
     );
-    updateActiveGenericData({
-      [field]: nextItems,
-    });
+    persistGenericCollection(field, nextItems);
   };
 
   const handleSidebarTabChange = (tab: string) => {
@@ -4687,10 +13241,15 @@ export default function EditSectionModal({
   };
 
   const selectSectionVariant = (variant: string) => {
+    const isListedLayout = sectionLayoutOptions.some(
+      (layout) =>
+        layout.id === variant || layout.componentVariant === variant,
+    );
     const isAllowedVariant =
       Boolean(currentSection?.data?.[variant]) ||
       variant.startsWith(`${activeSectionType}-`) ||
-      (isPageSection && variant.startsWith(`${activeSectionType}Page-`));
+      (isPageSection && variant.startsWith(`${activeSectionType}Page-`)) ||
+      isListedLayout;
 
     if (!isAllowedVariant) return;
 
@@ -4753,8 +13312,15 @@ export default function EditSectionModal({
 
     if (currentSection?.variant !== variant) {
       if (currentSection && !currentSection.data[variant]) {
+        const categoryDefault = getCategoryVariantData(
+          category,
+          activeSectionType,
+          variant,
+        );
         const sourceData =
-          currentSection.data[activeVariant] ?? Object.values(currentSection.data)[0];
+          categoryDefault ??
+          currentSection.data[activeVariant] ??
+          Object.values(currentSection.data)[0];
 
         onUpdateSectionData(activeSectionKey, {
           ...currentSection.data,
@@ -4844,7 +13410,27 @@ export default function EditSectionModal({
     field: "phone" | "email" | "location",
     value: string,
   ) => {
+    if (category === "NGO" && field === "location") {
+      updateActiveTopbarData({ location: value, address: value });
+      return;
+    }
+    if (category === "NGO" && field === "phone") {
+      updateActiveTopbarData({
+        phone: value,
+        phoneHref: value ? `tel:${value.replace(/\s+/g, "")}` : "",
+      });
+      return;
+    }
     updateActiveTopbarData({ [field]: value });
+  };
+
+  const updateTopbarCta = (field: "label" | "href", value: string) => {
+    const currentCta = activeTopbarData?.headerCta ?? {};
+    const nextCta = { ...currentCta, [field]: value };
+    updateActiveTopbarData({
+      headerCta: nextCta,
+      buttons: [{ label: nextCta.label ?? "", href: nextCta.href ?? "#" }],
+    });
   };
 
   const updateTopbarSocialLink = (
@@ -4917,7 +13503,23 @@ export default function EditSectionModal({
     updateActiveHeaderData({ headerTextColor: color });
   };
 
+  const updateHeaderLogoType = (logoType: "image" | "text" | "image-text") => {
+    const nextData: Record<string, unknown> = { logoType };
+
+    if (
+      logoType !== "image" &&
+      typeof activeHeaderData?.logo === "string" &&
+      activeHeaderData.logo.includes("/")
+    ) {
+      nextData.logo = "NGO";
+    }
+
+    updateActiveHeaderData(nextData);
+  };
+
   const updateHeaderLogo = (logo: string) => {
+    // Keep logo text as display text only (never a media path).
+    if (logo.includes("/") || logo.startsWith("data:")) return;
     updateActiveHeaderData({ logo });
   };
 
@@ -4925,18 +13527,25 @@ export default function EditSectionModal({
     const file = event.target.files?.[0];
     if (!file) return;
 
-    showBannerGenerationLoader("image");
-    readBannerBackgroundFile(file, (dataUrl) => {
-      updateActiveHeaderData({
-        logoImage: dataUrl,
-        logoImageTitle: file.name,
-      });
-    });
-    event.target.value = "";
-  };
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") return;
 
-  const deleteHeaderLogoImage = () => {
-    updateActiveHeaderData({ logoImage: "", logoImageTitle: "" });
+      updateActiveHeaderData({
+        logoImage: reader.result,
+        logoImageTitle: file.name,
+        ...(activeHeaderData?.logoType
+          ? {}
+          : {
+              logoType:
+                activeHeaderData?.logo?.trim()
+                  ? "image-text"
+                  : "image",
+            }),
+      });
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
   };
 
   const updateHeaderButton = (
@@ -4987,6 +13596,179 @@ export default function EditSectionModal({
         [field]: nextValue,
       },
     });
+  };
+
+  const getNGOHeaderPopupData = () => activeHeaderData?.PopupData ?? {};
+
+  const updateNGOHeaderPopupData = (
+    nextPopup: NonNullable<typeof activeHeaderData>["PopupData"],
+  ) => {
+    updateActiveHeaderData({ PopupData: nextPopup });
+  };
+
+  const updateNGOAboutPopup = (field: "title" | "desc", value: string) => {
+    const popup = getNGOHeaderPopupData();
+    updateNGOHeaderPopupData({
+      ...popup,
+      aboutpopup: {
+        ...(popup.aboutpopup ?? {}),
+        [field]: value,
+      },
+    });
+  };
+
+  const updateNGOInstagramPopup = (field: "title", value: string) => {
+    const popup = getNGOHeaderPopupData();
+    updateNGOHeaderPopupData({
+      ...popup,
+      instagram: {
+        ...(popup.instagram ?? {}),
+        [field]: value,
+      },
+    });
+  };
+
+  const updateNGOInstagramImage = (
+    index: number,
+    field: "src" | "alt",
+    value: string,
+  ) => {
+    const popup = getNGOHeaderPopupData();
+    const images = [...(popup.instagram?.images ?? [])];
+    images[index] = { ...(images[index] ?? {}), [field]: value };
+    updateNGOHeaderPopupData({
+      ...popup,
+      instagram: {
+        ...(popup.instagram ?? {}),
+        images,
+      },
+    });
+  };
+
+  const addNGOInstagramImage = () => {
+    const popup = getNGOHeaderPopupData();
+    const images = [...(popup.instagram?.images ?? [])];
+    if (images.length >= 8) return;
+    images.push({ src: "", alt: "Gallery image" });
+    updateNGOHeaderPopupData({
+      ...popup,
+      instagram: {
+        ...(popup.instagram ?? {}),
+        images,
+      },
+    });
+  };
+
+  const deleteNGOInstagramImage = (index: number) => {
+    const popup = getNGOHeaderPopupData();
+    const images = (popup.instagram?.images ?? []).filter(
+      (_, imageIndex) => imageIndex !== index,
+    );
+    updateNGOHeaderPopupData({
+      ...popup,
+      instagram: {
+        ...(popup.instagram ?? {}),
+        images,
+      },
+    });
+  };
+
+  const confirmPendingNGOInstagramImageDelete = () => {
+    if (pendingNGOInstagramImageDelete === null) return;
+    deleteNGOInstagramImage(pendingNGOInstagramImageDelete.index);
+    setPendingNGOInstagramImageDelete(null);
+  };
+
+  const uploadNGOInstagramImage = (
+    index: number,
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== "string") return;
+      const popup = getNGOHeaderPopupData();
+      const images = [...(popup.instagram?.images ?? [])];
+      images[index] = {
+        ...(images[index] ?? {}),
+        src: reader.result,
+        alt: file.name,
+      };
+      updateNGOHeaderPopupData({
+        ...popup,
+        instagram: {
+          ...(popup.instagram ?? {}),
+          images,
+        },
+      });
+    };
+    reader.readAsDataURL(file);
+    event.target.value = "";
+  };
+
+  const updateNGOContactPopup = (
+    field: "phone" | "email" | "separator",
+    value: string,
+  ) => {
+    const popup = getNGOHeaderPopupData();
+    const nextContact = {
+      ...(popup.contactpopup ?? {}),
+      [field]: value,
+    };
+    if (field === "phone") {
+      nextContact.phoneHref = value
+        ? `tel:${value.replace(/\s+/g, "")}`
+        : "";
+    }
+    if (field === "email") {
+      nextContact.emailHref = value ? `mailto:${value}` : "";
+    }
+    updateNGOHeaderPopupData({
+      ...popup,
+      contactpopup: nextContact,
+    });
+  };
+
+  const updateNGOPopupSocialLink = (
+    index: number,
+    field: "label" | "href",
+    value: string,
+  ) => {
+    const popup = getNGOHeaderPopupData();
+    const links = [...(popup.socialLinkspopup ?? [])];
+    links[index] = { ...(links[index] ?? {}), [field]: value };
+    updateNGOHeaderPopupData({
+      ...popup,
+      socialLinkspopup: links,
+    });
+  };
+
+  const addNGOPopupSocialLink = () => {
+    const popup = getNGOHeaderPopupData();
+    const links = [...(popup.socialLinkspopup ?? [])];
+    if (links.length >= 6) return;
+    links.push({ label: "facebook", href: "#" });
+    updateNGOHeaderPopupData({
+      ...popup,
+      socialLinkspopup: links,
+    });
+  };
+
+  const deleteNGOPopupSocialLink = (index: number) => {
+    const popup = getNGOHeaderPopupData();
+    updateNGOHeaderPopupData({
+      ...popup,
+      socialLinkspopup: (popup.socialLinkspopup ?? []).filter(
+        (_, linkIndex) => linkIndex !== index,
+      ),
+    });
+  };
+
+  const confirmPendingNGOPopupSocialLinkDelete = () => {
+    if (pendingNGOPopupSocialLinkDelete === null) return;
+    deleteNGOPopupSocialLink(pendingNGOPopupSocialLinkDelete.index);
+    setPendingNGOPopupSocialLinkDelete(null);
   };
 
   const updateBannerField = (field: string, value: string) => {
@@ -5155,7 +13937,7 @@ export default function EditSectionModal({
       (slide, slideIndex) => {
         if (slideIndex !== index) return slide;
 
-        return {
+        const nextSlide = {
           ...slide,
           button: {
             label: "Learn more",
@@ -5164,6 +13946,51 @@ export default function EditSectionModal({
             [field]: nextValue,
           },
         };
+
+        if (isNGOSliderBanner) {
+          const { ctaButtons: _unusedCtaButtons, ...rest } = nextSlide as typeof nextSlide & {
+            ctaButtons?: unknown;
+          };
+          return rest;
+        }
+
+        return nextSlide;
+      },
+    );
+
+    updateActiveBannerData({ bannerSlides: updatedSlides });
+  };
+
+  const updateBannerSlideSecondButton = (
+    index: number,
+    field: "label" | "href" | "variant",
+    value: string,
+  ) => {
+    const nextValue = field === "label" ? limitLinkText(value) : value;
+    const fallbackButton = activeBannerData?.buttons?.[1];
+    const updatedSlides = (activeBannerData?.bannerSlides ?? []).map(
+      (slide, slideIndex) => {
+        if (slideIndex !== index) return slide;
+
+        const nextSlide = {
+          ...slide,
+          secondButton: {
+            label: fallbackButton?.label ?? "Learn more",
+            href: fallbackButton?.href ?? "#",
+            variant: fallbackButton?.variant ?? "secondary",
+            ...slide.secondButton,
+            [field]: nextValue,
+          },
+        };
+
+        if (isNGOSliderBanner) {
+          const { ctaButtons: _unusedCtaButtons, ...rest } = nextSlide as typeof nextSlide & {
+            ctaButtons?: unknown;
+          };
+          return rest;
+        }
+
+        return nextSlide;
       },
     );
 
@@ -5171,25 +13998,44 @@ export default function EditSectionModal({
   };
 
   const addBannerSlide = () => {
-    const nextIndex = (activeBannerData?.bannerSlides ?? []).length + 1;
-    const firstSlide = activeBannerData?.bannerSlides?.[0];
+    const currentSlides = activeBannerData?.bannerSlides ?? [];
+    const nextIndex = currentSlides.length + 1;
+    const firstSlide = currentSlides[0];
     const categoryImage =
       firstSlide?.image ?? activeBannerData?.backgroundImage ?? "/bg1.jpg";
     const categoryVideo =
       firstSlide?.video ?? activeBannerData?.backgroundVideo ?? "/video.mp4";
     const updatedSlides = [
-      ...(activeBannerData?.bannerSlides ?? []),
+      ...currentSlides,
       {
         image: categoryImage,
         ...(isVideoSliderBanner ? { video: categoryVideo } : {}),
         alt: `Banner slide ${nextIndex}`,
+        pretitle: isTemplateSliderBanner ? "New slide pretitle" : undefined,
         title: "New banner slide",
         desc: "Update this slide text from Banner Content.",
         button: {
-          label: "Learn more",
-          href: "#",
-          variant: "primary" as const,
+          label: firstSlide?.button?.label ?? "Learn more",
+          href: firstSlide?.button?.href ?? "#",
+          variant: (firstSlide?.button?.variant ?? "primary") as ButtonData["variant"],
         },
+        ...(isTemplateSliderBanner
+          ? {
+              secondButton: {
+                label:
+                  firstSlide?.secondButton?.label ??
+                  activeBannerData?.buttons?.[1]?.label ??
+                  "View more",
+                href:
+                  firstSlide?.secondButton?.href ??
+                  activeBannerData?.buttons?.[1]?.href ??
+                  "#",
+                variant: (firstSlide?.secondButton?.variant ??
+                  activeBannerData?.buttons?.[1]?.variant ??
+                  "secondary") as ButtonData["variant"],
+              },
+            }
+          : {}),
       },
     ];
 
@@ -5246,6 +14092,10 @@ export default function EditSectionModal({
     event.target.value = "";
   };
 
+  const updateFooterLogoType = (logoType: "image" | "text" | "image-text") => {
+    updateActiveFooterData({ logoType });
+  };
+
   const updateFooterColumn = (columnIndex: number, field: "title", value: string) => {
     const columns = [...(activeFooterData?.footerColumns ?? [])];
     columns[columnIndex] = { ...columns[columnIndex], [field]: value };
@@ -5286,6 +14136,122 @@ export default function EditSectionModal({
       ],
     });
   };
+
+  const renderFooterLinkColumnEditor = (
+    column: { title: string; links: { label: string; href: string }[] },
+    columnIndex: number,
+  ) => (
+    <section
+      key={`footerColumn-${columnIndex}`}
+      className="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-sm font-semibold text-gray-900">
+          Link column {columnIndex + 1}
+        </h3>
+
+        <button
+          type="button"
+          aria-label={`Delete ${column.title || `link column ${columnIndex + 1}`}`}
+          onClick={() =>
+            setPendingFooterSectionDelete({
+              kind: "column",
+              label: column.title || `Link column ${columnIndex + 1}`,
+              index: columnIndex,
+            })
+          }
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
+        >
+          <Trash size={14} />
+        </button>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs font-semibold text-slate-600">
+          Column title
+        </label>
+
+        <input
+          value={column.title}
+          onChange={(event) =>
+            updateFooterColumn(columnIndex, "title", event.target.value)
+          }
+          className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+          placeholder="Column title"
+        />
+      </div>
+
+      <div className="space-y-3">
+        {column.links.map((link, linkIndex) => (
+          <div
+            key={`${columnIndex}-${linkIndex}`}
+            className="grid gap-3 rounded-xl border border-gray-200 bg-[#f8f8f8] p-3 sm:grid-cols-[1fr_1fr_auto]"
+          >
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-slate-600">
+                Label
+              </label>
+
+              <input
+                value={link.label}
+                onChange={(event) =>
+                  updateFooterLink(
+                    columnIndex,
+                    linkIndex,
+                    "label",
+                    event.target.value,
+                  )
+                }
+                className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                placeholder="Link label"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-slate-600">
+                Link
+              </label>
+
+              <input
+                value={link.href}
+                onChange={(event) =>
+                  updateFooterLink(
+                    columnIndex,
+                    linkIndex,
+                    "href",
+                    event.target.value,
+                  )
+                }
+                className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                placeholder="/page"
+              />
+            </div>
+
+            <div className="flex items-end">
+              <button
+                type="button"
+                onClick={() => removeFooterLink(columnIndex, linkIndex)}
+                className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
+                aria-label="Delete footer link"
+              >
+                <Trash size={14} />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => addFooterLink(columnIndex)}
+        disabled={column.links.length >= MAX_FOOTER_LINKS_PER_COLUMN}
+        className="flex items-center gap-2 rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-600 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <Plus size={14} />
+        Add Link
+      </button>
+    </section>
+  );
 
   const removeFooterLink = (columnIndex: number, linkIndex: number) => {
     const columns = [...(activeFooterData?.footerColumns ?? [])];
@@ -5351,9 +14317,11 @@ export default function EditSectionModal({
           : value,
     };
 
-    updateActiveFooterData({
-      socialLinks: links,
-    });
+    updateActiveFooterData(
+      isEventsFooter
+        ? { footerSocialLinks: links, socialLinks: links }
+        : { socialLinks: links },
+    );
   };
 
   const addFooterSocialLink = () => {
@@ -5367,15 +14335,19 @@ export default function EditSectionModal({
       return;
     }
 
-    updateActiveFooterData({
-      socialLinks: [
-        ...links,
-        {
-          label: "facebook",
-          href: "#",
-        },
-      ],
-    });
+    const nextLinks = [
+      ...links,
+      {
+        label: "facebook" as SocialLinkData["label"],
+        href: "#",
+      },
+    ];
+
+    updateActiveFooterData(
+      isEventsFooter
+        ? { footerSocialLinks: nextLinks, socialLinks: nextLinks }
+        : { socialLinks: nextLinks },
+    );
   };
 
   const removeFooterSocialLink = (index: number) => {
@@ -5384,11 +14356,15 @@ export default function EditSectionModal({
       activeFooterData?.footerSocialLinks ??
       [];
 
-    updateActiveFooterData({
-      socialLinks: links.filter(
-        (_, socialIndex) => socialIndex !== index,
-      ),
-    });
+    const nextLinks = links.filter(
+      (_, socialIndex) => socialIndex !== index,
+    );
+
+    updateActiveFooterData(
+      isEventsFooter
+        ? { footerSocialLinks: nextLinks, socialLinks: nextLinks }
+        : { socialLinks: nextLinks },
+    );
   };
 
   const deleteFooterSection = () => {
@@ -5412,6 +14388,7 @@ export default function EditSectionModal({
         logo: "",
         logoImage: "",
         logoImageTitle: "",
+        logoType: undefined,
         desc: "",
       });
     } else if (pendingFooterSectionDelete.kind === "contact") {
@@ -5868,40 +14845,87 @@ export default function EditSectionModal({
             {activeSectionType === "Topbar" &&
               activeTab === "Topbar Content" && (
                 <div className="space-y-4">
-                  <div className="rounded-xl border border-gray-200 bg-white p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <label className="block text-sm font-semibold text-gray-900">Topbar Text</label>
-                      <VisibilityButton hidden={isTopbarFieldHidden("text")} onClick={() => toggleTopbarFieldVisibility("text")} />
+                  {category !== "NGO" ? (
+                    <div className="rounded-xl border border-gray-200 bg-white p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <label className="block text-sm font-semibold text-gray-900">Topbar Text</label>
+                        <VisibilityButton hidden={isTopbarFieldHidden("text")} onClick={() => toggleTopbarFieldVisibility("text")} />
+                      </div>
+                      <input
+                        value={activeTopbarData?.text?.[0] ?? ""}
+                        onChange={(event) => updateTopbarText(event.target.value)}
+                        className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                        placeholder="Enter topbar text"
+                      />
                     </div>
-                    <input
-                      value={activeTopbarData?.text?.[0] ?? ""}
-                      onChange={(event) => updateTopbarText(event.target.value)}
-                      className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
-                      placeholder="Enter topbar text"
-                    />
-                  </div>
+                  ) : null}
 
-                  <div className="grid gap-4 lg:grid-cols-3">
-                    {(["phone", "email", "location"] as const).map((field) => (
+                  <div className={`grid gap-4 ${category === "NGO" ? "lg:grid-cols-2" : "lg:grid-cols-3"}`}>
+                    {(category === "NGO"
+                      ? (["phone", "location"] as const)
+                      : (["phone", "email", "location"] as const)
+                    ).map((field) => (
                       <div
                         key={field}
                         className="rounded-xl border border-gray-200 bg-white p-4"
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <label className="block text-sm font-semibold capitalize text-gray-900">{field}</label>
+                          <label className="block text-sm font-semibold capitalize text-gray-900">
+                            {field === "location" && category === "NGO"
+                              ? "Address"
+                              : field}
+                          </label>
                           <VisibilityButton hidden={isTopbarFieldHidden(field)} onClick={() => toggleTopbarFieldVisibility(field)} />
                         </div>
                         <input
-                          value={activeTopbarData?.[field] ?? ""}
+                          value={
+                            field === "location" && category === "NGO"
+                              ? (activeTopbarData?.address as string | undefined) ??
+                                activeTopbarData?.location ??
+                                ""
+                              : activeTopbarData?.[field] ?? ""
+                          }
                           onChange={(event) =>
                             updateTopbarField(field, event.target.value)
                           }
                           className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
-                          placeholder={`Enter ${field}`}
+                          placeholder={`Enter ${field === "location" && category === "NGO" ? "address" : field}`}
                         />
                       </div>
                     ))}
                   </div>
+
+                  {category === "NGO" ? (
+                    <div className="rounded-xl border border-gray-200 bg-white p-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <h4 className="text-sm font-semibold text-gray-900">
+                          Donate Button
+                        </h4>
+                        <VisibilityButton
+                          hidden={isTopbarFieldHidden("headerCta")}
+                          onClick={() => toggleTopbarFieldVisibility("headerCta")}
+                        />
+                      </div>
+                      <div className="mt-3 grid gap-3 lg:grid-cols-2">
+                        <input
+                          value={activeTopbarData?.headerCta?.label ?? ""}
+                          onChange={(event) =>
+                            updateTopbarCta("label", event.target.value)
+                          }
+                          className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                          placeholder="Button label"
+                        />
+                        <input
+                          value={activeTopbarData?.headerCta?.href ?? ""}
+                          onChange={(event) =>
+                            updateTopbarCta("href", event.target.value)
+                          }
+                          className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                          placeholder="Button link"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
 
                   <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
                     <div className="flex items-center justify-between gap-3">
@@ -5988,200 +15012,546 @@ export default function EditSectionModal({
                 <div className="space-y-5">
                   <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
                     <h4 className="text-sm font-bold text-slate-900">
-                      Logo
+                      {/* Logo */}
                     </h4>
 
                     <label className="block text-sm font-semibold text-gray-900">
-                      Logo Text
-                    </label>
-                    <input
-                      value={activeHeaderData?.logo ?? ""}
-                      onChange={(event) => updateHeaderLogo(event.target.value)}
-                      className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
-                      placeholder="Enter logo text"
-                    />
-
-                    <div className="space-y-2">
-                      <span className="block text-sm font-semibold text-gray-900">
-                        Logo Image
-                      </span>
-                      <label className="flex h-11 w-full cursor-pointer items-center justify-between rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-900 transition hover:border-blue-500">
-                        <span className="font-medium">
-                          {activeHeaderData?.logoImage
-                            ? "Change logo image"
-                            : "Upload logo image"}
-                        </span>
-                        <span className="max-w-[55%] truncate text-xs text-slate-500">
-                          {getMediaUploadLabel(
-                            activeHeaderData?.logoImage ?? "",
-                            "image",
-                          )}
-                        </span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={updateHeaderLogoImage}
-                          className="sr-only"
-                        />
-                      </label>
-
-                      {activeHeaderData?.logoImage && (
-                        <button
-                          type="button"
-                          onClick={deleteHeaderLogoImage}
-                          className="rounded-md border border-red-500 px-3 py-1 text-xs font-semibold text-red-600 hover:bg-red-50"
-                        >
-                          Remove logo image
-                        </button>
-                      )}
-                      <input
-                        value={activeHeaderData?.logoImageTitle ?? ""}
+                      Logo Type
+                      <select
+                        value={resolvedHeaderLogoType}
                         onChange={(event) =>
-                          updateActiveHeaderData({
-                            logoImageTitle: event.target.value,
-                          })
+                          updateHeaderLogoType(
+                            event.target.value as
+                              | "image"
+                              | "text"
+                              | "image-text",
+                          )
                         }
-                        className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
-                        placeholder="Logo image alt text"
-                      />
-                    </div>
+                        className="mt-1 h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none focus:border-blue-600"
+                      >
+                        <option value="image">Image logo</option>
+                        <option value="text">Text Logo</option>
+                        <option value="image-text">Image + Text logo</option>
+                      </select>
+                    </label>
+
+                    {showHeaderLogoText && (
+                      <>
+                        <label className="block text-sm font-semibold text-gray-900">
+                          Logo Text
+                        </label>
+                        <input
+                          value={activeHeaderData?.logo ?? ""}
+                          onChange={(event) =>
+                            updateHeaderLogo(event.target.value)
+                          }
+                          className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                          placeholder="Enter logo text"
+                        />
+                      </>
+                    )}
+
+                    {showHeaderLogoImage && (
+                      <div className="space-y-2">
+                        <span className="block text-sm font-semibold text-gray-900">
+                          Logo Image
+                        </span>
+                        <div className="flex flex-wrap items-start gap-3">
+                          <label className="flex h-11 min-w-[12rem] flex-1 cursor-pointer items-center justify-between rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-900 transition hover:border-blue-500">
+                            <span className="font-medium">
+                              {activeHeaderData?.logoImage
+                                ? "Change logo image"
+                                : "Upload logo image"}
+                            </span>
+                            <span className="max-w-[45%] truncate text-xs text-slate-500">
+                              {getMediaUploadLabel(
+                                activeHeaderData?.logoImage ?? "",
+                                "image",
+                              )}
+                            </span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={updateHeaderLogoImage}
+                              className="sr-only"
+                            />
+                          </label>
+                          <div className="flex h-20 w-32 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2">
+                            {activeHeaderData?.logoImage ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={activeHeaderData.logoImage}
+                                alt={
+                                  activeHeaderData.logoImageTitle ||
+                                  "Logo preview"
+                                }
+                                className="max-h-full max-w-full object-contain"
+                              />
+                            ) : (
+                              <span className="text-xs font-semibold text-slate-400">
+                                No image
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <input
+                          value={activeHeaderData?.logoImageTitle ?? ""}
+                          onChange={(event) =>
+                            updateActiveHeaderData({
+                              logoImageTitle: event.target.value,
+                            })
+                          }
+                          className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                          placeholder="Logo image alt text"
+                        />
+                      </div>
+                    )}
                   </div>
 
-                  <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
-                    {isEventsHeader ? (
-                      <>
+                  {isNGOHeader ? (
+                    <div className="space-y-4">
+                      <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
                         <div>
                           <h4 className="text-sm font-bold text-slate-900">
-                            Header Button
+                            About Side Panel
                           </h4>
                           <p className="mt-1 text-xs text-gray-700 underline">
-                            Edit the Book Now CTA shown in the header.
+                            Edit the About drawer opened from the header grid
+                            icon.
+                          </p>
+                        </div>
+                        <label className="block text-sm font-semibold text-gray-900">
+                          About Title
+                          <input
+                            value={
+                              activeHeaderData?.PopupData?.aboutpopup?.title ??
+                              ""
+                            }
+                            onChange={(event) =>
+                              updateNGOAboutPopup("title", event.target.value)
+                            }
+                            className="mt-1 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
+                            placeholder="About Us"
+                          />
+                        </label>
+                        <label className="block text-sm font-semibold text-gray-900">
+                          About Description
+                          <textarea
+                            value={
+                              activeHeaderData?.PopupData?.aboutpopup?.desc ??
+                              ""
+                            }
+                            onChange={(event) =>
+                              updateNGOAboutPopup("desc", event.target.value)
+                            }
+                            rows={4}
+                            className="mt-1 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-600"
+                            placeholder="About description"
+                          />
+                        </label>
+                      </div>
+
+                      <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <h4 className="text-sm font-bold text-slate-900">
+                              Instagram Gallery
+                            </h4>
+                            <p className="mt-1 text-xs text-gray-500">
+                              Up to 8 images in the side panel.
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={addNGOInstagramImage}
+                            disabled={
+                              (activeHeaderData?.PopupData?.instagram?.images ??
+                                []).length >= 8
+                            }
+                            className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+                          >
+                            <Plus size={14} />
+                            Add Image
+                          </button>
+                        </div>
+                        <label className="block text-sm font-semibold text-gray-900">
+                          Section Title
+                          <input
+                            value={
+                              activeHeaderData?.PopupData?.instagram?.title ??
+                              ""
+                            }
+                            onChange={(event) =>
+                              updateNGOInstagramPopup(
+                                "title",
+                                event.target.value,
+                              )
+                            }
+                            className="mt-1 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
+                            placeholder="Instagram"
+                          />
+                        </label>
+                        <div className="space-y-3">
+                          {(
+                            activeHeaderData?.PopupData?.instagram?.images ?? []
+                          ).map((image, index) => (
+                            <div
+                              key={index}
+                              className="space-y-3 rounded-xl border border-gray-300 bg-white p-3 shadow-sm"
+                            >
+                              <div className="flex flex-wrap items-start gap-3">
+                                <label className="flex h-11 min-w-[12rem] flex-1 cursor-pointer items-center justify-between rounded-lg border border-gray-300 bg-white px-4 text-sm text-gray-900 transition hover:border-blue-500">
+                                  <span className="font-medium">
+                                    {image.src
+                                      ? "Change image"
+                                      : "Upload image"}
+                                  </span>
+                                  <span className="max-w-[45%] truncate text-xs text-slate-500">
+                                    {getMediaUploadLabel(
+                                      image.src ?? "",
+                                      "image",
+                                    )}
+                                  </span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(event) =>
+                                      uploadNGOInstagramImage(index, event)
+                                    }
+                                    className="sr-only"
+                                  />
+                                </label>
+                                <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                                  {image.src ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img
+                                      src={image.src}
+                                      alt={image.alt || "Gallery preview"}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  ) : (
+                                    <span className="text-[10px] font-semibold text-slate-400">
+                                      No image
+                                    </span>
+                                  )}
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setPendingNGOInstagramImageDelete({
+                                      index,
+                                      label:
+                                        image.alt?.trim() ||
+                                        `Image ${index + 1}`,
+                                    })
+                                  }
+                                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-500 bg-white text-red-600"
+                                  aria-label="Delete gallery image"
+                                >
+                                  <Trash size={18} />
+                                </button>
+                              </div>
+                              <input
+                                value={image.alt ?? ""}
+                                onChange={(event) =>
+                                  updateNGOInstagramImage(
+                                    index,
+                                    "alt",
+                                    event.target.value,
+                                  )
+                                }
+                                className="h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
+                                placeholder="Image alt text"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-900">
+                            Contact Details
+                          </h4>
+                          <p className="mt-1 text-xs text-gray-500">
+                            Phone and email shown in the About side panel.
                           </p>
                         </div>
                         <div className="grid gap-3 sm:grid-cols-2">
                           <label className="block text-sm font-semibold text-gray-900">
-                            Button Label
+                            Phone
                             <input
-                              value={activeHeaderData?.button?.label ?? ""}
+                              value={
+                                activeHeaderData?.PopupData?.contactpopup
+                                  ?.phone ?? ""
+                              }
                               onChange={(event) =>
-                                updateEventsHeaderCta(
-                                  "label",
+                                updateNGOContactPopup(
+                                  "phone",
                                   event.target.value,
                                 )
                               }
                               className="mt-1 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
-                              placeholder="Book Now"
+                              placeholder="+088 130 629 8615"
                             />
                           </label>
                           <label className="block text-sm font-semibold text-gray-900">
-                            Button Link
+                            Email
                             <input
-                              value={activeHeaderData?.button?.href ?? ""}
+                              value={
+                                activeHeaderData?.PopupData?.contactpopup
+                                  ?.email ?? ""
+                              }
                               onChange={(event) =>
-                                updateEventsHeaderCta(
-                                  "href",
+                                updateNGOContactPopup(
+                                  "email",
                                   event.target.value,
                                 )
                               }
                               className="mt-1 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
-                              placeholder="/contact"
+                              placeholder="huruma@gmail.com"
                             />
                           </label>
                         </div>
-                      </>
-                    ) : (
-                      <>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="text-sm font-bold text-slate-900">
-                          Header Buttons
-                        </h4>
-                        <p className="mt-1 text-xs text-gray-700 underline">
-                          Manage header action buttons.
-                        </p>
+                        <label className="block text-sm font-semibold text-gray-900">
+                          Separator Text
+                          <input
+                            value={
+                              activeHeaderData?.PopupData?.contactpopup
+                                ?.separator ?? ""
+                            }
+                            onChange={(event) =>
+                              updateNGOContactPopup(
+                                "separator",
+                                event.target.value,
+                              )
+                            }
+                            className="mt-1 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
+                            placeholder="or"
+                          />
+                        </label>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={addHeaderButton}
-                        disabled={
-                          (activeHeaderData?.buttons ?? []).length >=
-                          MAX_HEADER_BUTTONS
-                        }
-                        className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
-                      >
-                        <Plus size={14} />
-                        Add Button
-                      </button>
-                    </div>
-
-                    <p className="text-xs text-gray-500">
-                      {(activeHeaderData?.buttons ?? []).length}/
-                      {MAX_HEADER_BUTTONS} header buttons added
-                    </p>
-
-                    <div className="space-y-3">
-                      {(activeHeaderData?.buttons ?? []).map((button, index) => (
-                        <div
-                          key={index}
-                          className="grid grid-cols-1 gap-3 rounded-xl border border-gray-300 bg-white p-3 shadow-sm lg:grid-cols-[minmax(8rem,1fr)_minmax(8rem,1fr)_8rem_3.5rem]"
-                        >
-                          <input
-                            value={button.label}
-                            onChange={(event) =>
-                              updateHeaderButton(
-                                index,
-                                "label",
-                                event.target.value,
-                              )
-                            }
-                            className="h-11 rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
-                            placeholder="Button label"
-                          />
-
-                          <input
-                            value={button.href}
-                            onChange={(event) =>
-                              updateHeaderButton(
-                                index,
-                                "href",
-                                event.target.value,
-                              )
-                            }
-                            className="h-11 rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
-                            placeholder="/link"
-                          />
-
-                          <select
-                            value={button.variant ?? "primary"}
-                            onChange={(event) =>
-                              updateHeaderButton(
-                                index,
-                                "variant",
-                                event.target.value,
-                              )
-                            }
-                            className="h-11 rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
-                            aria-label="Header button style"
-                          >
-                            <option value="primary">Primary</option>
-                            <option value="secondary">Secondary</option>
-                          </select>
-
+                      <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <h4 className="text-sm font-bold text-slate-900">
+                              Social Icons
+                            </h4>
+                            <p className="mt-1 text-xs text-gray-500">
+                              Icons at the bottom of the About side panel.
+                            </p>
+                          </div>
                           <button
                             type="button"
-                            onClick={() => deleteHeaderButton(index)}
-                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-500 bg-white text-red-600"
-                            aria-label="Delete header button"
+                            onClick={addNGOPopupSocialLink}
+                            disabled={
+                              (activeHeaderData?.PopupData?.socialLinkspopup ??
+                                []).length >= 6
+                            }
+                            className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
                           >
-                            <Trash size={18} />
+                            <Plus size={14} />
+                            Add Icon
                           </button>
                         </div>
-                      ))}
+                        <div className="space-y-3">
+                          {(
+                            activeHeaderData?.PopupData?.socialLinkspopup ?? []
+                          ).map((socialLink, index) => (
+                            <div
+                              key={index}
+                              className="grid grid-cols-1 gap-3 rounded-xl border border-gray-300 bg-white p-3 shadow-sm lg:grid-cols-[minmax(8rem,1fr)_minmax(8rem,1fr)_3.5rem]"
+                            >
+                              <select
+                                value={socialLink.label ?? "facebook"}
+                                onChange={(event) =>
+                                  updateNGOPopupSocialLink(
+                                    index,
+                                    "label",
+                                    event.target.value,
+                                  )
+                                }
+                                className="h-11 rounded-lg border border-gray-300 px-4 text-sm capitalize outline-none focus:border-blue-600"
+                              >
+                                {socialLinkLabels.map((socialName) => (
+                                  <option key={socialName} value={socialName}>
+                                    {socialName}
+                                  </option>
+                                ))}
+                              </select>
+                              <input
+                                value={socialLink.href ?? ""}
+                                onChange={(event) =>
+                                  updateNGOPopupSocialLink(
+                                    index,
+                                    "href",
+                                    event.target.value,
+                                  )
+                                }
+                                className="h-11 rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
+                                placeholder="Social link"
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setPendingNGOPopupSocialLinkDelete({
+                                    index,
+                                    label:
+                                      socialLink.label?.trim() ||
+                                      `Social icon ${index + 1}`,
+                                  })
+                                }
+                                className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-500 bg-white text-red-600"
+                                aria-label="Delete social icon"
+                              >
+                                <Trash size={18} />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                      </>
-                    )}
-                  </div>
+                  ) : (
+                    <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
+                      {isSingleCtaHeader ? (
+                        <>
+                          <div>
+                            <h4 className="text-sm font-bold text-slate-900">
+                              Header Button
+                            </h4>
+                            <p className="mt-1 text-xs text-gray-700 underline">
+                              Edit the Book Now CTA shown in the header.
+                            </p>
+                          </div>
+                          <div className="grid gap-3 sm:grid-cols-2">
+                            <label className="block text-sm font-semibold text-gray-900">
+                              Button Label
+                              <input
+                                value={activeHeaderData?.button?.label ?? ""}
+                                onChange={(event) =>
+                                  updateEventsHeaderCta(
+                                    "label",
+                                    event.target.value,
+                                  )
+                                }
+                                className="mt-1 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
+                                placeholder="Book Now"
+                              />
+                            </label>
+                            <label className="block text-sm font-semibold text-gray-900">
+                              Button Link
+                              <input
+                                value={activeHeaderData?.button?.href ?? ""}
+                                onChange={(event) =>
+                                  updateEventsHeaderCta(
+                                    "href",
+                                    event.target.value,
+                                  )
+                                }
+                                className="mt-1 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
+                                placeholder="/contact"
+                              />
+                            </label>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="text-sm font-bold text-slate-900">
+                                Header Buttons
+                              </h4>
+                              <p className="mt-1 text-xs text-gray-700 underline">
+                                Manage header action buttons.
+                              </p>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={addHeaderButton}
+                              disabled={
+                                (activeHeaderData?.buttons ?? []).length >=
+                                MAX_HEADER_BUTTONS
+                              }
+                              className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+                            >
+                              <Plus size={14} />
+                              Add Button
+                            </button>
+                          </div>
+
+                          <p className="text-xs text-gray-500">
+                            {(activeHeaderData?.buttons ?? []).length}/
+                            {MAX_HEADER_BUTTONS} header buttons added
+                          </p>
+
+                          <div className="space-y-3">
+                            {(activeHeaderData?.buttons ?? []).map(
+                              (button, index) => (
+                                <div
+                                  key={index}
+                                  className="grid grid-cols-1 gap-3 rounded-xl border border-gray-300 bg-white p-3 shadow-sm lg:grid-cols-[minmax(8rem,1fr)_minmax(8rem,1fr)_8rem_3.5rem]"
+                                >
+                                  <input
+                                    value={button.label}
+                                    onChange={(event) =>
+                                      updateHeaderButton(
+                                        index,
+                                        "label",
+                                        event.target.value,
+                                      )
+                                    }
+                                    className="h-11 rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
+                                    placeholder="Button label"
+                                  />
+
+                                  <input
+                                    value={button.href}
+                                    onChange={(event) =>
+                                      updateHeaderButton(
+                                        index,
+                                        "href",
+                                        event.target.value,
+                                      )
+                                    }
+                                    className="h-11 rounded-lg border border-gray-300 px-4 text-sm outline-none focus:border-blue-600"
+                                    placeholder="/link"
+                                  />
+
+                                  <select
+                                    value={button.variant ?? "primary"}
+                                    onChange={(event) =>
+                                      updateHeaderButton(
+                                        index,
+                                        "variant",
+                                        event.target.value,
+                                      )
+                                    }
+                                    className="h-11 rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                                    aria-label="Header button style"
+                                  >
+                                    <option value="primary">Primary</option>
+                                    <option value="secondary">Secondary</option>
+                                  </select>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteHeaderButton(index)}
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-500 bg-white text-red-600"
+                                    aria-label="Delete header button"
+                                  >
+                                    <Trash size={18} />
+                                  </button>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -6299,7 +15669,8 @@ export default function EditSectionModal({
                     aria-label="Choose banner video"
                   />
 
-                  {"pretitle" in (activeBannerData ?? {}) && (
+                  {"pretitle" in (activeBannerData ?? {}) &&
+                    !isTemplateSliderBanner && (
                     <div className="rounded-xl border border-gray-200 bg-white p-4">
                       <label className="block text-sm font-semibold text-gray-900">
                         Pretitle
@@ -6364,7 +15735,8 @@ export default function EditSectionModal({
                     <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
                       <div className="flex items-center justify-between gap-3">
                         <h4 className="text-sm font-semibold text-gray-900">
-                          Banner Slider
+                          Banner Slider (
+                          {(activeBannerData?.bannerSlides ?? []).length})
                         </h4>
                         <button
                           type="button"
@@ -6542,6 +15914,23 @@ export default function EditSectionModal({
 
                             <div>
                               <label className="block text-sm font-semibold text-gray-900">
+                                Slide Pre Title
+                              </label>
+                              <input
+                                value={slide.pretitle ?? ""}
+                                onChange={(event) =>
+                                  updateBannerSlide(
+                                    index,
+                                    "pretitle",
+                                    event.target.value,
+                                  )
+                                }
+                                className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                                placeholder="Enter slide pretitle"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm font-semibold text-gray-900">
                                 Slide Title
                               </label>
                               <input
@@ -6576,63 +15965,150 @@ export default function EditSectionModal({
                               />
                             </div>
 
-                            {slide.button && <div className="grid gap-3 lg:grid-cols-3">
-                              <div>
-                                <label className="block text-sm font-semibold text-gray-900">
-                                  Button Label
-                                </label>
-                                <input
-                                  value={slide.button?.label ?? ""}
-                                  onChange={(event) =>
-                                    updateBannerSlideButton(
-                                      index,
-                                      "label",
-                                      event.target.value,
-                                    )
-                                  }
-                                  className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
-                                  placeholder="Learn more"
-                                />
-                              </div>
+                            {(slide.button || isTemplateSliderBanner) && (
+                              <div className="space-y-3">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                  {isTemplateSliderBanner
+                                    ? "Primary Button"
+                                    : "Button"}
+                                </p>
+                                <div className="grid gap-3 lg:grid-cols-3">
+                                  <div>
+                                    <label className="block text-sm font-semibold text-gray-900">
+                                      Button Label
+                                    </label>
+                                    <input
+                                      value={slide.button?.label ?? ""}
+                                      onChange={(event) =>
+                                        updateBannerSlideButton(
+                                          index,
+                                          "label",
+                                          event.target.value,
+                                        )
+                                      }
+                                      className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                                      placeholder="Learn more"
+                                    />
+                                  </div>
 
-                              <div>
-                                <label className="block text-sm font-semibold text-gray-900">
-                                  Button Link
-                                </label>
-                                <input
-                                  value={slide.button?.href ?? ""}
-                                  onChange={(event) =>
-                                    updateBannerSlideButton(
-                                      index,
-                                      "href",
-                                      event.target.value,
-                                    )
-                                  }
-                                  className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
-                                  placeholder="#"
-                                />
-                              </div>
+                                  <div>
+                                    <label className="block text-sm font-semibold text-gray-900">
+                                      Button Link
+                                    </label>
+                                    <input
+                                      value={slide.button?.href ?? ""}
+                                      onChange={(event) =>
+                                        updateBannerSlideButton(
+                                          index,
+                                          "href",
+                                          event.target.value,
+                                        )
+                                      }
+                                      className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                                      placeholder="#"
+                                    />
+                                  </div>
 
-                              <div>
-                                <label className="block text-sm font-semibold text-gray-900">
-                                  Button Style
-                                </label>
-                                <select
-                                  value={slide.button?.variant ?? "primary"}
-                                  onChange={(event) =>
-                                    updateBannerSlideButton(
-                                      index,
-                                      "variant",
-                                      event.target.value,
-                                    )
-                                  }
-                                  className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
-                                >
-                                  <option value="primary">Primary</option>
-                                  <option value="secondary">Secondary</option>
-                                </select>
+                                  <div>
+                                    <label className="block text-sm font-semibold text-gray-900">
+                                      Button Style
+                                    </label>
+                                    <select
+                                      value={slide.button?.variant ?? "primary"}
+                                      onChange={(event) =>
+                                        updateBannerSlideButton(
+                                          index,
+                                          "variant",
+                                          event.target.value,
+                                        )
+                                      }
+                                      className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                                    >
+                                      <option value="primary">Primary</option>
+                                      <option value="secondary">Secondary</option>
+                                    </select>
+                                  </div>
+                                </div>
                               </div>
-                            </div>}
+                            )}
+
+                            {isTemplateSliderBanner && (
+                              <div className="space-y-3">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                  Secondary Button
+                                </p>
+                                <div className="grid gap-3 lg:grid-cols-3">
+                                  <div>
+                                    <label className="block text-sm font-semibold text-gray-900">
+                                      Button Label
+                                    </label>
+                                    <input
+                                      value={
+                                        slide.secondButton?.label ??
+                                        activeBannerData?.buttons?.[1]?.label ??
+                                        ""
+                                      }
+                                      onChange={(event) =>
+                                        updateBannerSlideSecondButton(
+                                          index,
+                                          "label",
+                                          event.target.value,
+                                        )
+                                      }
+                                      className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                                      placeholder="View more"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-sm font-semibold text-gray-900">
+                                      Button Link
+                                    </label>
+                                    <input
+                                      value={
+                                        slide.secondButton?.href ??
+                                        activeBannerData?.buttons?.[1]?.href ??
+                                        ""
+                                      }
+                                      onChange={(event) =>
+                                        updateBannerSlideSecondButton(
+                                          index,
+                                          "href",
+                                          event.target.value,
+                                        )
+                                      }
+                                      className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                                      placeholder="#"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <label className="block text-sm font-semibold text-gray-900">
+                                      Button Style
+                                    </label>
+                                    <select
+                                      value={
+                                        slide.secondButton?.variant ??
+                                        activeBannerData?.buttons?.[1]
+                                          ?.variant ??
+                                        "secondary"
+                                      }
+                                      onChange={(event) =>
+                                        updateBannerSlideSecondButton(
+                                          index,
+                                          "variant",
+                                          event.target.value,
+                                        )
+                                      }
+                                      className="mt-2 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                                    >
+                                      <option value="primary">Primary</option>
+                                      <option value="secondary">Secondary</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         ),
                       )}
@@ -6771,7 +16247,7 @@ export default function EditSectionModal({
                     </section>
                   )}
 
-                  {hasBannerHeightField && (
+                  {hasBannerHeightField && !isNGOSliderBanner && (
                     <div className="rounded-xl border border-gray-200 bg-white p-4">
                       <div className="flex items-center justify-between gap-3">
                         <label className="text-sm font-semibold text-gray-900">
@@ -6898,7 +16374,28 @@ export default function EditSectionModal({
               activeTab === "Banner Layout" && (
                 <div className="space-y-4">
                   {sectionLayoutOptions.map((layout) => {
-                    const isActive = currentSection?.variant === layout.id;
+                    const isActive =
+                      currentSection?.variant === layout.id ||
+                      currentSection?.variant === layout.componentVariant;
+                    const Component = getSectionComponent(
+                      category,
+                      activeSectionType,
+                      layout.componentVariant ?? layout.id,
+                    );
+                    const useEventsBannerLivePreview =
+                      category === "Events" && Boolean(Component);
+                    const layoutData =
+                      currentSection?.data?.[layout.id] ??
+                      currentSection?.data?.[layout.componentVariant ?? ""] ??
+                      (useEventsBannerLivePreview
+                        ? getCategoryVariantData(
+                            category,
+                            activeSectionType,
+                            layout.componentVariant ?? layout.id,
+                          )
+                        : undefined) ??
+                      activeBannerData ??
+                      activeGenericData;
 
                     return (
                       <button
@@ -6909,7 +16406,15 @@ export default function EditSectionModal({
                           }`}
                       >
                         <SelectedLayoutBadge active={isActive} title={layout.name} />
-                        <div className="h-28 bg-gray-100">
+                        <div
+                          className={`${useEventsBannerLivePreview ? "h-36" : "h-28"} overflow-hidden bg-gray-100`}
+                        >
+                          {useEventsBannerLivePreview && Component ? (
+                            <div className="h-[520px] w-[1200px] origin-top-left scale-[0.32] bg-white">
+                              <Component data={layoutData} />
+                            </div>
+                          ) : (
+                            <>
                           {layout.id === "Banner-1" && (
                             <div className="relative flex h-full items-center overflow-hidden bg-slate-900 px-5">
                               <div
@@ -7017,6 +16522,8 @@ export default function EditSectionModal({
                               </div>
                             </div>
                           )}
+                            </>
+                          )}
                         </div>
                       </button>
                     );
@@ -7024,26 +16531,81 @@ export default function EditSectionModal({
                 </div>
               )}
 
-            {activeSectionType === "About" && activeTab === "About Layout" && (
+            {(isEventsInnerSubsectionLayout || isNGOAboutPageLayout) &&
+              activeTab.endsWith("Layout") &&
+              activeTab !== "Box Layout" && (
               <div className="space-y-4">
                 {activeAboutLayouts.map((layout) => {
-                  const isActive = currentSection?.variant === layout.id;
-                  const Component = getSectionComponent(
-                    category,
-                    activeSectionType,
-                    layout.id,
-                  );
-                  const layoutData =
-                    currentSection?.data?.[layout.id] ?? activeGenericData;
-                  const usesGeneratedPagePreview =
-                    isPageSection &&
-                    !layout.id.startsWith(`${activeSectionType}Page-`);
+                  const subsectionComponentVariant =
+                    layout.componentVariant ?? layout.id;
 
                   return (
                     <button
                       key={layout.id}
                       type="button"
-                      onClick={() => selectSectionVariant(layout.id)}
+                      className="relative w-full overflow-hidden rounded-2xl border border-gray-400 bg-white text-left"
+                    >
+                      <SelectedLayoutBadge active title={layout.name} />
+                      <div className="h-32 bg-gray-100">
+                        <div className="h-[520px] w-[1200px] origin-top-left scale-[0.28] bg-white">
+                          {isNGOAboutPageLayout ? (
+                            <NGOSubsectionLayoutPreview
+                              componentVariant={subsectionComponentVariant}
+                              data={pageVariantData ?? activeGenericData}
+                              subsectionLabel={
+                                subsectionScope?.label ?? layout.name
+                              }
+                            />
+                          ) : (
+                            <EventsSubsectionLayoutPreview
+                              componentVariant={subsectionComponentVariant}
+                              data={activeGenericData}
+                              subsectionLabel={
+                                subsectionScope?.label ?? layout.name
+                              }
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {category === "Events" &&
+              isPageSection &&
+              !subsectionScope &&
+              activeSectionType !== "Contact" &&
+              activeTab.endsWith("Layout") &&
+              activeTab !== "Box Layout" && (
+              <div className="space-y-4">
+                {pageLayoutOptions.map((layout) => {
+                  const isActive =
+                    currentSection?.variant === layout.id ||
+                    currentSection?.variant === layout.componentVariant;
+                  const Component = getSectionComponent(
+                    category,
+                    activeSectionType,
+                    layout.componentVariant ?? layout.id,
+                  );
+                  const layoutData =
+                    currentSection?.data?.[layout.id] ??
+                    currentSection?.data?.[layout.componentVariant ?? ""] ??
+                    activeGenericData;
+                  const usesGeneratedPagePreview =
+                    Boolean(Component) &&
+                    String(layout.componentVariant ?? "").includes("Page");
+
+                  return (
+                    <button
+                      key={layout.id}
+                      type="button"
+                      onClick={() =>
+                        selectSectionVariant(
+                          layout.componentVariant ?? layout.id,
+                        )
+                      }
                       className={`relative w-full overflow-hidden rounded-2xl border bg-white text-left ${isActive ? "border-gray-400" : "border-gray-200"
                         }`}
                     >
@@ -7052,6 +16614,92 @@ export default function EditSectionModal({
                         {usesGeneratedPagePreview && Component && (
                           <div className="h-[520px] w-[1200px] origin-top-left scale-[0.28] bg-white">
                             <Component data={layoutData} />
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {(activeSectionType === "About" ||
+              (category !== "Events" &&
+                (activeSectionType === "AboutPage" ||
+                  activeSectionType === "AboutUsPage"))) &&
+              !isEventsInnerSubsectionLayout &&
+              !isNGOAboutPageLayout &&
+              activeTab.endsWith("Layout") &&
+              activeTab !== "Box Layout" && (
+              <div className="space-y-4">
+                {activeAboutLayouts.map((layout) => {
+                  const isActive =
+                    currentSection?.variant === layout.id ||
+                    currentSection?.variant === layout.componentVariant;
+                  const Component = getSectionComponent(
+                    category,
+                    activeSectionType,
+                    layout.componentVariant ?? layout.id,
+                  );
+                  const useEventsAboutLivePreview =
+                    category === "Events" &&
+                    activeSectionType === "About" &&
+                    Boolean(Component);
+                  const layoutData =
+                    currentSection?.data?.[layout.id] ??
+                    currentSection?.data?.[layout.componentVariant ?? ""] ??
+                    (useEventsAboutLivePreview
+                      ? getCategoryVariantData(
+                          category,
+                          activeSectionType,
+                          layout.componentVariant ?? layout.id,
+                        )
+                      : undefined) ??
+                    activeGenericData;
+                  const usesGeneratedPagePreview =
+                    isPageSection &&
+                    !layout.id.startsWith(`${activeSectionType}Page-`) &&
+                    !String(layout.componentVariant ?? "").includes("Page");
+
+                  return (
+                    <button
+                      key={layout.id}
+                      type="button"
+                      onClick={() =>
+                        selectSectionVariant(
+                          layout.componentVariant ?? layout.id,
+                        )
+                      }
+                      className={`relative w-full overflow-hidden rounded-2xl border bg-white text-left ${isActive ? "border-gray-400" : "border-gray-200"
+                        }`}
+                    >
+                      <SelectedLayoutBadge active={isActive} title={layout.name} />
+                      <div
+                        className={`${useEventsAboutLivePreview ? "h-36" : "h-32"} overflow-hidden bg-gray-100`}
+                      >
+                        {useEventsAboutLivePreview && Component ? (
+                          <div className="h-[520px] w-[1200px] origin-top-left scale-[0.32] bg-white">
+                            <Component data={layoutData} />
+                          </div>
+                        ) : (
+                          <>
+                        {usesGeneratedPagePreview && Component && (
+                          <div className="h-[520px] w-[1200px] origin-top-left scale-[0.28] bg-white">
+                            <Component data={layoutData} />
+                          </div>
+                        )}
+
+                        {(layout.componentVariant === "EventsAboutPage1" ||
+                          layout.id === "EventsAboutPage1") && (
+                          <div className="grid h-full grid-cols-[1.1fr_0.9fr] gap-3 bg-white p-4">
+                            <div className="space-y-2">
+                              <div className="h-2 w-20 rounded bg-[#d61b58]" />
+                              <div className="h-5 w-full rounded bg-slate-900" />
+                              <div className="h-5 w-4/5 rounded bg-slate-900" />
+                              <div className="mt-3 h-2 w-full rounded bg-slate-400" />
+                              <div className="h-2 w-5/6 rounded bg-slate-400" />
+                            </div>
+                            <div className="rounded-2xl bg-slate-300" />
                           </div>
                         )}
 
@@ -7133,6 +16781,8 @@ export default function EditSectionModal({
                               <div className="h-2 w-4/5 rounded bg-slate-400" />
                             </div>
                           </div>
+                        )}
+                          </>
                         )}
                       </div>
                     </button>
@@ -7449,14 +17099,7 @@ export default function EditSectionModal({
 
             {showBoxLayoutTab && activeTab === "Box Layout" && (
               <div className="space-y-5">
-                <div>
-                  <h3 className="text-base font-semibold text-slate-950">
-                    Boxes per row
-                  </h3>
-                  <p className="mt-1 text-sm text-slate-500">
-                    Choose how many cards appear in one desktop row.
-                  </p>
-                </div>
+               
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   {[2, 3, 4, 5, 6]
@@ -7540,11 +17183,213 @@ export default function EditSectionModal({
               (activeTab.endsWith("Content") ||
                 activeTab === "Tabs" ||
                 (hasScopedContentAndFormTabs && activeTab === "Form") ||
+                (isEventsHomeContact && activeTab === "Form") ||
                 (activeSectionType === "CareerPage" &&
-                  activeTab === "CareerPage Form")) && (
+                  activeTab === "CareerPage Form") ||
+                (showEventsCareersFormTab &&
+                  activeTab === EVENTS_CAREERS_FORM_TAB)) && (
                 <div className="space-y-5">
+                  {isBreadcrumbEditor && (
+                    <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
+                      <label className="block">
+                        <span className="mb-1 block text-xs font-semibold text-slate-600">
+                          Background Type
+                        </span>
+                        <select
+                          value={breadcrumbBackgroundType}
+                          onChange={(event) => {
+                            const nextType =
+                              event.target.value === "color" ? "color" : "image";
+
+                            if (nextType === "color") {
+                              updateActiveGenericData({
+                                breadcrumbBackgroundType: "color",
+                                backgroundImage: "",
+                                breadcrumbColorBackgroundType:
+                                  activeGenericEditorData?.breadcrumbColorBackgroundType ===
+                                  "gradient"
+                                    ? "gradient"
+                                    : "solid",
+                                backgroundColor:
+                                  activeGenericEditorData?.backgroundColor ||
+                                  breadcrumbDefaultSolid,
+                                breadcrumbGradientColor:
+                                  activeGenericEditorData?.breadcrumbGradientColor ||
+                                  breadcrumbDefaultGradient,
+                              });
+                              return;
+                            }
+
+                            updateGenericField(
+                              ["breadcrumbBackgroundType"],
+                              "image",
+                            );
+                          }}
+                          className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-600"
+                        >
+                          <option value="image">Background image</option>
+                          <option value="color">Background color</option>
+                        </select>
+                      </label>
+
+                      {breadcrumbBackgroundType === "image" && (
+                        <div>
+                          <span className="mb-1 block text-xs font-semibold text-slate-600">
+                            Background Image
+                          </span>
+                          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_8rem] sm:items-start">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                breadcrumbImageInputRef.current?.click()
+                              }
+                              className="flex h-10 w-full items-center justify-between rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 transition hover:border-blue-500 focus:border-blue-600 focus:outline-none"
+                            >
+                              <span className="font-medium">
+                                {activeGenericEditorData?.backgroundImage
+                                  ? "Change image"
+                                  : "Upload image"}
+                              </span>
+                              <span className="max-w-[55%] truncate text-xs text-slate-500">
+                                {getMediaUploadLabel(
+                                  activeGenericEditorData?.backgroundImage ?? "",
+                                  "image",
+                                )}
+                              </span>
+                            </button>
+                            <MediaUploadPreview
+                              src={activeGenericEditorData?.backgroundImage ?? ""}
+                              type="image"
+                            />
+                          </div>
+                          <input
+                            ref={breadcrumbImageInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="sr-only"
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              if (file) {
+                                updateGenericMedia(
+                                  ["backgroundImage"],
+                                  "backgroundImage",
+                                  file,
+                                );
+                              }
+                              event.target.value = "";
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {breadcrumbBackgroundType === "image" && (
+                        <div className="border-t border-gray-200 pt-4">
+                          <ColorInput
+                            label="Text color"
+                            value={breadcrumbTextColor}
+                            onChange={(color) =>
+                              updateGenericField(["textColor"], color)
+                            }
+                          />
+                        </div>
+                      )}
+
+                      {breadcrumbBackgroundType === "color" && (
+                        <div className="space-y-4 border-t border-gray-200 pt-4">
+                          <div className="flex flex-wrap items-center gap-3">
+                            <span className="text-sm font-semibold text-gray-950">
+                              Background Type :
+                            </span>
+                            {(["solid", "gradient"] as const).map((type) => {
+                              const isActive =
+                                breadcrumbColorBackgroundType === type;
+
+                              return (
+                                <button
+                                  key={type}
+                                  type="button"
+                                  onClick={() =>
+                                    updateActiveGenericData({
+                                      breadcrumbBackgroundType: "color",
+                                      backgroundImage: "",
+                                      breadcrumbColorBackgroundType: type,
+                                      backgroundColor:
+                                        activeGenericEditorData?.backgroundColor ||
+                                        breadcrumbDefaultSolid,
+                                      breadcrumbGradientColor:
+                                        activeGenericEditorData?.breadcrumbGradientColor ||
+                                        breadcrumbDefaultGradient,
+                                    })
+                                  }
+                                  className={`h-10 min-w-28 rounded-xl border px-5 text-sm font-semibold capitalize text-gray-950 shadow-sm transition ${
+                                    isActive
+                                      ? "border-gray-300 bg-white"
+                                      : "border-transparent bg-slate-200 hover:bg-white"
+                                  }`}
+                                >
+                                  {type}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+                            <ColorInput
+                              label="Text color"
+                              value={breadcrumbTextColor}
+                              onChange={(color) =>
+                                updateGenericField(["textColor"], color)
+                              }
+                            />
+                            <ColorInput
+                              label={
+                                breadcrumbColorBackgroundType === "gradient"
+                                  ? "Background left"
+                                  : "Background color"
+                              }
+                              value={breadcrumbSolidColor}
+                              onChange={(color) =>
+                                updateGenericField(["backgroundColor"], color)
+                              }
+                            />
+                            {breadcrumbColorBackgroundType === "gradient" && (
+                              <ColorInput
+                                label="Background right"
+                                value={breadcrumbGradientColor}
+                                onChange={(color) =>
+                                  updateGenericField(
+                                    ["breadcrumbGradientColor"],
+                                    color,
+                                  )
+                                }
+                              />
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {isNGOBreadcrumbEditor && (
+                    <label className="block">
+                      <span className="mb-1 block text-xs font-semibold text-slate-600">
+                        Title
+                      </span>
+                      <input
+                        value={ngoBreadcrumbTitle}
+                        onChange={(event) =>
+                          updateActiveGenericData({
+                            banner: {
+                              ...ngoBreadcrumbBanner,
+                              breadcrumbCurrent: event.target.value,
+                            },
+                          })
+                        }
+                        className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                      />
+                    </label>
+                  )}
                   {activeSectionType === "PopularEvents" &&
-                    (activeTab.endsWith("Content") || activeTab === "Tabs") && (
+                    activeTab === "Tabs" && (
                       <GenericFieldEditor
                         fieldName="tabs"
                         value={popularEventTabItems}
@@ -7557,25 +17402,409 @@ export default function EditSectionModal({
                         availablePageNames={availablePageNames}
                       />
                     )}
-                  {visibleGenericContentEntries.map(([key, value]) => (
+                  {showEventsTeamTabsTab && activeTab === "Tabs" && (
+                    <GenericFieldEditor
+                      fieldName="departments"
+                      value={
+                        (activeGenericEditorData?.departments ??
+                          activeGenericData?.departments ??
+                          []) as unknown[]
+                      }
+                      path={["departments"]}
+                      sectionType={activeSectionType}
+                      category={category}
+                      onChange={updateGenericField}
+                      onMediaChange={updateGenericMedia}
+                      onAddArrayItem={addGenericCollectionItem}
+                      onDeleteArrayItem={deleteGenericCollectionItem}
+                      availablePageNames={availablePageNames}
+                      cardFields={eventsTeamsDepartmentCardFields}
+                    />
+                  )}
+                  {showEventsCareersFormTab &&
+                    activeTab === EVENTS_CAREERS_FORM_TAB && (
+                      <div className="space-y-5">
+                        <section className="rounded-xl border border-gray-200 bg-white p-4">
+                          <h4 className="text-sm font-bold text-slate-900">
+                            Form Settings
+                          </h4>
+                          <div className="mt-4 grid gap-4 md:grid-cols-2">
+                            <label className="block">
+                              <span className="mb-1 block text-xs font-semibold text-slate-600">
+                                Form Title
+                              </span>
+                              <input
+                                value={activeCareersApplyForm.title}
+                                onChange={(event) =>
+                                  updateCareersApplyForm({
+                                    title: event.target.value,
+                                  })
+                                }
+                                className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                              />
+                            </label>
+                            <label className="block">
+                              <span className="mb-1 block text-xs font-semibold text-slate-600">
+                                Submit Label
+                              </span>
+                              <input
+                                value={activeCareersApplyForm.submitLabel}
+                                onChange={(event) =>
+                                  updateCareersApplyForm({
+                                    submitLabel: event.target.value,
+                                  })
+                                }
+                                className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                              />
+                            </label>
+                            <label className="block md:col-span-2">
+                              <span className="mb-1 block text-xs font-semibold text-slate-600">
+                                Form Subtitle
+                              </span>
+                              <input
+                                value={activeCareersApplyForm.subtitle}
+                                onChange={(event) =>
+                                  updateCareersApplyForm({
+                                    subtitle: event.target.value,
+                                  })
+                                }
+                                className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                              />
+                            </label>
+                            <label className="block md:col-span-2">
+                              <span className="mb-1 block text-xs font-semibold text-slate-600">
+                                Success Message
+                              </span>
+                              <textarea
+                                value={activeCareersApplyForm.successDescription}
+                                onChange={(event) =>
+                                  updateCareersApplyForm({
+                                    successDescription: event.target.value,
+                                  })
+                                }
+                                className="min-h-24 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-600"
+                              />
+                            </label>
+                          </div>
+                        </section>
+
+                        <GenericFieldEditor
+                          fieldName="locations"
+                          value={activeCareersApplyForm.locations}
+                          path={["applyForm", "locations"]}
+                          sectionType={activeSectionType}
+                          category={category}
+                          onChange={updateGenericField}
+                          onMediaChange={updateGenericMedia}
+                          onAddArrayItem={addGenericCollectionItem}
+                          onDeleteArrayItem={deleteGenericCollectionItem}
+                          availablePageNames={availablePageNames}
+                        />
+                        <GenericFieldEditor
+                          fieldName="noticePeriods"
+                          value={activeCareersApplyForm.noticePeriods}
+                          path={["applyForm", "noticePeriods"]}
+                          sectionType={activeSectionType}
+                          category={category}
+                          onChange={updateGenericField}
+                          onMediaChange={updateGenericMedia}
+                          onAddArrayItem={addGenericCollectionItem}
+                          onDeleteArrayItem={deleteGenericCollectionItem}
+                          availablePageNames={availablePageNames}
+                        />
+
+                        <section className="rounded-xl bg-[#f4f4f5] p-4">
+                          <div className="mb-4 flex items-center justify-between gap-3">
+                            <h4 className="text-sm font-bold text-slate-900">
+                              Form Fields
+                            </h4>
+                            <button
+                              type="button"
+                              onClick={addCareersApplyFormField}
+                              disabled={
+                                activeCareersApplyForm.fields.length >=
+                                MAX_EVENTS_CAREERS_FORM_FIELDS
+                              }
+                              className="rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:bg-gray-300"
+                            >
+                              Add Field
+                            </button>
+                          </div>
+                          <p className="-mt-2 mb-4 text-xs font-medium text-slate-500">
+                            {activeCareersApplyForm.fields.length}/
+                            {MAX_EVENTS_CAREERS_FORM_FIELDS} fields added
+                          </p>
+
+                          <div className="space-y-3">
+                            {activeCareersApplyForm.fields.map(
+                              (field, index) => (
+                                <div
+                                  key={`${field.name ?? "field"}-${index}`}
+                                  className="rounded-xl border border-slate-200 bg-white p-3"
+                                >
+                                  <div className="mb-3 flex items-center justify-end gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        moveCareersApplyFormField(
+                                          index,
+                                          index - 1,
+                                        )
+                                      }
+                                      disabled={index === 0}
+                                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+                                      aria-label={`Move field ${index + 1} up`}
+                                    >
+                                      <ChevronUp size={16} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        moveCareersApplyFormField(
+                                          index,
+                                          index + 1,
+                                        )
+                                      }
+                                      disabled={
+                                        index ===
+                                        activeCareersApplyForm.fields.length - 1
+                                      }
+                                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-300 bg-white text-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
+                                      aria-label={`Move field ${index + 1} down`}
+                                    >
+                                      <ChevronDown size={16} />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setPendingCareersFormFieldDeleteIndex(
+                                          index,
+                                        )
+                                      }
+                                      disabled={
+                                        activeCareersApplyForm.fields.length <=
+                                        1
+                                      }
+                                      className="flex h-8 items-center gap-1 rounded-lg border border-red-200 bg-white px-3 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:border-slate-200 disabled:text-slate-400 disabled:hover:bg-white"
+                                    >
+                                      <Trash size={15} />
+                                      Delete
+                                    </button>
+                                  </div>
+
+                                  <div className="grid gap-3 md:grid-cols-2">
+                                    <label className="block">
+                                      <span className="mb-1 block text-xs font-semibold text-slate-600">
+                                        Label
+                                      </span>
+                                      <input
+                                        value={field.label ?? ""}
+                                        onChange={(event) =>
+                                          updateCareersApplyFormItemField(
+                                            index,
+                                            "label",
+                                            event.target.value,
+                                          )
+                                        }
+                                        className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                                      />
+                                    </label>
+                                    <label className="block md:col-span-1">
+                                      <span className="mb-1 block text-xs font-semibold text-slate-600">
+                                        Placeholder
+                                      </span>
+                                      <input
+                                        value={field.placeholder ?? ""}
+                                        onChange={(event) =>
+                                          updateCareersApplyFormItemField(
+                                            index,
+                                            "placeholder",
+                                            event.target.value,
+                                          )
+                                        }
+                                        className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                                      />
+                                    </label>
+                                    <label className="block">
+                                      <span className="mb-1 block text-xs font-semibold text-slate-600">
+                                        Field Type
+                                      </span>
+                                      <select
+                                        value={field.type ?? "text"}
+                                        onChange={(event) =>
+                                          updateCareersApplyFormItemField(
+                                            index,
+                                            "type",
+                                            event.target.value,
+                                          )
+                                        }
+                                        className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                                      >
+                                        <option value="text">Text</option>
+                                        <option value="email">Email</option>
+                                        <option value="tel">Phone</option>
+                                        <option value="url">URL</option>
+                                        <option value="textarea">
+                                          Textarea
+                                        </option>
+                                        <option value="select">Select</option>
+                                        <option value="file">File Upload</option>
+                                      </select>
+                                    </label>
+                                    <label className="block">
+                                      <span className="mb-1 block text-xs font-semibold text-slate-600">
+                                        Width
+                                      </span>
+                                      <select
+                                        value={field.width ?? "half"}
+                                        onChange={(event) =>
+                                          updateCareersApplyFormItemField(
+                                            index,
+                                            "width",
+                                            event.target.value,
+                                          )
+                                        }
+                                        className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                                      >
+                                        <option value="half">Half</option>
+                                        <option value="full">Full</option>
+                                      </select>
+                                    </label>
+                                    {field.type === "select" && (
+                                      <label className="block md:col-span-2">
+                                        <span className="mb-1 block text-xs font-semibold text-slate-600">
+                                          Options Source
+                                        </span>
+                                        <select
+                                          value={field.optionsSource ?? ""}
+                                          onChange={(event) =>
+                                            updateCareersApplyFormItemField(
+                                              index,
+                                              "optionsSource",
+                                              event.target.value || undefined,
+                                            )
+                                          }
+                                          className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
+                                        >
+                                          <option value="">
+                                            Custom options
+                                          </option>
+                                          <option value="locations">
+                                            Locations list
+                                          </option>
+                                          <option value="noticePeriods">
+                                            Notice periods list
+                                          </option>
+                                        </select>
+                                      </label>
+                                    )}
+                                    <label className="flex items-center gap-2 md:col-span-2">
+                                      <input
+                                        type="checkbox"
+                                        checked={Boolean(field.required)}
+                                        onChange={(event) =>
+                                          updateCareersApplyFormItemField(
+                                            index,
+                                            "required",
+                                            event.target.checked,
+                                          )
+                                        }
+                                      />
+                                      <span className="text-sm font-semibold text-slate-700">
+                                        Required field
+                                      </span>
+                                    </label>
+                                  </div>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        </section>
+
+                        {pendingCareersFormFieldDeleteIndex !== null &&
+                          createPortal(
+                            <div className="fixed inset-0 z-[10020] flex items-center justify-center bg-slate-950/45 px-4">
+                              <div
+                                role="alertdialog"
+                                aria-modal="true"
+                                aria-labelledby="delete-careers-form-field-title"
+                                className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-2xl"
+                              >
+                                <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-600">
+                                  <Trash size={20} />
+                                </div>
+                                <h3
+                                  id="delete-careers-form-field-title"
+                                  className="mt-4 text-xl font-semibold text-slate-950"
+                                >
+                                  Delete this field?
+                                </h3>
+                                <p className="mt-2 text-sm leading-6 text-slate-600">
+                                  “
+                                  {activeCareersApplyForm.fields[
+                                    pendingCareersFormFieldDeleteIndex
+                                  ]?.label?.trim() ||
+                                    `Field ${pendingCareersFormFieldDeleteIndex + 1}`}
+                                  ” will be removed from the apply form.
+                                </p>
+                                <div className="mt-6 flex justify-center gap-3">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setPendingCareersFormFieldDeleteIndex(
+                                        null,
+                                      )
+                                    }
+                                    className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      deleteCareersApplyFormField(
+                                        pendingCareersFormFieldDeleteIndex,
+                                      )
+                                    }
+                                    className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            </div>,
+                            document.body,
+                          )}
+                      </div>
+                    )}
+                  {!(
+                    showEventsCareersFormTab &&
+                    activeTab === EVENTS_CAREERS_FORM_TAB
+                  ) &&
+                    visibleGenericContentEntries.map(([key, value]) => (
                     <GenericFieldEditor
                       key={key}
                       fieldName={key}
                       value={value}
                       path={[key]}
                       sectionType={activeSectionType}
+                      category={category}
                       onChange={updateGenericField}
                       onMediaChange={updateGenericMedia}
                       onAddArrayItem={addGenericCollectionItem}
                       onDeleteArrayItem={deleteGenericCollectionItem}
                       availablePageNames={availablePageNames}
                       cardFields={activeCardFields}
+                      categorySelectOptions={activeCategorySelectOptions}
                     />
                   ))}
                 </div>
               )}
 
-            {["WhyChooseUs", "Service", "Gallery", "Contact", "FAQ", "Testimonial", "Awards", "Blog", "CompanyStatistics"].includes(activeSectionType) &&
+            {["WhyChooseUs", "Service", "Gallery", "Contact", "FAQ", "Testimonial", "Awards", "Blog", "CompanyStatistics", "Causes", "Projects", "Events", "Cta"].includes(activeSectionType) &&
+              !(category === "Events" && isPageSection) &&
+              !isEventsInnerSubsectionLayout &&
+              !isNGOAboutPageLayout &&
               activeTab.endsWith("Layout") &&
               activeTab !== "Box Layout" && (
                 <div className="space-y-4">
@@ -7611,20 +17840,33 @@ export default function EditSectionModal({
                   )}
 
                   {visibleLayoutOptions.map((layout) => {
-                    const isActive = currentSection?.variant === layout.id;
+                    const isActive =
+                      currentSection?.variant === layout.id ||
+                      currentSection?.variant === layout.componentVariant;
                     const Component = getSectionComponent(
                       category,
                       activeSectionType,
-                      layout.id,
+                      layout.componentVariant ?? layout.id,
                     );
                     const layoutData =
-                      currentSection?.data?.[layout.id] ?? activeGenericData;
+                      currentSection?.data?.[layout.id] ??
+                      currentSection?.data?.[layout.componentVariant ?? ""] ??
+                      getCategoryVariantData(
+                        category,
+                        activeSectionType,
+                        layout.componentVariant ?? layout.id,
+                      ) ??
+                      activeGenericData;
 
                     return (
                       <button
                         key={layout.id}
                         type="button"
-                        onClick={() => selectSectionVariant(layout.id)}
+                        onClick={() =>
+                          selectSectionVariant(
+                            layout.componentVariant ?? layout.id,
+                          )
+                        }
                         className={`relative w-full overflow-hidden rounded-2xl border bg-white text-left ${isActive ? "border-gray-400" : "border-gray-200"
                           }`}
                       >
@@ -7708,6 +17950,18 @@ export default function EditSectionModal({
             {activeSectionType === "Footer" &&
               activeTab === "Footer Content" && (
                 <div className="space-y-5">
+                  {isNGOFooter && (
+                    <section className="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+                      <h3 className="text-sm font-semibold text-gray-900">
+                        Newsletter
+                      </h3>
+                      {renderFooterContentField("newsletterTitle")}
+                      {renderFooterContentField("newsletterDesc")}
+                      {renderFooterContentField("newsletterPlaceholder")}
+                      {renderFooterContentField("newsletterButtonLabel")}
+                    </section>
+                  )}
+
                   {activeGenericData?.logo ||
                     activeGenericData?.logoImage ||
                     activeGenericData?.desc ? (
@@ -7736,22 +17990,50 @@ export default function EditSectionModal({
                         Use a text logo or upload an image.
                       </p>
 
-                      <label className="mt-4 block text-xs font-medium text-gray-700">
-                        Logo text
-                      </label>
+                      {usesTypedFooterLogo ? (
+                        <label className="mt-4 block text-xs font-medium text-gray-700">
+                          Logo Type
+                          <select
+                            value={resolvedFooterLogoType}
+                            onChange={(event) =>
+                              updateFooterLogoType(
+                                event.target.value as
+                                  | "image"
+                                  | "text"
+                                  | "image-text",
+                              )
+                            }
+                            className="mt-1 h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none focus:border-blue-600"
+                          >
+                            <option value="image">Image logo</option>
+                            <option value="text">Text Logo</option>
+                            <option value="image-text">Image + Text logo</option>
+                          </select>
+                        </label>
+                      ) : null}
 
-                      <input
-                        value={activeFooterData?.logo ?? ""}
-                        onChange={(event) =>
-                          updateActiveFooterData({
-                            logo: event.target.value,
-                          })
-                        }
-                        className="mt-1 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
-                        placeholder="Your site name"
-                      />
+                      {(!usesTypedFooterLogo || showFooterLogoText) && (
+                        <>
+                          <label className="mt-4 block text-xs font-medium text-gray-700">
+                            Logo text
+                          </label>
 
-                      {"logoImage" in (activeFooterData ?? {}) && (
+                          <input
+                            value={activeFooterData?.logo ?? ""}
+                            onChange={(event) =>
+                              updateActiveFooterData({
+                                logo: event.target.value,
+                              })
+                            }
+                            className="mt-1 h-11 w-full rounded-lg border border-gray-300 px-4 text-sm text-gray-900 outline-none focus:border-blue-600"
+                            placeholder="Your site name"
+                          />
+                        </>
+                      )}
+
+                      {(!usesTypedFooterLogo
+                        ? "logoImage" in (activeFooterData ?? {})
+                        : showFooterLogoImage) && (
                         <>
                           <div className="mt-4 flex flex-wrap items-center gap-3">
                             <label className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700">
@@ -7764,7 +18046,7 @@ export default function EditSectionModal({
                               />
                             </label>
 
-                            {activeFooterData?.logoImage && (
+                            {activeFooterData?.logoImage && !isEventsFooter && (
                               <button
                                 type="button"
                                 onClick={() =>
@@ -7779,6 +18061,20 @@ export default function EditSectionModal({
                               </button>
                             )}
                           </div>
+
+                          {activeFooterData?.logoImage ? (
+                            <div className="mt-3 flex h-20 w-32 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-2">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={activeFooterData.logoImage}
+                                alt={
+                                  activeFooterData.logoImageTitle ||
+                                  "Logo preview"
+                                }
+                                className="max-h-full max-w-full object-contain"
+                              />
+                            </div>
+                          ) : null}
 
                           <input
                             value={activeFooterData?.logoImageTitle ?? ""}
@@ -7801,12 +18097,31 @@ export default function EditSectionModal({
                     <button
                       type="button"
                       onClick={() =>
-                        updateActiveFooterData({
-                          logo: "HAUS Group",
-                          logoImage: "",
-                          logoImageTitle: "",
-                          desc: "Add your footer description here.",
-                        })
+                        updateActiveFooterData(
+                          isNGOFooter
+                            ? {
+                                logo: "NGO",
+                                logoImage: "/logo.png",
+                                logoImageTitle: "NGO Logo",
+                                logoType: "image",
+                                desc: "We are a non-profit organization working for children and communities in need.",
+                              }
+                            : isEventsFooter
+                              ? {
+                                  logo: "Events",
+                                  logoImage:
+                                    "/categories/events/template1/logo/logoo.png",
+                                  logoImageTitle: "Events Logo",
+                                  logoType: "image",
+                                  desc: "Creating Memorable Events With Seamless Planning.",
+                                }
+                            : {
+                                logo: "HAUS Group",
+                                logoImage: "",
+                                logoImageTitle: "",
+                                desc: "Add your footer description here.",
+                              },
+                        )
                       }
                       className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50 px-4 py-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-100"
                     >
@@ -7815,133 +18130,23 @@ export default function EditSectionModal({
                     </button>
                   )}
 
-                  {visibleFooterColumns.map((column, columnIndex) => (
-                    <section
-                      key={`footerColumn-${columnIndex}`}
-                      className="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
+                  {(isNGOFooter
+                    ? visibleFooterColumns.slice(0, 2)
+                    : visibleFooterColumns
+                  ).map((column, columnIndex) =>
+                    renderFooterLinkColumnEditor(column, columnIndex),
+                  )}
+
+                  {!isNGOFooter && (
+                    <button
+                      type="button"
+                      onClick={addFooterColumn}
+                      className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50 px-4 py-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-100"
                     >
-                      <div className="flex items-center justify-between gap-3">
-                        <h3 className="text-sm font-semibold text-gray-900">
-                          Link column {columnIndex + 1}
-                        </h3>
-
-                        <button
-                          type="button"
-                          aria-label={`Delete ${column.title || `link column ${columnIndex + 1}`}`}
-                          onClick={() =>
-                            setPendingFooterSectionDelete({
-                              kind: "column",
-                              label: column.title || `Link column ${columnIndex + 1}`,
-                              index: columnIndex,
-                            })
-                          }
-                          className="flex h-8 w-8 items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
-                        >
-                          <Trash size={14} />
-                        </button>
-                      </div>
-
-                      <div>
-                        <label className="mb-1 block text-xs font-semibold text-slate-600">
-                          Column title
-                        </label>
-
-                        <input
-                          value={column.title}
-                          onChange={(event) =>
-                            updateFooterColumn(
-                              columnIndex,
-                              "title",
-                              event.target.value,
-                            )
-                          }
-                          className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
-                          placeholder="Column title"
-                        />
-                      </div>
-
-                      <div className="space-y-3">
-                        {column.links.map((link, linkIndex) => (
-                          <div
-                            key={`${columnIndex}-${linkIndex}`}
-                            className="grid gap-3 rounded-xl border border-gray-200 bg-[#f8f8f8] p-3 sm:grid-cols-[1fr_1fr_auto]"
-                          >
-                            <div>
-                              <label className="mb-1 block text-xs font-semibold text-slate-600">
-                                Label
-                              </label>
-
-                              <input
-                                value={link.label}
-                                onChange={(event) =>
-                                  updateFooterLink(
-                                    columnIndex,
-                                    linkIndex,
-                                    "label",
-                                    event.target.value,
-                                  )
-                                }
-                                className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
-                                placeholder="Link label"
-                              />
-                            </div>
-
-                            <div>
-                              <label className="mb-1 block text-xs font-semibold text-slate-600">
-                                Link
-                              </label>
-
-                              <input
-                                value={link.href}
-                                onChange={(event) =>
-                                  updateFooterLink(
-                                    columnIndex,
-                                    linkIndex,
-                                    "href",
-                                    event.target.value,
-                                  )
-                                }
-                                className="h-10 w-full rounded-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-600"
-                                placeholder="/page"
-                              />
-                            </div>
-
-                            <div className="flex items-end">
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  removeFooterLink(columnIndex, linkIndex)
-                                }
-                                className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50"
-                                aria-label="Delete footer link"
-                              >
-                                <Trash size={14} />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => addFooterLink(columnIndex)}
-                        disabled={column.links.length >= MAX_FOOTER_LINKS_PER_COLUMN}
-                        className="flex items-center gap-2 rounded-lg border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-600 hover:bg-blue-50 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <Plus size={14} />
-                        Add Link
-                      </button>
-                    </section>
-                  ))}
-
-                  <button
-                    type="button"
-                    onClick={addFooterColumn}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50 px-4 py-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-100"
-                  >
-                    <Plus size={16} />
-                    Add Footer Link Column
-                  </button>
+                      <Plus size={16} />
+                      Add Footer Link Column
+                    </button>
+                  )}
 
                   {activeGenericData?.footerContact ? (
                     <section className="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
@@ -7966,27 +18171,59 @@ export default function EditSectionModal({
                       </div>
 
                       {renderFooterContentField("contactLabel")}
-                      {renderFooterContentField("officeLabel")}
+                      {!isNGOFooter &&
+                        !isEventsFooter &&
+                        renderFooterContentField("officeLabel")}
                       {renderFooterContentField("footerContact")}
                     </section>
                   ) : (
                     <button
                       type="button"
                       onClick={() =>
-                        updateActiveFooterData({
-                          contactLabel: "Call an advisor",
-                          footerContact: {
-                            phone: "+91 98765 43210",
-                            email: "hello@example.com",
-                            location: "Your office address",
-                          },
-                          officeLabel: "Visit us",
-                        })
+                        updateActiveFooterData(
+                          isNGOFooter
+                            ? {
+                                contactLabel: "Contact Info",
+                                footerContact: {
+                                  phone: "987-0986-0987",
+                                  email: "support@huruma.com",
+                                  location:
+                                    "205 Fida Walinton, Tongo New York, Canada",
+                                },
+                              }
+                            : {
+                                contactLabel: "Call an advisor",
+                                footerContact: {
+                                  phone: "+91 98765 43210",
+                                  email: "hello@example.com",
+                                  location: "Your office address",
+                                },
+                                officeLabel: "Visit us",
+                              },
+                        )
                       }
                       className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50 px-4 py-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-100"
                     >
                       <Plus size={16} />
                       Add Contact Details
+                    </button>
+                  )}
+
+                  {isNGOFooter &&
+                    visibleFooterColumns
+                      .slice(2)
+                      .map((column, offset) =>
+                        renderFooterLinkColumnEditor(column, offset + 2),
+                      )}
+
+                  {isNGOFooter && (
+                    <button
+                      type="button"
+                      onClick={addFooterColumn}
+                      className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50 px-4 py-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-100"
+                    >
+                      <Plus size={16} />
+                      Add Footer Link Column
                     </button>
                   )}
 
@@ -8041,7 +18278,7 @@ export default function EditSectionModal({
                         </button>
                       </div>
 
-                      {/* Copyright */}
+                      {!isNGOFooter && (
                       <div>
                         <label className="mb-1 block text-xs font-semibold text-slate-600">
                           Copyright text
@@ -8059,6 +18296,7 @@ export default function EditSectionModal({
                           placeholder="© 2026 HAUS Group. All rights reserved."
                         />
                       </div>
+                      )}
 
                       {/* Legal Links */}
                       <div className="rounded-xl border border-gray-200 bg-[#f8f8f8] p-4">
@@ -8171,7 +18409,7 @@ export default function EditSectionModal({
                         </div>
                       </div>
 
-                      {/* Social Links */}
+                      {!isNGOFooter && (
                       <div className="rounded-xl border border-gray-200 bg-[#f8f8f8] p-4">
                         <div className="mb-4 flex items-center justify-between gap-3">
                           <div>
@@ -8300,12 +18538,27 @@ export default function EditSectionModal({
                             )}
                         </div>
                       </div>
+                      )}
                     </section>
                   ) : (
                     <button
                       type="button"
                       onClick={() =>
-                        updateActiveFooterData({
+                        updateActiveFooterData(
+                          isNGOFooter
+                            ? {
+                                footerLegalLinks: [
+                                  {
+                                    label: "Privacy Policy",
+                                    href: "/privacy-policy",
+                                  },
+                                  {
+                                    label: "Terms & Conditions",
+                                    href: "/terms-conditions",
+                                  },
+                                ],
+                              }
+                            : {
                           copyrightText: `© ${new Date().getFullYear()} HAUS Group. All rights reserved.`,
 
                           ...(showFooterLegalExtras ? { legalTitle: "Legal" } : {}),
@@ -8331,7 +18584,8 @@ export default function EditSectionModal({
                               href: "#",
                             },
                           ],
-                        })
+                        },
+                        )
                       }
                       className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50 px-4 py-4 text-sm font-semibold text-emerald-700 hover:bg-emerald-100"
                     >
@@ -8344,7 +18598,9 @@ export default function EditSectionModal({
               )}
 
             {activeTab.endsWith("Content") &&
-              automaticContentFields.length > 0 && (
+              automaticContentFields.length > 0 &&
+              !(category === "NGO" && activeSectionType === "Footer") &&
+              !(category === "Events" && activeSectionType === "Footer") && (
                 <section className="space-y-4 rounded-xl border border-gray-200 bg-white p-4">
                   <h4 className="text-sm font-bold text-slate-900">
                     Additional Content
@@ -8356,10 +18612,12 @@ export default function EditSectionModal({
                       value={field.value}
                       path={field.path}
                       sectionType={activeSectionType}
+                      category={category}
                       onChange={updateGenericField}
                       onMediaChange={updateGenericMedia}
                       availablePageNames={availablePageNames}
                       cardFields={activeCardFields}
+                      categorySelectOptions={activeCategorySelectOptions}
                     />
                   ))}
                 </section>
@@ -8422,6 +18680,92 @@ export default function EditSectionModal({
                         {(activeBannerData?.bannerSlides ?? []).length <= 1
                           ? "Hide Banner"
                           : "Delete"}
+                      </button>
+                    </div>
+                  </div>
+                </div>,
+                document.body,
+              )}
+
+            {pendingNGOInstagramImageDelete &&
+              createPortal(
+                <div className="fixed inset-0 z-[10030] flex items-center justify-center bg-slate-950/45 px-4">
+                  <div
+                    role="alertdialog"
+                    aria-modal="true"
+                    aria-labelledby="delete-ngo-instagram-image-title"
+                    className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-2xl"
+                  >
+                    <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-600">
+                      <Trash size={20} />
+                    </div>
+                    <h3
+                      id="delete-ngo-instagram-image-title"
+                      className="mt-4 text-xl font-semibold text-slate-950"
+                    >
+                      Delete this image?
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      “{pendingNGOInstagramImageDelete.label}” will be removed
+                      from the About side panel gallery.
+                    </p>
+                    <div className="mt-6 flex justify-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPendingNGOInstagramImageDelete(null)}
+                        className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={confirmPendingNGOInstagramImageDelete}
+                        className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>,
+                document.body,
+              )}
+
+            {pendingNGOPopupSocialLinkDelete &&
+              createPortal(
+                <div className="fixed inset-0 z-[10030] flex items-center justify-center bg-slate-950/45 px-4">
+                  <div
+                    role="alertdialog"
+                    aria-modal="true"
+                    aria-labelledby="delete-ngo-popup-social-title"
+                    className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-2xl"
+                  >
+                    <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-red-50 text-red-600">
+                      <Trash size={20} />
+                    </div>
+                    <h3
+                      id="delete-ngo-popup-social-title"
+                      className="mt-4 text-xl font-semibold text-slate-950"
+                    >
+                      Delete this social icon?
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      “{pendingNGOPopupSocialLinkDelete.label}” will be removed
+                      from the About side panel.
+                    </p>
+                    <div className="mt-6 flex justify-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPendingNGOPopupSocialLinkDelete(null)}
+                        className="rounded-full border border-slate-300 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        onClick={confirmPendingNGOPopupSocialLinkDelete}
+                        className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                      >
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -8589,7 +18933,8 @@ export default function EditSectionModal({
                             disabled={
                               (item.children?.length ?? 0) >= MAX_DROPDOWN_LINKS
                             }
-                            className="h-11 whitespace-nowrap rounded-lg border border-blue-500 bg-white px-3 text-[10px] font-medium leading-tight text-blue-600 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+                            style={{ fontSize: "13px" }}
+                            className="h-11 whitespace-nowrap rounded-lg border border-blue-500 bg-white px-3 font-medium leading-tight text-blue-600 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
                           >
                             Add Dropdown
                           </button>

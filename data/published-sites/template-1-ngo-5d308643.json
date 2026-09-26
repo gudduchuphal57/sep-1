@@ -1,0 +1,2342 @@
+{
+  "id": "template-1-ngo-5d308643",
+  "templateId": "template-1",
+  "category": "NGO",
+  "pageLinks": [
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "About",
+      "href": "#",
+      "children": [
+        {
+          "label": "Overview",
+          "href": "/about-us"
+        },
+        {
+          "label": "Our Projects",
+          "href": "/project"
+        },
+        {
+          "label": "Services",
+          "href": "/service"
+        },
+        {
+          "label": "Industry We Serve",
+          "href": "/industry"
+        },
+        {
+          "label": "Team",
+          "href": "/team"
+        },
+        {
+          "label": "Branches",
+          "href": "/branches"
+        },
+        {
+          "label": "Media",
+          "href": "/media"
+        },
+        {
+          "label": "Awards & Recognition",
+          "href": "/awards"
+        }
+      ]
+    },
+    {
+      "label": "Careers",
+      "href": "/career"
+    },
+    {
+      "label": "Blogs",
+      "href": "/blog"
+    },
+    {
+      "label": "Events",
+      "href": "#",
+      "children": [
+        {
+          "label": "Upcoming Events",
+          "href": "/event"
+        },
+        {
+          "label": "Gallery",
+          "href": "/gallery"
+        }
+      ]
+    },
+    {
+      "label": "Contact",
+      "href": "#",
+      "children": [
+        {
+          "label": "Contact Us",
+          "href": "/contact-us"
+        },
+        {
+          "label": "Support",
+          "href": "/support"
+        }
+      ]
+    },
+    {
+      "label": "Faqs",
+      "href": "/faq"
+    }
+  ],
+  "sections": [
+    {
+      "type": "Topbar",
+      "variant": "Topbar-1",
+      "data": {
+        "Topbar-1": {
+          "topbarBackgroundType": "solid",
+          "topbarBackgroundColor": "#ffffff",
+          "topbarGradientColor": "#256b7a",
+          "topbarTextColor": "#0f172a",
+          "text": [
+            "Fast setup, editable sections, category-ready media"
+          ],
+          "phone": "+1 800-224-3391",
+          "email": "hello@example.com",
+          "location": "14 Maple Grove Avenue, Nairobi",
+          "socialLinks": [
+            {
+              "label": "facebook",
+              "href": "https://www.facebook.com/"
+            },
+            {
+              "label": "twitter",
+              "href": "https://www.twitter.com/"
+            },
+            {
+              "label": "youtube",
+              "href": "https://www.youtube.com/"
+            },
+            {
+              "label": "instagram",
+              "href": "https://www.instagram.com/"
+            }
+          ],
+          "address": "14 Maple Grove Avenue, Nairobi",
+          "phoneHref": "tel:18002243391",
+          "headerCta": {
+            "label": "Donate Now",
+            "href": "/donate"
+          },
+          "buttons": [
+            {
+              "label": "Donate Now",
+              "href": "/donate"
+            }
+          ]
+        },
+        "Topbar-2": {
+          "topbarBackgroundType": "solid",
+          "topbarBackgroundColor": "#17241f",
+          "topbarGradientColor": "#256b7a",
+          "topbarTextColor": "#ffffff",
+          "text": [
+            "Fast setup, editable sections, category-ready media"
+          ],
+          "phone": "+91 98765 43210",
+          "email": "hello@example.com",
+          "location": "India",
+          "socialLinks": [
+            {
+              "label": "facebook",
+              "href": "#"
+            },
+            {
+              "label": "twitter",
+              "href": "#"
+            },
+            {
+              "label": "linkedin",
+              "href": "#"
+            }
+          ]
+        }
+      },
+      "id": "shared-Topbar"
+    },
+    {
+      "type": "Header",
+      "variant": "Header-1",
+      "data": {
+        "Header-1": {
+          "logo": "/logo.png",
+          "headerBackgroundType": "solid",
+          "headerBackgroundColor": "#3d376d",
+          "headerGradientColor": "#0668ff",
+          "headerTextColor": "#f8fafc",
+          "menu": [
+            {
+              "label": "Home",
+              "href": "/"
+            },
+            {
+              "label": "About",
+              "href": "#",
+              "children": [
+                {
+                  "label": "Overview",
+                  "href": "/about-us"
+                },
+                {
+                  "label": "Our Projects",
+                  "href": "/project"
+                },
+                {
+                  "label": "Services",
+                  "href": "/service"
+                },
+                {
+                  "label": "Industry We Serve",
+                  "href": "/industry"
+                },
+                {
+                  "label": "Team",
+                  "href": "/team"
+                },
+                {
+                  "label": "Branches",
+                  "href": "/branches"
+                },
+                {
+                  "label": "Media",
+                  "href": "/media"
+                },
+                {
+                  "label": "Awards & Recognition",
+                  "href": "/awards"
+                }
+              ]
+            },
+            {
+              "label": "Careers",
+              "href": "/career"
+            },
+            {
+              "label": "Blogs",
+              "href": "/blog"
+            },
+            {
+              "label": "Events",
+              "href": "#",
+              "children": [
+                {
+                  "label": "Upcoming Events",
+                  "href": "/event"
+                },
+                {
+                  "label": "Gallery",
+                  "href": "/gallery"
+                }
+              ]
+            },
+            {
+              "label": "Contact",
+              "href": "#",
+              "children": [
+                {
+                  "label": "Contact Us",
+                  "href": "/contact-us"
+                },
+                {
+                  "label": "Support",
+                  "href": "/support"
+                }
+              ]
+            },
+            {
+              "label": "Faqs",
+              "href": "/faq"
+            }
+          ],
+          "buttons": [
+            {
+              "label": "Generate Report",
+              "href": "#",
+              "variant": "primary"
+            },
+            {
+              "label": "Call Us",
+              "href": "#",
+              "variant": "secondary"
+            }
+          ],
+          "logoImage": "/logo.png",
+          "logoType": "image",
+          "header": [
+            {
+              "label": "Home",
+              "href": "/"
+            },
+            {
+              "label": "About",
+              "href": "#",
+              "children": [
+                {
+                  "label": "Overview",
+                  "href": "/about-us"
+                },
+                {
+                  "label": "Our Projects",
+                  "href": "/project"
+                },
+                {
+                  "label": "Services",
+                  "href": "/service"
+                },
+                {
+                  "label": "Industry We Serve",
+                  "href": "/industry"
+                },
+                {
+                  "label": "Team",
+                  "href": "/team"
+                },
+                {
+                  "label": "Branches",
+                  "href": "/branches"
+                },
+                {
+                  "label": "Media",
+                  "href": "/media"
+                },
+                {
+                  "label": "Awards & Recognition",
+                  "href": "/awards"
+                }
+              ]
+            },
+            {
+              "label": "Careers",
+              "href": "/career"
+            },
+            {
+              "label": "Blogs",
+              "href": "/blog"
+            },
+            {
+              "label": "Events",
+              "href": "#",
+              "children": [
+                {
+                  "label": "Upcoming Events",
+                  "href": "/event"
+                },
+                {
+                  "label": "Gallery",
+                  "href": "/gallery"
+                }
+              ]
+            },
+            {
+              "label": "Contact",
+              "href": "#",
+              "children": [
+                {
+                  "label": "Contact Us",
+                  "href": "/contact-us"
+                },
+                {
+                  "label": "Support",
+                  "href": "/support"
+                }
+              ]
+            },
+            {
+              "label": "Faqs",
+              "href": "/faq"
+            }
+          ],
+          "PopupData": {
+            "aboutpopup": {
+              "title": "About Us",
+              "desc": "We believe brand interaction is key in communication. Real innovations and a positive customer experience are the heart of successful communication. No fake products and services. The customer is king, their lives and needs are the inspiration."
+            },
+            "instagram": {
+              "title": "Instagram",
+              "images": [
+                {
+                  "src": "/NGO_Images/children-speaking-holding-book.jpg",
+                  "alt": "Children together"
+                },
+                {
+                  "src": "/NGO_Images/close-up-hand-holding-flowering-plant.jpg",
+                  "alt": "Child portrait"
+                },
+                {
+                  "src": "/NGO_Images/colorful-letters-forming-word-charity.jpg",
+                  "alt": "Happy child"
+                },
+                {
+                  "src": "/NGO_Images/colorful-letters-forming-word-donate.jpg",
+                  "alt": "Child smiling"
+                },
+                {
+                  "src": "/NGO_Images/communication-feedback-chos-role.jpg",
+                  "alt": "Children portrait"
+                },
+                {
+                  "src": "/NGO_Images/community-concept-with-nature-close-up.jpg",
+                  "alt": "Children playing"
+                },
+                {
+                  "src": "/NGO_Images/cropped-hands-women.jpg",
+                  "alt": "Childhood moment"
+                },
+                {
+                  "src": "/NGO_Images/cute-sisters-having-snacks-home.jpg",
+                  "alt": "Child portrait"
+                }
+              ]
+            },
+            "contactpopup": {
+              "phone": "+088 130 629 8615",
+              "phoneHref": "tel:+0881306298615",
+              "separator": "or",
+              "email": "huruma@gmail.com",
+              "emailHref": "mailto:huruma@gmail.com"
+            },
+            "socialLinkspopup": [
+              {
+                "label": "facebook",
+                "href": "#"
+              },
+              {
+                "label": "twitter",
+                "href": "#"
+              },
+              {
+                "label": "instagram",
+                "href": "#"
+              },
+              {
+                "label": "linkedin",
+                "href": "#"
+              },
+              {
+                "label": "pinterest",
+                "href": "#"
+              }
+            ]
+          },
+          "headerCta": {
+            "label": "Donate Now",
+            "href": "/donate"
+          }
+        },
+        "Header-2": {
+          "logo": "Header2",
+          "headerBackgroundType": "solid",
+          "headerBackgroundColor": "#245c6e",
+          "headerGradientColor": "#0668ff",
+          "headerTextColor": "#ffffff",
+          "menu": [
+            {
+              "label": "Home",
+              "href": "#"
+            },
+            {
+              "label": "Services",
+              "href": "#"
+            },
+            {
+              "label": "Contact",
+              "href": "#"
+            }
+          ],
+          "buttons": [
+            {
+              "label": "Call 2",
+              "href": "#"
+            }
+          ]
+        }
+      },
+      "id": "shared-Header"
+    },
+    {
+      "type": "Banner",
+      "variant": "Banner-1",
+      "data": {
+        "Banner-1": {
+          "bannerBackgroundMode": "image",
+          "backgroundImage": "/bg1.jpg",
+          "backgroundImageTitle": "BG1",
+          "backgroundVideo": "",
+          "bannerBackgroundColor": "#0f172a",
+          "bannerGradientColor": "#0ea5e9",
+          "bannerHeight": 70,
+          "pretitle": "Free AI tools from Google Cloud",
+          "title": "Watch your cart shrink.",
+          "desc": "Google AI Studio is the fast path for developers, students, and researchers who want to try Gemini models and start building with the Gemini Developer API. We also offer free tools for common AI use cases, including translation, image and video analysis, speech-to-text, and more.",
+          "buttons": [
+            {
+              "label": "Learn more",
+              "href": "#"
+            }
+          ],
+          "bannerSlides": [
+            {
+              "image": "/NGO_Images/children-holding-hand-group.jpg",
+              "alt": "It is more difficult to give money away",
+              "pretitle": "Haruma",
+              "title": "It is more difficult to give money away",
+              "desc": "Discover curated botanical blends and timeless floral aesthetic crafted to elevate your daily ritual.",
+              "overlayOpacity": 0.55,
+              "button": {
+                "label": "Donate Now",
+                "href": "/donate",
+                "variant": "primary"
+              },
+              "secondButton": {
+                "label": "Become Member",
+                "href": "/team",
+                "variant": "secondary"
+              },
+              "ctaButtons": [
+                {
+                  "label": "Donate Now",
+                  "href": "/donate",
+                  "variant": "primary"
+                },
+                {
+                  "label": "Become Member",
+                  "href": "/team",
+                  "variant": "secondary"
+                }
+              ]
+            },
+            {
+              "image": "/NGO_Images/children-plant-plants-garden.jpg",
+              "alt": "Together, We Can Create Change",
+              "pretitle": "Support Our Mission",
+              "title": "Together, We Can Create Change",
+              "desc": "Your support helps us empower communities, create opportunities, and build a better future for everyone.",
+              "overlayOpacity": 0.55,
+              "button": {
+                "label": "Donate Now",
+                "href": "/donate",
+                "variant": "primary"
+              },
+              "secondButton": {
+                "label": "Become Member",
+                "href": "/team",
+                "variant": "secondary"
+              },
+              "ctaButtons": [
+                {
+                  "label": "Donate Now",
+                  "href": "/donate",
+                  "variant": "primary"
+                },
+                {
+                  "label": "Become Member",
+                  "href": "/team",
+                  "variant": "secondary"
+                }
+              ]
+            },
+            {
+              "image": "/NGO_Images/hands-soil-woman-with-plant-earth-day-future-eco-business-funding-support-closeup-recycle-sustainability-female-volunteer-with-leaf-growth-agriculture-climate-change-ngo.jpg",
+              "alt": "It is more difficult to give money away",
+              "pretitle": "Haruma",
+              "title": "It is more difficult to give money away",
+              "desc": "Discover curated botanical blends and timeless floral aesthetic crafted to elevate your daily ritual.",
+              "overlayOpacity": 0.55,
+              "button": {
+                "label": "Donate Now",
+                "href": "/donate",
+                "variant": "primary"
+              },
+              "secondButton": {
+                "label": "Become Member",
+                "href": "/team",
+                "variant": "secondary"
+              },
+              "ctaButtons": [
+                {
+                  "label": "Donate Now",
+                  "href": "/donate",
+                  "variant": "primary"
+                },
+                {
+                  "label": "Become Member",
+                  "href": "/team",
+                  "variant": "secondary"
+                }
+              ]
+            }
+          ],
+          "slides": [
+            {
+              "title": "It is more difficult to give money away",
+              "pretitle": "Haruma",
+              "desc": "Discover curated botanical blends and timeless floral aesthetic crafted to elevate your daily ritual.",
+              "bgImageUrl": "/NGO_Images/children-holding-hand-group.jpg",
+              "overlayOpacity": 0.55,
+              "ctaButtons": [
+                {
+                  "label": "Donate Now",
+                  "href": "/donate",
+                  "variant": "primary"
+                },
+                {
+                  "label": "Become Member",
+                  "href": "/team",
+                  "variant": "secondary"
+                }
+              ]
+            },
+            {
+              "title": "Together, We Can Create Change",
+              "pretitle": "Support Our Mission",
+              "desc": "Your support helps us empower communities, create opportunities, and build a better future for everyone.",
+              "bgImageUrl": "/NGO_Images/children-plant-plants-garden.jpg",
+              "overlayOpacity": 0.55,
+              "ctaButtons": [
+                {
+                  "label": "Donate Now",
+                  "href": "/donate",
+                  "variant": "primary"
+                },
+                {
+                  "label": "Become Member",
+                  "href": "/team",
+                  "variant": "secondary"
+                }
+              ]
+            },
+            {
+              "title": "It is more difficult to give money away",
+              "pretitle": "Haruma",
+              "desc": "Discover curated botanical blends and timeless floral aesthetic crafted to elevate your daily ritual.",
+              "bgImageUrl": "/NGO_Images/hands-soil-woman-with-plant-earth-day-future-eco-business-funding-support-closeup-recycle-sustainability-female-volunteer-with-leaf-growth-agriculture-climate-change-ngo.jpg",
+              "overlayOpacity": 0.55,
+              "ctaButtons": [
+                {
+                  "label": "Donate Now",
+                  "href": "/donate",
+                  "variant": "primary"
+                },
+                {
+                  "label": "Become Member",
+                  "href": "/team",
+                  "variant": "secondary"
+                }
+              ]
+            }
+          ],
+          "banner": [
+            {
+              "title": "It is more difficult to give money away",
+              "pretitle": "Haruma",
+              "desc": "Discover curated botanical blends and timeless floral aesthetic crafted to elevate your daily ritual.",
+              "bgImageUrl": "/NGO_Images/children-holding-hand-group.jpg",
+              "overlayOpacity": 0.55,
+              "ctaButtons": [
+                {
+                  "label": "Donate Now",
+                  "href": "/donate",
+                  "variant": "primary"
+                },
+                {
+                  "label": "Become Member",
+                  "href": "/team",
+                  "variant": "secondary"
+                }
+              ]
+            },
+            {
+              "title": "Together, We Can Create Change",
+              "pretitle": "Support Our Mission",
+              "desc": "Your support helps us empower communities, create opportunities, and build a better future for everyone.",
+              "bgImageUrl": "/NGO_Images/children-plant-plants-garden.jpg",
+              "overlayOpacity": 0.55,
+              "ctaButtons": [
+                {
+                  "label": "Donate Now",
+                  "href": "/donate",
+                  "variant": "primary"
+                },
+                {
+                  "label": "Become Member",
+                  "href": "/team",
+                  "variant": "secondary"
+                }
+              ]
+            },
+            {
+              "title": "It is more difficult to give money away",
+              "pretitle": "Haruma",
+              "desc": "Discover curated botanical blends and timeless floral aesthetic crafted to elevate your daily ritual.",
+              "bgImageUrl": "/NGO_Images/hands-soil-woman-with-plant-earth-day-future-eco-business-funding-support-closeup-recycle-sustainability-female-volunteer-with-leaf-growth-agriculture-climate-change-ngo.jpg",
+              "overlayOpacity": 0.55,
+              "ctaButtons": [
+                {
+                  "label": "Donate Now",
+                  "href": "/donate",
+                  "variant": "primary"
+                },
+                {
+                  "label": "Become Member",
+                  "href": "/team",
+                  "variant": "secondary"
+                }
+              ]
+            }
+          ]
+        },
+        "Banner-2": {
+          "bannerBackgroundMode": "video",
+          "backgroundImage": "/bg2.jpg",
+          "backgroundImageTitle": "AI rays",
+          "backgroundVideo": "/video.mp4",
+          "bannerBackgroundColor": "#0f172a",
+          "bannerGradientColor": "#0ea5e9",
+          "bannerHeight": 70,
+          "pretitle": "Launch faster with AI",
+          "title": "Build smarter pages in minutes.",
+          "desc": "You can build AI agents with Gemini Enterprise Agent Platform. Get started by exploring Agent Garden for pre-built, customizable blueprints, complete with source code and configuration files.",
+          "buttons": [
+            {
+              "label": "Start building",
+              "href": "#"
+            }
+          ]
+        },
+        "Banner-3": {
+          "bannerHeight": 70,
+          "bannerSlides": [
+            {
+              "image": "/bg1.jpg",
+              "alt": "AI website builder dashboard",
+              "title": "Build Your Website Today",
+              "desc": "Create polished pages from reusable blocks that your backend can update with clean JSON.",
+              "button": {
+                "label": "Get Started",
+                "href": "#",
+                "variant": "primary"
+              }
+            },
+            {
+              "image": "/bg2.jpg",
+              "alt": "AI powered banner design",
+              "title": "Change Every Slide",
+              "desc": "Each slide has its own image, title, description, and button so content stays simple to manage.",
+              "button": {
+                "label": "View Demo",
+                "href": "#",
+                "variant": "primary"
+              }
+            },
+            {
+              "image": "/ai_rays.png",
+              "alt": "AI rays visual",
+              "title": "Ready For Backend Data",
+              "desc": "Send bannerSlides from the backend and this layout will render the slider automatically.",
+              "button": {
+                "label": "Learn More",
+                "href": "#",
+                "variant": "primary"
+              }
+            }
+          ]
+        }
+      },
+      "id": "home-Banner"
+    },
+    {
+      "type": "About",
+      "variant": "About-1",
+      "data": {
+        "About-1": {
+          "pretitle": "Know more of us",
+          "title": {
+            "line1": "An International Independent Charity Organization"
+          },
+          "desc": {
+            "primary": "Your support will help us to make life better living for poor vulnerable children.",
+            "secondary": "We are a non-profit organization working for children and communities in need. Through education, healthcare, and essential support, we aim to create a world where every child has the opportunity to live a healthy, happy, and dignified life."
+          },
+          "desc2": "This integration can help you spend less time on infrastructure management and more time on refining your models to solve complex business problems.",
+          "backgroundImage": "/bg2.jpg",
+          "backgroundImageTitle": "About image",
+          "buttons": [
+            {
+              "label": "Donate Now",
+              "href": "/donate",
+              "variant": "primary",
+              "icon": "heart"
+            },
+            {
+              "label": "More About Us",
+              "href": "/about-us",
+              "variant": "secondary",
+              "icon": "users"
+            }
+          ],
+          "badge": {
+            "icon": "about",
+            "label": "About Us"
+          },
+          "trustBadges": [
+            {
+              "icon": "check",
+              "text": "100% Trusted",
+              "bgColor": "bg-emerald-100",
+              "textColor": "text-emerald-600",
+              "desc": "Transparent & Accountable"
+            },
+            {
+              "icon": "star",
+              "text": "80G Certified",
+              "bgColor": "bg-amber-100",
+              "textColor": "text-amber-600",
+              "desc": "Tax Benifits Available"
+            },
+            {
+              "icon": "heart",
+              "text": "50K+ Lives",
+              "bgColor": "bg-purple-100",
+              "textColor": "text-purple-600",
+              "desc": "Impacted So far"
+            }
+          ],
+          "gallery": {
+            "mainImage": {
+              "src": "/NGO_Images/diverse-community-with-hands-circle.jpg",
+              "alt": "Children smiling together"
+            },
+            "topImage": {
+              "src": "/NGO_Images/girl-is-reading-book-with-word-one-it.jpg",
+              "alt": "Shelter for families"
+            },
+            "sideImage": {
+              "src": "/NGO_Images/girl-is-reading-book-with-word-one-it.jpg",
+              "alt": "Community support"
+            },
+            "playButton": {
+              "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            },
+            "floatingCard": {
+              "icon": "heartHands",
+              "title": "Your Support",
+              "pretitle": "Creates Real",
+              "highlight": "Change"
+            }
+          },
+          "statistics2": [
+            {
+              "icon": "heart",
+              "value": "150+",
+              "label": "Healthcare Campus"
+            },
+            {
+              "icon": "users",
+              "value": "100+",
+              "label": "Vilage Reached"
+            },
+            {
+              "icon": "education",
+              "value": "350+",
+              "label": "Education Program"
+            }
+          ],
+          "statistics": [
+            {
+              "icon": "children",
+              "value": "25,000+",
+              "label": "Children Supported"
+            },
+            {
+              "icon": "education",
+              "value": "350+",
+              "label": "Education Program"
+            },
+            {
+              "icon": "heart",
+              "value": "150+",
+              "label": "HealthCare Camps"
+            },
+            {
+              "icon": "people",
+              "value": "100+",
+              "label": "Village Reached"
+            }
+          ],
+          "background": {
+            "showGradient": true,
+            "showDecorations": true
+          },
+          "banner": {
+            "breadcrumbCurrent": "About us",
+            "breadcrumbHome": "Home",
+            "alt": "about us page ",
+            "overlay": true,
+            "bgImageUrl": "/NGO_Images/girl-with-smile-her-face-is-sitting-classroom-with-other-children.jpg"
+          },
+          "values": {
+            "badge": "Our Values",
+            "title": "What Guides Everything We Do",
+            "items": [
+              {
+                "icon": "heart",
+                "title": "Compassion",
+                "desc": "We put people first and approach every challenge with empathy, kindness, and respect."
+              },
+              {
+                "icon": "shield",
+                "title": "Integrity",
+                "desc": "We remain accountable and transparent in the way we use resources and serve communities."
+              },
+              {
+                "icon": "users",
+                "title": "Inclusion",
+                "desc": "We believe everyone deserves equal opportunities regardless of their background or circumstances."
+              },
+              {
+                "icon": "globe",
+                "title": "Sustainability",
+                "desc": "We focus on solutions that strengthen communities and create lasting positive change."
+              }
+            ]
+          },
+          "cta": {
+            "badge": "Be Part of the Change",
+            "title": "Together, We Can Change Lives",
+            "desc": "Your support can help us reach more children, strengthen communities, and create opportunities for a brighter future.",
+            "button": {
+              "label": "Donate Now",
+              "href": "/donate",
+              "icon": "heart"
+            },
+            "secondaryButton": {
+              "label": "Get Involved",
+              "href": "/volunteer",
+              "icon": "users"
+            }
+          }
+        },
+        "About-2": {
+          "pretitle": "Know More of Us",
+          "title": "About Us",
+          "subtitle": "Luxurious Interior and Industrial Design",
+          "desc": "Modern Elegance: Designs featuring clean lines, neutral palettes, and high-quality materials.",
+          "backgroundImage": "/blackbay.png",
+          "backgroundImageTitle": "Modern luxury living room interior",
+          "sideImage": "/shaye.png",
+          "sideImageTitle": "Luxury interior chair design",
+          "philosophyTitle": "Our Philosophy",
+          "philosophyDesc": "At Britto Charette, we believe in creating luxurious, personalized environments that reflect our clients' tastes and lifestyles.",
+          "buttons": [
+            {
+              "label": "Contact Us",
+              "href": "#",
+              "variant": "primary"
+            }
+          ]
+        }
+      },
+      "id": "home-About"
+    },
+    {
+      "type": "Causes",
+      "variant": "Causes-1",
+      "data": {
+        "Causes-1": {
+          "badge": {
+            "icon": "heart",
+            "label": "Our Causes"
+          },
+          "banner": {
+            "breadcrumbCurrent": "Case Study",
+            "breadcrumbHome": "Home",
+            "bgImageUrl": "/NGO_Images/group-doctors-putting-their-hands-together-closeup.jpg"
+          },
+          "title": {
+            "line1": "The",
+            "highlight": "Causes",
+            "line2": "We Care About"
+          },
+          "description": "Every contribution creates opportunities for children, families, and communities to build a brighter and healthier future together.",
+          "items": [
+            {
+              "image": {
+                "src": "/NGO_Images/group-environmental-conservation-people-hands-planting-aerial-view.jpg",
+                "alt": "Education for poor child"
+              },
+              "icon": "education",
+              "category": "#Education",
+              "title": "Education For Poor Child",
+              "titleLink": "/case-details",
+              "description": "Providing quality education, school supplies, scholarships, and equal learning opportunities for underprivileged children.",
+              "button": {
+                "label": "Donate Now",
+                "href": "/donate",
+                "icon": "arrow"
+              }
+            },
+            {
+              "image": {
+                "src": "/NGO_Images/group-environmental-conservation-people-hands-planting-aerial-view.jpg",
+                "alt": "Donation support"
+              },
+              "icon": "donation",
+              "category": "#Donation",
+              "title": "Massive Donation To Poor",
+              "titleLink": "/case-details",
+              "description": "Supporting families through food distribution, clothing, emergency assistance, and essential daily resources.",
+              "button": {
+                "label": "Donate Now",
+                "href": "/donate",
+                "icon": "arrow"
+              }
+            },
+            {
+              "image": {
+                "src": "/NGO_Images/hands-people-with-diverse-ethnicity.jpg",
+                "alt": "Help homeless children"
+              },
+              "icon": "medical",
+              "category": "#Healthcare",
+              "title": "Huge Help To Homeless Children",
+              "titleLink": "/case-details",
+              "description": "Delivering healthcare, shelter, nutrition, and emotional support to vulnerable children and families in need.",
+              "button": {
+                "label": "Donate Now",
+                "href": "/donate",
+                "icon": "arrow"
+              }
+            },
+            {
+              "image": {
+                "src": "/NGO_Images/happy-diverse-kinds-park.jpg",
+                "alt": "Women empowerment program"
+              },
+              "icon": "women",
+              "category": "#Women Empowerment",
+              "title": "Empowering Women",
+              "titleLink": "/case-details",
+              "description": "Providing skill development, vocational training, financial support, and employment opportunities to help women become independent.",
+              "button": {
+                "label": "Donate Now",
+                "href": "/donate",
+                "icon": "arrow"
+              }
+            },
+            {
+              "image": {
+                "src": "/NGO_Images/medium-shot-happy-kids-posing.jpg",
+                "alt": "Clean water for communities"
+              },
+              "icon": "water",
+              "category": "#Clean Water",
+              "title": "Clean Water For All",
+              "titleLink": "/case-details",
+              "description": "Building water wells, providing purification systems, and creating safe access to clean drinking water for underserved communities.",
+              "button": {
+                "label": "Donate Now",
+                "href": "/donate",
+                "icon": "arrow"
+              }
+            },
+            {
+              "image": {
+                "src": "/NGO_Images/girl-with-smile-her-face-is-sitting-classroom-with-other-children.jpg",
+                "alt": "Community development program"
+              },
+              "icon": "community",
+              "category": "#Community Development",
+              "title": "Building Strong Communities",
+              "titleLink": "/case-details",
+              "description": "Creating stronger communities through livelihood programs, infrastructure support, awareness campaigns, and local development initiatives.",
+              "button": {
+                "label": "Donate Now",
+                "href": "/donate",
+                "icon": "arrow"
+              }
+            }
+          ],
+          "exploreButton": {
+            "label": "Explore More Causes",
+            "href": "/case-study",
+            "icon": "arrow"
+          },
+          "cta": {
+            "bgImageUrl": "/NGO_Images/hands-soil-woman-with-plant-earth-day-future-eco-business-funding-support-closeup-recycle-sustainability-female-volunteer-with-leaf-growth-agriculture-climate-change-ngo.jpg",
+            "title": "Want You Know How Can Help?",
+            "description": "Join our mission by donating, volunteering, or partnering with us to create sustainable change for communities around the world.",
+            "button": {
+              "label": "Donate Now",
+              "href": "/donate",
+              "icon": "arrow"
+            },
+            "decorations": {
+              "showLeaves": true,
+              "showDots": true
+            }
+          }
+        }
+      },
+      "id": "home-Causes"
+    },
+    {
+      "type": "Projects",
+      "variant": "Projects-1",
+      "data": {
+        "Projects-1": {
+          "badge": {
+            "label": "Our Projects"
+          },
+          "banner": {
+            "breadcrumbCurrent": "Projects",
+            "breadcrumbHome": "Home",
+            "bgImageUrl": "/NGO_Images/group-doctors-putting-their-hands-together-closeup.jpg"
+          },
+          "heading": {
+            "title": "Featured Projects",
+            "highlight": "Projects"
+          },
+          "description": "We believe in transparency and real change. Here are some of our ongoing projects improving lives and building a better future.",
+          "items": [
+            {
+              "category": "Education",
+              "title": "Quality Education For All",
+              "description": "Providing free education, books and learning resources to underprivileged children for a brighter future.",
+              "image": "/NGO_Images/hands-soil-woman-with-plant-earth-day-future-eco-business-funding-support-closeup-recycle-sustainability-female-volunteer-with-leaf-growth-agriculture-climate-change-ngo.jpg",
+              "button": {
+                "label": "Learn More",
+                "href": "/project-details/quality-education-for-all"
+              },
+              "icon": "book",
+              "color": "orange"
+            },
+            {
+              "category": "Healthcare",
+              "title": "Healthcare For Every Life",
+              "description": "Organizing health camps, medical support and awareness programs for rural communities.",
+              "image": "/NGO_Images/happy-diverse-kinds-park.jpg",
+              "button": {
+                "label": "Learn More",
+                "href": "/project-details/healthcare-for-every-life"
+              },
+              "icon": "heart",
+              "color": "purple"
+            },
+            {
+              "category": "Clean Water",
+              "title": "Clean Water, Better Life",
+              "description": "Building water wells and supplying safe drinking water to families and villages.",
+              "image": "/NGO_Images/medium-shot-happy-kids-posing.jpg",
+              "button": {
+                "label": "Learn More",
+                "href": "/project-details/clean-water-better-life"
+              },
+              "icon": "drop",
+              "color": "orange"
+            },
+            {
+              "category": "Women Empowerment",
+              "title": "Empowering Women",
+              "description": "Skill development, vocational training and support programs to help women become independent.",
+              "image": "/NGO_Images/multiethnic-adventurer-girls-casual-clothes-crouching-wild-nature-looking-piece-acorn-environment-nature-lovers-concept.jpg",
+              "button": {
+                "label": "Learn More",
+                "href": "/project-details/empowering-women"
+              },
+              "icon": "women",
+              "color": "purple"
+            }
+          ],
+          "cta": {
+            "icon": "heart",
+            "title": "Your Support Can Change Lives",
+            "description": "Every contribution brings hope and creates lasting impact in someone's life.",
+            "button": {
+              "label": "Donate Now",
+              "href": "/donate"
+            }
+          }
+        }
+      },
+      "id": "home-Projects"
+    },
+    {
+      "type": "Events",
+      "variant": "Events-1",
+      "data": {
+        "Events-1": {
+          "badge": {
+            "label": "Upcoming Events"
+          },
+          "banner": {
+            "breadcrumbCurrent": "Events",
+            "breadcrumbHome": "Home",
+            "bgImageUrl": "/NGO_Images/girl-with-smile-her-face-is-sitting-classroom-with-other-children.jpg"
+          },
+          "title": {
+            "line1": "Be Ready",
+            "highlight": "For Our Events"
+          },
+          "description": "Join our upcoming charity programs, fundraising campaigns, and community events to create lasting impact together.",
+          "events": [
+            {
+              "title": "Huruma Con Donation For Poor Child 2026",
+              "image": "/NGO_Images/two-women-are-sitting-bench-one-has-sign-that-says-medical.jpg",
+              "href": "/event-details",
+              "button": {
+                "label": "Join Now",
+                "variant": "primary",
+                "href": "/contact-us"
+              }
+            },
+            {
+              "title": "Poor Funding For Helpless In Africa",
+              "image": "/NGO_Images/volunteers-planting-trees-forest-working-together-environmental-project-aimed-reforestation-ecosystem-restoration.jpg",
+              "href": "/event-details",
+              "button": {
+                "label": "Join Now",
+                "variant": "secondary",
+                "href": "/contact-us"
+              }
+            },
+            {
+              "title": "Education Is Necessary To Poverty Family In Canada",
+              "image": "/NGO_Images/black-white-photo-girl-reading-book-with-words-word-bottom.jpg",
+              "href": "/event-details",
+              "button": {
+                "label": "Join Now",
+                "variant": "primary",
+                "href": "/contact-us"
+              }
+            }
+          ]
+        }
+      },
+      "id": "home-Events"
+    },
+    {
+      "type": "Testimonial",
+      "variant": "Testimonial-1",
+      "data": {
+        "Testimonial-1": {
+          "pretitle": "Precious Journey With You",
+          "title": {
+            "line1": "Don't Believe Us?",
+            "highlight": "See Review"
+          },
+          "desc": "Real feedback from people who found their next home with HAUS Group.",
+          "testimonialItems": [
+            {
+              "name": "Aarav Mehta",
+              "role": "Homebuyer, South Delhi",
+              "quote": "They shortlisted three strong options in a week and made every site visit feel clear and pressure-free.",
+              "image": "https://i.pinimg.com/1200x/44/4e/8e/444e8ee62b093f4e48312a627b91486b.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Neha Kapoor",
+              "role": "First-time renter",
+              "quote": "Honest pricing, verified documents, and advisors who actually answered follow-up questions the same day.",
+              "image": "https://i.pinimg.com/1200x/16/93/de/1693de5f7a785c4ba56af61eca60aed3.jpg",
+              "rating": "4.9"
+            },
+            {
+              "name": "Rahul Verma",
+              "role": "Property investor",
+              "quote": "Neighborhood comps and rental potential were laid out simply — that made the decision much easier.",
+              "image": "https://i.pinimg.com/1200x/d0/18/d3/d018d3646a7d320d800a428b66d7c768.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Isha Malhotra",
+              "role": "Home seller",
+              "quote": "Listing support felt premium without being pushy. We closed with a serious buyer faster than expected.",
+              "image": "https://i.pinimg.com/1200x/c1/c2/51/c1c2516462d7050a0db5ee42e9ea6ef5.jpg",
+              "rating": "4.8"
+            },
+            {
+              "name": "Kabir Anand",
+              "role": "Relocating family",
+              "quote": "School catchments, commute times, and amenity checks were all part of the shortlist. Huge help.",
+              "image": "https://i.pinimg.com/1200x/af/e7/23/afe723e9b040978dd864edcd02c5b641.jpg",
+              "rating": "4.7"
+            },
+            {
+              "name": "Sara Khan",
+              "role": "Apartment buyer",
+              "quote": "From enquiry to registration, the process stayed organized and we always knew the next step.",
+              "image": "https://i.pinimg.com/736x/72/ff/ce/72ffce7dd84957cf5c5bfe270db6afe1.jpg",
+              "rating": "5.0"
+            }
+          ],
+          "badge": {
+            "label": "Testimonials"
+          },
+          "banner": {
+            "breadcrumbCurrent": "Testimonial",
+            "breadcrumbHome": "Home",
+            "bgImageUrl": "/NGO_Images/hands-people-with-diverse-ethnicity.jpg"
+          },
+          "description": "Every contribution helps transform lives and bring hope to communities in need. ",
+          "testimonials": [
+            {
+              "name": "Juhon Dew",
+              "designation": "Charity Blog Creator",
+              "image": "/NGO_Images/hands-soil-woman-with-plant-earth-day-future-eco-business-funding-support-closeup-recycle-sustainability-female-volunteer-with-leaf-growth-agriculture-climate-change-ngo.jpg",
+              "rating": 5,
+              "message": "Supporting this organization has been one of the most rewarding experiences of my life. Every campaign is thoughtfully planned, transparent, and focused on creating meaningful change. I have personally witnessed children receive education, families gain access to healthcare, and entire communities become stronger through their initiatives. Their commitment, honesty, and compassion make me proud to continue contributing and sharing their mission with others."
+            },
+            {
+              "name": "Sarah Williams",
+              "designation": "Community Volunteer",
+              "image": "/NGO_Images/happy-diverse-kinds-park.jpg",
+              "rating": 5,
+              "message": "Volunteering with this NGO has completely transformed my perspective on service and humanity. Every project is organized with professionalism and genuine care for the people they support. The smiles of children, the gratitude of families, and the dedication of the entire team inspire me every single day. I feel honored to be part of an organization that consistently turns hope into real opportunities for those who need it most."
+            },
+            {
+              "name": "Michael Brown",
+              "designation": "Monthly Donor",
+              "image": "/NGO_Images/medium-shot-happy-kids-posing.jpg",
+              "rating": 5,
+              "message": "What impressed me most was the transparency and accountability shown throughout every donation campaign. Regular reports, project updates, and real stories from beneficiaries gave me complete confidence that my contributions were making a genuine impact. Knowing that every donation helps provide education, food, clean water, and healthcare encourages me to remain a long-term supporter."
+            },
+            {
+              "name": "Emily Johnson",
+              "designation": "Education Sponsor",
+              "image": "/NGO_Images/multiethnic-adventurer-girls-casual-clothes-crouching-wild-nature-looking-piece-acorn-environment-nature-lovers-concept.jpg",
+              "rating": 5,
+              "message": "Being able to sponsor a child's education through this foundation has been an unforgettable journey. Receiving progress updates, letters, and photos has allowed me to witness the positive changes firsthand. The organization creates a personal connection between supporters and beneficiaries while maintaining the highest standards of integrity."
+            },
+            {
+              "name": "Daniel Carter",
+              "designation": "Corporate Partner",
+              "image": "/NGO_Images/hands-soil-woman-with-plant-earth-day-future-eco-business-funding-support-closeup-recycle-sustainability-female-volunteer-with-leaf-growth-agriculture-climate-change-ngo.jpg",
+              "rating": 5,
+              "message": "Partnering with this charity has strengthened our company's commitment to social responsibility. Their experienced team manages every project efficiently while ensuring measurable outcomes that truly improve lives. Together we have supported education, healthcare, and disaster relief initiatives for thousands of families."
+            },
+            {
+              "name": "Sophia Martinez",
+              "designation": "Healthcare Volunteer",
+              "image": "/NGO_Images/nature-friends-group-volunteers-with-boxes-help-goals-donation-charity-event-non-profit-food-drive-ngo-people-outdoor-field-community-service-project-collaboration.jpg",
+              "rating": 5,
+              "message": "Working alongside dedicated volunteers and staff members has shown me the incredible difference that compassion and teamwork can make. Every outreach program is carefully planned, ensuring medical assistance reaches families who would otherwise have little access to healthcare."
+            }
+          ]
+        },
+        "Testimonial-2": {
+          "pretitle": "Testimonials",
+          "title": "Trusted by buyers, renters, and homeowners.",
+          "desc": "Real feedback from people who found their next home with HAUS Group.",
+          "testimonialItems": [
+            {
+              "name": "Aarav Mehta",
+              "role": "Homebuyer, South Delhi",
+              "quote": "They shortlisted three strong options in a week and made every site visit feel clear and pressure-free.",
+              "image": "https://i.pinimg.com/1200x/44/4e/8e/444e8ee62b093f4e48312a627b91486b.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Neha Kapoor",
+              "role": "First-time renter",
+              "quote": "Honest pricing, verified documents, and advisors who actually answered follow-up questions the same day.",
+              "image": "https://i.pinimg.com/1200x/16/93/de/1693de5f7a785c4ba56af61eca60aed3.jpg",
+              "rating": "4.9"
+            },
+            {
+              "name": "Rahul Verma",
+              "role": "Property investor",
+              "quote": "Neighborhood comps and rental potential were laid out simply — that made the decision much easier.",
+              "image": "https://i.pinimg.com/1200x/d0/18/d3/d018d3646a7d320d800a428b66d7c768.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Isha Malhotra",
+              "role": "Home seller",
+              "quote": "Listing support felt premium without being pushy. We closed with a serious buyer faster than expected.",
+              "image": "https://i.pinimg.com/1200x/c1/c2/51/c1c2516462d7050a0db5ee42e9ea6ef5.jpg",
+              "rating": "4.8"
+            },
+            {
+              "name": "Kabir Anand",
+              "role": "Relocating family",
+              "quote": "School catchments, commute times, and amenity checks were all part of the shortlist. Huge help.",
+              "image": "https://i.pinimg.com/1200x/af/e7/23/afe723e9b040978dd864edcd02c5b641.jpg",
+              "rating": "4.7"
+            },
+            {
+              "name": "Sara Khan",
+              "role": "Apartment buyer",
+              "quote": "From enquiry to registration, the process stayed organized and we always knew the next step.",
+              "image": "https://i.pinimg.com/736x/72/ff/ce/72ffce7dd84957cf5c5bfe270db6afe1.jpg",
+              "rating": "5.0"
+            }
+          ]
+        },
+        "Testimonial-3": {
+          "pretitle": "Testimonials",
+          "title": "Trusted by buyers, renters, and homeowners.",
+          "desc": "Real feedback from people who found their next home with HAUS Group.",
+          "testimonialItems": [
+            {
+              "name": "Aarav Mehta",
+              "role": "Homebuyer, South Delhi",
+              "quote": "They shortlisted three strong options in a week and made every site visit feel clear and pressure-free.",
+              "image": "https://i.pinimg.com/1200x/44/4e/8e/444e8ee62b093f4e48312a627b91486b.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Neha Kapoor",
+              "role": "First-time renter",
+              "quote": "Honest pricing, verified documents, and advisors who actually answered follow-up questions the same day.",
+              "image": "https://i.pinimg.com/1200x/16/93/de/1693de5f7a785c4ba56af61eca60aed3.jpg",
+              "rating": "4.9"
+            },
+            {
+              "name": "Rahul Verma",
+              "role": "Property investor",
+              "quote": "Neighborhood comps and rental potential were laid out simply — that made the decision much easier.",
+              "image": "https://i.pinimg.com/1200x/d0/18/d3/d018d3646a7d320d800a428b66d7c768.jpg",
+              "rating": "5.0"
+            },
+            {
+              "name": "Isha Malhotra",
+              "role": "Home seller",
+              "quote": "Listing support felt premium without being pushy. We closed with a serious buyer faster than expected.",
+              "image": "https://i.pinimg.com/1200x/c1/c2/51/c1c2516462d7050a0db5ee42e9ea6ef5.jpg",
+              "rating": "4.8"
+            },
+            {
+              "name": "Kabir Anand",
+              "role": "Relocating family",
+              "quote": "School catchments, commute times, and amenity checks were all part of the shortlist. Huge help.",
+              "image": "https://i.pinimg.com/1200x/af/e7/23/afe723e9b040978dd864edcd02c5b641.jpg",
+              "rating": "4.7"
+            },
+            {
+              "name": "Sara Khan",
+              "role": "Apartment buyer",
+              "quote": "From enquiry to registration, the process stayed organized and we always knew the next step.",
+              "image": "https://i.pinimg.com/736x/72/ff/ce/72ffce7dd84957cf5c5bfe270db6afe1.jpg",
+              "rating": "5.0"
+            }
+          ]
+        }
+      },
+      "id": "home-Testimonial"
+    },
+    {
+      "type": "Blog",
+      "variant": "Blog-1",
+      "data": {
+        "Blog-1": {
+          "badge": {
+            "label": "Our Blog"
+          },
+          "banner": {
+            "breadcrumbCurrent": "Blogs & News",
+            "breadcrumbHome": "Home",
+            "bgImageUrl": "/NGO_Images/smiley-young-african-boy-standing-field.jpg"
+          },
+          "title": {
+            "line1": "Check Out Our",
+            "highlight": "Latest News"
+          },
+          "pretitle": "Stay updated with inspiring stories, community achievements, and our latest charity initiatives.",
+          "button": {
+            "label": "View More",
+            "href": "#"
+          },
+          "articles": [
+            {
+              "category": "Poor",
+              "date": "22 January",
+              "title": "Poverty Not Only Means Having Less Money But Fewer Opportunities",
+              "description": "Discover how education, healthcare, and community support can help families overcome poverty and build a brighter future together.",
+              "image": "/NGO_Images/origami-chain-people-with-globe.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            },
+            {
+              "category": "Food",
+              "date": "21 December",
+              "title": "Healthy Meals Bring Hope To Every Child In Need",
+              "description": "Learn how our nutrition programs provide healthy meals to children while supporting their education and overall development.",
+              "image": "/NGO_Images/origami-chain-people-with-globe.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            },
+            {
+              "category": "Health",
+              "date": "23 June",
+              "title": "Medical Support Creates A Better Future For Vulnerable Families",
+              "description": "Read how medical camps, vaccinations, and healthcare initiatives are changing thousands of lives across underserved communities.",
+              "image": "/NGO_Images/people-hands-diversity-with-humanity-unity-inclusion-community-together-banner-closeup-group-social-gathering-with-teamwork-share-charity-poor-civilization-poverty.jpg",
+              "author": "Admin",
+              "href": "blog-details"
+            },
+            {
+              "category": "Education",
+              "date": "12 April",
+              "title": "Education Opens New Doors For Every Child",
+              "description": "Providing school supplies, scholarships, and learning opportunities helps children dream bigger and achieve lasting success.",
+              "image": "/NGO_Images/planet-earth-boy-s-hands-saves-protects-world-environmental-concept-earth-day.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            },
+            {
+              "category": "Women",
+              "date": "18 March",
+              "title": "Empowering Women Through Skills And Employment",
+              "description": "Our vocational training programs enable women to gain financial independence and create sustainable livelihoods.",
+              "image": "/NGO_Images/portrait-cute-girl-with-kitten.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            },
+            {
+              "category": "Community",
+              "date": "5 February",
+              "title": "Volunteers Continue Bringing Smiles To Communities",
+              "description": "Meet the volunteers whose dedication is making a meaningful impact through education, food drives, and relief programs.",
+              "image": "/NGO_Images/portrait-cute-girl-with-kitten.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            }
+          ],
+          "blogItems": [
+            {
+              "category": "Poor",
+              "date": "22 January",
+              "title": "Poverty Not Only Means Having Less Money But Fewer Opportunities",
+              "description": "Discover how education, healthcare, and community support can help families overcome poverty and build a brighter future together.",
+              "image": "/NGO_Images/origami-chain-people-with-globe.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            },
+            {
+              "category": "Food",
+              "date": "21 December",
+              "title": "Healthy Meals Bring Hope To Every Child In Need",
+              "description": "Learn how our nutrition programs provide healthy meals to children while supporting their education and overall development.",
+              "image": "/NGO_Images/origami-chain-people-with-globe.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            },
+            {
+              "category": "Health",
+              "date": "23 June",
+              "title": "Medical Support Creates A Better Future For Vulnerable Families",
+              "description": "Read how medical camps, vaccinations, and healthcare initiatives are changing thousands of lives across underserved communities.",
+              "image": "/NGO_Images/people-hands-diversity-with-humanity-unity-inclusion-community-together-banner-closeup-group-social-gathering-with-teamwork-share-charity-poor-civilization-poverty.jpg",
+              "author": "Admin",
+              "href": "blog-details"
+            },
+            {
+              "category": "Education",
+              "date": "12 April",
+              "title": "Education Opens New Doors For Every Child",
+              "description": "Providing school supplies, scholarships, and learning opportunities helps children dream bigger and achieve lasting success.",
+              "image": "/NGO_Images/planet-earth-boy-s-hands-saves-protects-world-environmental-concept-earth-day.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            },
+            {
+              "category": "Women",
+              "date": "18 March",
+              "title": "Empowering Women Through Skills And Employment",
+              "description": "Our vocational training programs enable women to gain financial independence and create sustainable livelihoods.",
+              "image": "/NGO_Images/portrait-cute-girl-with-kitten.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            },
+            {
+              "category": "Community",
+              "date": "5 February",
+              "title": "Volunteers Continue Bringing Smiles To Communities",
+              "description": "Meet the volunteers whose dedication is making a meaningful impact through education, food drives, and relief programs.",
+              "image": "/NGO_Images/portrait-cute-girl-with-kitten.jpg",
+              "author": "Admin",
+              "href": "/blog-details"
+            }
+          ]
+        }
+      },
+      "id": "home-Blog"
+    },
+    {
+      "id": "CustomPage-about",
+      "page": "about",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "About",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "About",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "About",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-services",
+      "page": "services",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Services",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-contact",
+      "page": "contact",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Contact",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Contact",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Contact",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-overview",
+      "page": "overview",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Overview",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Overview",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Overview",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-our-projects",
+      "page": "our-projects",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Our Projects",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Our Projects",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Our Projects",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-industry-we-serve",
+      "page": "industry-we-serve",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Industry We Serve",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Industry We Serve",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Industry We Serve",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-team",
+      "page": "team",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Team",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Team",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Team",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-branches",
+      "page": "branches",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Branches",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Branches",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Branches",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-media",
+      "page": "media",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Media",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Media",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Media",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-awards-&-recognition",
+      "page": "awards-&-recognition",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Awards & Recognition",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Awards & Recognition",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Awards & Recognition",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-careers",
+      "page": "careers",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Careers",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Careers",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Careers",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-blogs",
+      "page": "blogs",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Blogs",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Blogs",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Blogs",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-upcoming-events",
+      "page": "upcoming-events",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Upcoming Events",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Upcoming Events",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Upcoming Events",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-gallery",
+      "page": "gallery",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Gallery",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Gallery",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Gallery",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-contact-us",
+      "page": "contact-us",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Contact Us",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Contact Us",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Contact Us",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-support",
+      "page": "support",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Support",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Support",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Support",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "id": "CustomPage-faqs",
+      "page": "faqs",
+      "type": "About",
+      "variant": "AboutPage-2",
+      "data": {
+        "AboutPage-1": {
+          "pretitle": "Demo content",
+          "title": "Faqs",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-2": {
+          "pretitle": "Demo content",
+          "title": "Faqs",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        },
+        "AboutPage-3": {
+          "pretitle": "Demo content",
+          "title": "Faqs",
+          "desc": "This demo paragraph is loaded from the same JSON content source as the rest of the template. Replace it with the message, offer, or story this page should explain.",
+          "desc2": "Use this section as a simple starting point with a small pretitle, clear heading, useful paragraph, and supporting image.",
+          "sideImage": "/bg1.jpg",
+          "sideImageTitle": "Demo page image"
+        }
+      }
+    },
+    {
+      "type": "Footer",
+      "variant": "Footer-1",
+      "data": {
+        "Footer-1": {
+          "logo": "BlackBay",
+          "desc": "Editable website content powered by one category and template JSON file.",
+          "footerBackgroundType": "solid",
+          "footerBackgroundColor": "#0d1f2a",
+          "footerGradientColor": "#1d4ed8",
+          "footerTextColor": "#ffffff",
+          "footerMutedTextColor": "#cbd5e1",
+          "footerSocialLinks": [
+            {
+              "label": "facebook",
+              "href": "#"
+            },
+            {
+              "label": "instagram",
+              "href": "#"
+            },
+            {
+              "label": "twitter",
+              "href": "#"
+            },
+            {
+              "label": "linkedin",
+              "href": "#"
+            }
+          ],
+          "footerColumns": [
+            {
+              "title": "Pages",
+              "links": [
+                {
+                  "label": "Home",
+                  "href": "#"
+                },
+                {
+                  "label": "About",
+                  "href": "#about"
+                },
+                {
+                  "label": "Service",
+                  "href": "#service"
+                },
+                {
+                  "label": "Gallery",
+                  "href": "#gallery"
+                },
+                {
+                  "label": "Contact",
+                  "href": "#contact"
+                }
+              ]
+            },
+            {
+              "title": "Sections",
+              "links": [
+                {
+                  "label": "Listings",
+                  "href": "#"
+                },
+                {
+                  "label": "Services",
+                  "href": "#"
+                },
+                {
+                  "label": "Programs",
+                  "href": "#"
+                },
+                {
+                  "label": "FAQ",
+                  "href": "#faq"
+                }
+              ]
+            }
+          ],
+          "footerContact": {
+            "location": "India",
+            "email": "hello@example.com",
+            "phone": "+91 98765 43210"
+          },
+          "footerLegalLinks": [
+            {
+              "label": "Privacy Policy",
+              "href": "#privacy"
+            },
+            {
+              "label": "Terms",
+              "href": "#terms"
+            }
+          ],
+          "copyrightText": "Copyright 2026. All rights reserved.",
+          "logoImage": "/etacard.png",
+          "logoImageTitle": "ETA Card logo",
+          "whatsappLink": "https://api.whatsapp.com/send?phone=962786336414",
+          "callLink": "tel:+919876543210",
+          "newsletter": {
+            "title": "Join Our Newsletter",
+            "description": "News letter dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+            "placeholder": "Enter your email",
+            "buttonLabel": "Subscribe Now",
+            "buttonIcon": "arrow-right"
+          },
+          "contactInfo": {
+            "title": "Contact Info",
+            "location": {
+              "label": "LOCATION",
+              "address": "205 Fida Walinton, Tongo New York, Canada",
+              "icon": "map-pin"
+            },
+            "phone": {
+              "label": "CALL US",
+              "number": "987-0986-0987",
+              "href": "tel:98709860987",
+              "icon": "phone"
+            },
+            "email": {
+              "label": "EMAIL US",
+              "address": "support@huruma.com",
+              "href": "mailto:support@huruma.com",
+              "icon": "mail"
+            }
+          },
+          "support": {
+            "title": "Our Support",
+            "links": [
+              {
+                "label": "Donate Now",
+                "href": "/donate"
+              },
+              {
+                "label": "Our Partners",
+                "href": "/partners"
+              },
+              {
+                "label": "CSR",
+                "href": "/csr"
+              }
+            ]
+          },
+          "services": {
+            "title": "Our Services",
+            "links": [
+              {
+                "label": "Enquiry Now",
+                "href": "/enquiry"
+              },
+              {
+                "label": "Frenchise",
+                "href": "/frenchise"
+              },
+              {
+                "label": "Case Study",
+                "href": "/case-study"
+              },
+              {
+                "label": "Testimonial",
+                "href": "/testimonial"
+              },
+              {
+                "label": "Brochure",
+                "href": "/brochure"
+              }
+            ]
+          },
+          "recentNews": {
+            "title": "Recent Blogs",
+            "items": [
+              {
+                "title": "Support About Poverty To Poor Family",
+                "date": "22 January 2025",
+                "image": "/NGO_Images/black-white-photo-girl-reading-book-with-words-word-bottom.jpg",
+                "href": "/blog-details"
+              },
+              {
+                "title": "Mostly Suffered School Boys Care",
+                "date": "24 January 2024",
+                "image": "/NGO_Images/charity-volunteer-giving-helping-hands.jpg",
+                "href": "/blog-details"
+              },
+              {
+                "title": "Mostly Suffered School Boys Care",
+                "date": "24 January 2024",
+                "image": "/NGO_Images/charity-volunteer-giving-helping-hands.jpg",
+                "href": "/blog-details"
+              }
+            ]
+          },
+          "bottomBar": {
+            "copyright": "Copyright © 2026. All rights reserved. Powered by Lestow.",
+            "links": [
+              {
+                "label": "Refund Policy",
+                "href": "/refund-policy"
+              },
+              {
+                "label": "Cookie Policy",
+                "href": "/cookie-policy"
+              },
+              {
+                "label": "Disclaimer ",
+                "href": "/disclaimer"
+              },
+              {
+                "label": "Terms & Conditions",
+                "href": "/terms-conditions"
+              },
+              {
+                "label": "Privacy Policy",
+                "href": "/privacy-policy"
+              },
+              {
+                "label": "Sitemap",
+                "href": "/sitemap"
+              }
+            ]
+          }
+        }
+      },
+      "id": "shared-Footer"
+    }
+  ],
+  "publishedAt": "2026-09-05T07:16:55.839Z"
+}

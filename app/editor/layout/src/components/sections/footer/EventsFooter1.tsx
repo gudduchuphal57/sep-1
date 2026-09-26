@@ -9,6 +9,8 @@ import {
   FaLinkedinIn,
   FaMapMarkerAlt,
   FaPhoneAlt,
+  FaPinterestP,
+  FaYoutube,
 } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import type { SectionData, SectionProps } from "../../../types/section";
@@ -60,17 +62,40 @@ const socialIcons: Record<string, React.ReactNode> = {
   twitter: <FaXTwitter className="h-5 w-5" />,
   x: <FaXTwitter className="h-5 w-5" />,
   linkedin: <FaLinkedinIn className="h-5 w-5" />,
+  youtube: <FaYoutube className="h-5 w-5" />,
+  pinterest: <FaPinterestP className="h-5 w-5" />,
+  pintest: <FaPinterestP className="h-5 w-5" />,
 };
 
 export default function EventsFooter1({ data = {} }: SectionProps) {
   const preview = useOptionalPreview();
   const columns = (data.footerColumns ?? []) as FooterColumn[];
-  const socialLinks = (data.footerSocialLinks ??
-    data.socialLinks ??
-    []) as FooterLink[];
+  const storedSocialLinks = (data.footerSocialLinks ?? []) as FooterLink[];
+  const editorSocialLinks = (data.socialLinks ?? []) as FooterLink[];
+  const socialLinks =
+    editorSocialLinks.length >= storedSocialLinks.length
+      ? editorSocialLinks
+      : storedSocialLinks;
   const legalLinks = (data.footerLegalLinks ?? []) as FooterLink[];
   const logoImage = toText(data.logoImage);
   const logoText = toText(data.logo);
+  const logoType =
+    data.logoType === "image" ||
+    data.logoType === "text" ||
+    data.logoType === "image-text"
+      ? data.logoType
+      : logoImage && logoText
+        ? "image-text"
+        : logoImage
+          ? "image"
+          : "text";
+  const showLogoImage =
+    Boolean(logoImage) &&
+    (logoType === "image" || logoType === "image-text");
+  const showLogoText =
+    Boolean(logoText) &&
+    (logoType === "text" || logoType === "image-text");
+  const logoDesc = toText(data.desc);
   const contact = data.footerContact;
   const footerSolidColor = toText(data.footerBackgroundColor) ?? "#230f20";
   const footerGradientColor =
@@ -110,38 +135,35 @@ export default function EventsFooter1({ data = {} }: SectionProps) {
                 data-editor-no-inline
                 onClick={(event) => handleNavigate(event, "/", "Home")}
               >
-                {logoImage ? (
+                {showLogoImage ? (
                   <div className="flex items-center">
                     <div className="flex h-16 w-16 items-center justify-center">
                       <Image
-                        src={logoImage}
+                        src={logoImage!}
                         alt={data.logoImageTitle ?? logoText ?? "Logo"}
                         width={64}
                         height={64}
-                        unoptimized={isUnoptimizedImageSrc(logoImage)}
+                        unoptimized={isUnoptimizedImageSrc(logoImage!)}
                         className="object-contain"
                       />
                     </div>
-                    <div className="flex items-center">
-                      {logoText && (
-                        <span className="text-md font-bold uppercase text-[#d61b58]">
-                          {logoText}
-                        </span>
-                      )}
-                    </div>
+                    {showLogoText ? (
+                      <span className="text-md font-bold uppercase text-[#d61b58]">
+                        {logoText}
+                      </span>
+                    ) : null}
                   </div>
-                ) : (
+                ) : showLogoText ? (
                   <div className="text-md font-bold uppercase text-[#d61b58]">
                     {logoText}
                   </div>
-                )}
-
-                {data.desc && (
-                  <p className="text-md mt-2 max-w-md leading-relaxed opacity-80">
-                    {data.desc}
-                  </p>
-                )}
+                ) : null}
               </Link>
+              {logoDesc ? (
+                <p className="text-md mt-2 max-w-md leading-relaxed opacity-80">
+                  {logoDesc}
+                </p>
+              ) : null}
 
               {socialLinks.length > 0 && (
                 <div className="flex flex-wrap gap-4 pt-4">

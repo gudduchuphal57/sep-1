@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import type { EventsBlogPostData, SectionProps } from "../../../types/section";
 import { isUnoptimizedImageSrc } from "../../../lib/media";
+import { eventsIconMap, renderEventsIcon } from "../../../lib/eventsIcons";
 import useCardPagination from "../types/useCardPagination";
 import EventsPagination1 from "./EventsPagination1";
 
@@ -144,7 +145,11 @@ export default function EventsBlogGrid1({ data = {} }: SectionProps) {
                     aria-hidden="true"
                     className="transition-transform duration-200 group-hover:translate-x-1.5"
                   >
-                    {buttonIcon}
+                    {buttonIcon &&
+                    (eventsIconMap[buttonIcon] ||
+                      buttonIcon.startsWith("Icon"))
+                      ? renderEventsIcon(buttonIcon, "h-4 w-4")
+                      : buttonIcon}
                   </span>
                 </Link>
               </div>

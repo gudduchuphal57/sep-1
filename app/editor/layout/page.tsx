@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowUp, MessageCircle, Phone } from "lucide-react";
 import { generalSansMedium } from "@/app/fonts";
@@ -10,6 +10,8 @@ import {
   createCategoryPageFromLabel,
   createCategoryPageFromHref,
   createCustomPageSection,
+  getTemplateHomeSignature,
+  insertMissingHomeSections,
 } from "./src/data/templateFlow";
 import {
   getPageVariantForSlug,
@@ -18,6 +20,11 @@ import {
 import { getSectionComponent } from "./src/lib/sectionRegistry";
 import { toSubsectionOrder } from "./src/lib/subsectionOrder";
 import { sectionWrapperBoxesPerRow } from "./src/lib/boxLayout";
+import {
+  getChromeSectionData,
+  getChromeStickyMode,
+  getChromeStickyOffset,
+} from "./src/lib/chromeSticky";
 
 import EditableSection from "./src/components/builder/EditableSection";
 import type { EditorSubsectionScope } from "./src/components/builder/EditableSection";
@@ -125,7 +132,9 @@ const addCustomPageSectionsForLinks = (
   pageLinks: EditorPageLink[],
 ) => {
   const uniqueLinks = Array.from(
-    new Map(flattenPageLinks(pageLinks).map((link) => [link.href, link])).values(),
+    new Map(
+      flattenPageLinks(pageLinks).map((link) => [link.href, link]),
+    ).values(),
   );
 
   return uniqueLinks.reduce((nextSections, link) => {
@@ -135,7 +144,10 @@ const addCustomPageSectionsForLinks = (
     if (
       !pageSlug ||
       pageSlug === "home" ||
-      nextSections.some((section) => section.page?.toLowerCase() === pageSlug)
+      nextSections.some(
+        (section) =>
+          Boolean(section.page) && sectionMatchesPageRoute(section, pageSlug),
+      )
     ) {
       return nextSections;
     }
@@ -159,8 +171,16 @@ const addCustomPageSectionsForLinks = (
 };
 
 const areMenusEqual = (
-  currentMenu: { label: string; href: string; children?: { label: string; href: string }[] }[] = [],
-  nextMenu: { label: string; href: string; children?: { label: string; href: string }[] }[],
+  currentMenu: {
+    label: string;
+    href: string;
+    children?: { label: string; href: string }[];
+  }[] = [],
+  nextMenu: {
+    label: string;
+    href: string;
+    children?: { label: string; href: string }[];
+  }[],
 ): boolean =>
   currentMenu.length === nextMenu.length &&
   currentMenu.every(
@@ -298,9 +318,10 @@ function EditorLayoutPage() {
   const templateId = searchParams.get("templateId") ?? "template-1";
   const category = searchParams.get("category") ?? "Realestate";
   const page = currentPage || searchParams.get("page") || "home";
+  const homeSignature = getTemplateHomeSignature(category, templateId);
   const initialConfig = useMemo(
     () => buildSelectedConfig(templateId, category),
-    [templateId, category],
+    [templateId, category, homeSignature],
   );
 
   useEffect(() => {
@@ -364,6 +385,7 @@ function EditorPage({
   const [inlineUpdateToast, setInlineUpdateToast] = useState<string | null>(
     null,
   );
+  const [stickyTopbarHeight, setStickyTopbarHeight] = useState(0);
 
   useEffect(() => {
     if (!savedToastSection) return;
@@ -388,16 +410,18 @@ function EditorPage({
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       setSections((prevSections) =>
-        addCustomPageSectionsForLinks(
-          prevSections,
-          category,
-          pageLinks,
-        ),
+        addCustomPageSectionsForLinks(prevSections, category, pageLinks),
       );
     }, 0);
 
     return () => window.clearTimeout(timeout);
   }, [category, pageLinks]);
+
+  useEffect(() => {
+    setSections((prevSections) =>
+      insertMissingHomeSections(prevSections, initialSections),
+    );
+  }, [initialSections]);
 
   useEffect(() => {
     const handlePageAdded = (event: Event) => {
@@ -485,11 +509,11 @@ function EditorPage({
             if (!isRecord(project)) return;
             const hrefSlug =
               typeof project.href === "string"
-                ? project.href
+                ? (project.href
                     .split(/[?#]/, 1)[0]
                     .replace(/\/+$/, "")
                     .split("/")
-                    .pop() ?? ""
+                    .pop() ?? "")
                 : "";
             const slug =
               typeof project.slug === "string" && project.slug.trim()
@@ -690,14 +714,17 @@ function EditorPage({
       }),
     );
     setInlineUpdateToast(
-      `${formatSectionName(sectionType)} ${mediaType === "video" ? "Video" : "Image"
+      `${formatSectionName(sectionType)} ${
+        mediaType === "video" ? "Video" : "Image"
       } - Updated`,
     );
   };
 
   const deleteSection = (sectionId: string) => {
     setSections((prevSections) =>
-      prevSections.filter((section) => (section.id ?? section.type) !== sectionId)
+      prevSections.filter(
+        (section) => (section.id ?? section.type) !== sectionId,
+      ),
     );
 
     setEditingSection(null);
@@ -720,8 +747,7 @@ function EditorPage({
         (section) => section.type === "Footer",
       );
 
-      let insertAt =
-        targetIndex === -1 ? prevSections.length : targetIndex + 1;
+      let insertAt = targetIndex === -1 ? prevSections.length : targetIndex + 1;
 
       // Never place newly added sections below the footer.
       if (footerIndex !== -1 && insertAt > footerIndex) {
@@ -883,8 +909,8 @@ function EditorPage({
     (section) => section.type === "Footer",
   );
   const footerVariantData = footerSection
-    ? footerSection.data?.[footerSection.variant] ??
-    footerSection.data?.["Footer-1"]
+    ? (footerSection.data?.[footerSection.variant] ??
+      footerSection.data?.["Footer-1"])
     : undefined;
   const footerData = isRecord(footerVariantData)
     ? (footerVariantData as SectionData)
@@ -896,11 +922,50 @@ function EditorPage({
   const visibleSections =
     currentPageSlug && currentPageSlug !== "home"
       ? syncedSections.filter(
-        (section) =>
-          pageShellSectionTypes.includes(section.type) ||
-          sectionMatchesPageRoute(section, currentPageSlug),
-      )
+          (section) =>
+            pageShellSectionTypes.includes(section.type) ||
+            sectionMatchesPageRoute(section, currentPageSlug),
+        )
       : syncedSections.filter((section) => !section.page);
+  const chromeStickyFallback = category === "NGO" ? "sticky" : "scroll";
+  const topbarIsSticky = visibleSections.some((section) => {
+    if (section.type !== "Topbar") return false;
+    const activeVariant =
+      getPageVariantForSlug(section, currentPageSlug) ?? section.variant;
+    return (
+      getChromeStickyMode(
+        section,
+        getChromeSectionData(section, activeVariant),
+        chromeStickyFallback,
+      ) === "sticky"
+    );
+  });
+
+  useLayoutEffect(() => {
+    if (!topbarIsSticky) {
+      setStickyTopbarHeight(0);
+      return;
+    }
+
+    const topbar = document.querySelector<HTMLElement>(
+      '[data-chrome-section="Topbar"]',
+    );
+    if (!topbar) {
+      setStickyTopbarHeight(0);
+      return;
+    }
+
+    const updateHeight = () => {
+      setStickyTopbarHeight(topbar.getBoundingClientRect().height);
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(topbar);
+
+    return () => observer.disconnect();
+  }, [topbarIsSticky, visibleSections]);
+
   const scrollToTopbar = () => {
     const scrollContainer = document.querySelector<HTMLElement>(
       "[data-template-scroll]",
@@ -957,12 +1022,17 @@ function EditorPage({
         const sectionData = (
           isRecord(variantData) ? variantData : section.data
         ) as SectionData;
-        const stickyMode =
-          section.type === "Header"
-            ? (sectionData.headerType ?? "scroll")
-            : section.type === "Topbar"
-              ? (sectionData.topbarType ?? "scroll")
-              : "scroll";
+        const stickyMode = getChromeStickyMode(
+          section,
+          sectionData,
+          chromeStickyFallback,
+        );
+        const stickyOffset = getChromeStickyOffset(
+          section.type,
+          stickyMode,
+          topbarIsSticky,
+          stickyTopbarHeight,
+        );
 
         if (!Component) return null;
 
@@ -976,7 +1046,9 @@ function EditorPage({
             }}
             onDelete={() => deleteSection(sectionId)}
             onDeleteSubsection={(subsectionIndex) => {
-              const hiddenSubsections = Array.isArray(sectionData.hiddenSubsections)
+              const hiddenSubsections = Array.isArray(
+                sectionData.hiddenSubsections,
+              )
                 ? sectionData.hiddenSubsections.filter(
                     (index): index is number => typeof index === "number",
                   )
@@ -992,15 +1064,16 @@ function EditorPage({
                 },
               });
             }}
-            onAddSection={(sectionType) => addSectionAfter(sectionId, sectionType)}
-            stickyMode={stickyMode}
-            boxesPerRow={
-              sectionWrapperBoxesPerRow(
-                sectionData,
-                section.type === "Features" ? 4 : undefined,
-                Boolean(section.page),
-              )
+            onAddSection={(sectionType) =>
+              addSectionAfter(sectionId, sectionType)
             }
+            stickyMode={stickyMode}
+            stickyOffset={stickyOffset}
+            boxesPerRow={sectionWrapperBoxesPerRow(
+              sectionData,
+              section.type === "Features" ? 4 : undefined,
+              Boolean(section.page),
+            )}
             hiddenSubsections={
               Array.isArray(sectionData.hiddenSubsections)
                 ? sectionData.hiddenSubsections.filter(
@@ -1064,32 +1137,64 @@ function EditorPage({
           onSelectVariant={updateSectionVariant}
           onUpdateSectionData={updateSectionData}
           onDeleteSection={() =>
-            deleteSection(
-              editingSectionItem.id ?? editingSectionItem.type,
-            )
+            deleteSection(editingSectionItem.id ?? editingSectionItem.type)
           }
         />
       )}
 
-      {savedToastSection && (
-        <div
-          key={savedToastSection}
-          className="fixed bottom-3 left-1/2 z-[10000] w-[min(92vw,300px)] -translate-x-1/2 rounded-[22px] border border-gray-500 bg-blue-600 px-1 py-3 text-center text-lg font-medium text-white shadow-[0_18px_45px_rgba(15,23,42,0.12)]"
-          role="status"
-          aria-live="polite"
-        >
-          {formatSectionName(savedToastSection)} changes saved
-        </div>
-      )}
+      {(savedToastSection || inlineUpdateToast) && (
+        <div className="pointer-events-none fixed right-4 top-[10%] z-10003 flex w-[min(92vw,360px)] flex-col gap-2">
+          {savedToastSection && (
+            <div
+              key={`saved-${savedToastSection}`}
+              className="pointer-events-auto flex items-center justify-between gap-3 rounded-md border border-emerald-300 bg-emerald-100 px-3 py-2 text-xs font-medium text-emerald-800 shadow-[0_4px_12px_rgba(15,23,42,0.12)]"
+              style={{ animation: "editorPopIn 0.22s ease-out" }}
+              role="status"
+              aria-live="polite"
+            >
+              <div className="flex items-center gap-2">
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-[10px] text-white">
+                  ✓
+                </span>
+                <span>
+                  {formatSectionName(savedToastSection)} changes saved
+                </span>
+              </div>
 
-      {inlineUpdateToast && (
-        <div
-          key={inlineUpdateToast}
-          className="fixed right-4 top-4 z-[10003] rounded-lg border border-emerald-200 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 shadow-[0_12px_35px_rgba(15,23,42,0.16)]"
-          role="status"
-          aria-live="polite"
-        >
-          {inlineUpdateToast}
+              <button
+                type="button"
+                className="text-xs leading-none text-emerald-700 hover:text-emerald-900"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          {inlineUpdateToast && (
+            <div
+              key={`inline-${inlineUpdateToast}`}
+              className="pointer-events-auto flex items-center justify-between gap-3 rounded-md border border-emerald-300 bg-emerald-100 px-3 py-2 text-xs font-medium text-emerald-900 shadow-[0_4px_12px_rgba(15,23,42,0.12)]"
+              style={{ animation: "editorPopIn 0.22s ease-out" }}
+              role="status"
+              aria-live="polite"
+            >
+              <div className="flex items-center gap-2">
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-[10px] text-white">
+                  ✓
+                </span>
+                <span>{inlineUpdateToast}</span>
+              </div>
+
+              <button
+                type="button"
+                className="text-xs leading-none text-emerald-700 hover:text-emerald-900"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+          )}
         </div>
       )}
 

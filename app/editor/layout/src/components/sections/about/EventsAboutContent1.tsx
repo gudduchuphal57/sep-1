@@ -69,7 +69,7 @@ export default function EventsAboutContent1({ data = {} }: SectionProps) {
     <section
       ref={sectionRef}
       data-editor-section-label="About Content"
-      data-editor-fields="pretitle description description1 description2 description3 quote quoteRole image imageAlt image2 image2Alt"
+      data-editor-fields="pretitle description description1 quote image imageAlt description2 description3 quoteRole image2 image2Alt"
       className="bg-white"
     >
       <div className="mx-auto mt-8 grid max-w-7xl gap-12 px-4 sm:px-6 md:mt-10 lg:mt-14 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
@@ -91,9 +91,9 @@ export default function EventsAboutContent1({ data = {} }: SectionProps) {
               {description}
             </p>
           )}
-          {data.description2 && (
+          {data.description1 && (
             <p className="text-sm leading-7 text-slate-500 sm:text-base">
-              {data.description2}
+              {data.description1}
             </p>
           )}
           {data.quote && (
@@ -126,11 +126,9 @@ export default function EventsAboutContent1({ data = {} }: SectionProps) {
               : "-translate-x-8 opacity-0"
           }`}
         >
-         
-
-          {data.description1 && (
+          {data.description2 && (
             <p className="text-sm leading-7 text-slate-500 sm:text-base">
-              {data.description1}
+              {data.description2}
             </p>
           )}
           {data.description3 && (

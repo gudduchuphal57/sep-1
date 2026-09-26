@@ -435,7 +435,8 @@ export default function Navbar({ onMenuClick }: HeaderProps) {
                               type="button"
                               disabled={!canAddDropdownLinks}
                               onClick={() => openAddDropdownPopup(page.label)}
-                              className={`rounded px-2 py-1.5 text-[10px] font-semibold text-white transition ${
+                              style={{ fontSize: "13px" }}
+                              className={`rounded px-2 py-1.5 font-semibold text-white transition ${
                                 canAddDropdownLinks
                                   ? "bg-blue-600 hover:bg-blue-700"
                                   : "cursor-not-allowed bg-blue-300"

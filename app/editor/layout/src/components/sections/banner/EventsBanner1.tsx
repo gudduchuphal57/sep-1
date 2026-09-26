@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import type { BannerSlideData, ButtonData, SectionProps } from "../../../types/section";
 import { isUnoptimizedImageSrc } from "../../../lib/media";
@@ -22,7 +23,7 @@ export default function EventsBanner1({ data = {} }: SectionProps) {
         title: slide.title ?? data.title ?? "",
         desc: slide.desc ?? data.desc,
         button: slide.button ?? data.buttons?.[0],
-        secondButton: data.buttons?.[1],
+        secondButton: slide.secondButton ?? data.buttons?.[1],
       }));
     }
 
@@ -41,6 +42,22 @@ export default function EventsBanner1({ data = {} }: SectionProps) {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState<number | null>(null);
+
+  const goToSlide = (nextIndex: number) => {
+    setActiveIndex((current) => {
+      if (current === nextIndex) return current;
+      setPrevIndex(current);
+      return nextIndex;
+    });
+  };
+
+  const goToPrev = () => {
+    goToSlide((activeIndex - 1 + slides.length) % slides.length);
+  };
+
+  const goToNext = () => {
+    goToSlide((activeIndex + 1) % slides.length);
+  };
 
   useEffect(() => {
     if (slides.length <= 1) return undefined;
@@ -117,11 +134,11 @@ export default function EventsBanner1({ data = {} }: SectionProps) {
 
       <div className="relative z-30 mx-auto flex h-full w-full max-w-7xl items-center px-6 py-10 lg:px-8">
         <div className="max-w-3xl space-y-3 text-white">
-          {data.pretitle && (
+          {activeSlide?.pretitle && (
             <div className="inline-flex items-center gap-3 rounded-full border border-white/25 bg-white/15 px-4 py-1.5 shadow-sm backdrop-blur-sm">
               <span className="h-2 w-2 animate-pulse rounded-full bg-[#ff4d7e]" />
               <span className="text-sm font-bold uppercase tracking-widest text-white/90">
-                {data.pretitle}
+                {activeSlide.pretitle}
               </span>
             </div>
           )}
@@ -163,26 +180,29 @@ export default function EventsBanner1({ data = {} }: SectionProps) {
               ) : null;
             })()}
           </div>
-
-          {slides.length > 1 && (
-            <div className="flex items-center gap-2 pt-6">
-              {slides.map((_slide, dotIndex) => (
-                <button
-                  key={dotIndex}
-                  type="button"
-                  onClick={() => setActiveIndex(dotIndex)}
-                  className={`h-2 w-8 cursor-pointer rounded-full transition-all duration-300 ${
-                    dotIndex === activeIndex
-                      ? "bg-white"
-                      : "bg-white/40 hover:bg-white/70"
-                  }`}
-                  aria-label={`Go to slide ${dotIndex + 1}`}
-                />
-              ))}
-            </div>
-          )}
         </div>
       </div>
+
+      {slides.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={goToPrev}
+            className="absolute left-3 top-1/2 z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/35 text-white backdrop-blur-sm transition hover:bg-black/55 sm:left-4 sm:h-11 sm:w-11 md:left-6 md:h-12 md:w-12"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+          </button>
+          <button
+            type="button"
+            onClick={goToNext}
+            className="absolute right-3 top-1/2 z-40 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/35 text-white backdrop-blur-sm transition hover:bg-black/55 sm:right-4 sm:h-11 sm:w-11 md:right-6 md:h-12 md:w-12"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+          </button>
+        </>
+      )}
     </div>
   );
 }

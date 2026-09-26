@@ -143,12 +143,19 @@ export default function EventsTestimonial1({ data = {} }: SectionProps) {
                         <p className="text-sm text-slate-500">{item.role}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1 text-sm font-semibold text-[#d61b58]">
-                      {Array.from({ length: Math.max(0, rating) }).map(
-                        (_, starIdx) => (
-                          <span key={starIdx}>★</span>
-                        ),
-                      )}
+                    <div className="flex items-center gap-1 text-sm font-semibold">
+                      {Array.from({ length: 5 }).map((_, starIdx) => (
+                        <span
+                          key={starIdx}
+                          className={
+                            starIdx < Math.max(0, Math.min(5, rating))
+                              ? "text-[#d61b58]"
+                              : "text-slate-300"
+                          }
+                        >
+                          ★
+                        </span>
+                      ))}
                     </div>
                   </div>
 

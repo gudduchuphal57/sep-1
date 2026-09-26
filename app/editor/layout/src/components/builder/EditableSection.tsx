@@ -52,6 +52,7 @@ type EditableSectionProps = {
     fileName: string,
   ) => void;
   stickyMode?: "scroll" | "sticky";
+  stickyOffset?: number;
   boxesPerRow?: number;
   hiddenSubsections?: number[];
   subsectionOrder?: number[];
@@ -72,6 +73,7 @@ export default function EditableSection({
   onInlineTextEdit,
   onInlineMediaEdit,
   stickyMode = "scroll",
+  stickyOffset = 0,
   boxesPerRow,
   hiddenSubsections = [],
   subsectionOrder,
@@ -423,13 +425,15 @@ export default function EditableSection({
     toolbarY >= hoverBlockBottom - TOOLBAR_HEIGHT - BOTTOM_TOOLBAR_GAP;
   const normalizedLabel = label.toLowerCase();
   const sectionStackClass =
-    normalizedLabel === "topbar"
+    normalizedLabel === "header"
       ? "z-[130]"
-      : normalizedLabel === "header"
+      : normalizedLabel === "topbar"
         ? "z-[120]"
         : "z-0";
   const sectionPositionClass =
-    stickyMode === "sticky" ? "sticky top-0" : "relative";
+    stickyMode === "sticky" ? "sticky" : "relative";
+  const sectionStickyStyle =
+    stickyMode === "sticky" ? { top: stickyOffset } : undefined;
   const innerMainElement = sectionRef.current?.querySelector("main");
   const innerSections = innerMainElement
     ? findInnerSubsections(innerMainElement)
@@ -679,7 +683,9 @@ export default function EditableSection({
           : undefined
       }
       data-hidden-subsections={hiddenSubsections.join(" ") || undefined}
+      data-chrome-section={label}
       className={`group/editor-section isolate ${sectionPositionClass} ${sectionStackClass}`}
+      style={sectionStickyStyle}
       onMouseMove={handleSectionMouseMove}
     >
       {subsectionOrderCss && <style>{subsectionOrderCss}</style>}

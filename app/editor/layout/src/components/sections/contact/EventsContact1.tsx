@@ -1,14 +1,37 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 
-import type { SectionProps } from "../../../types/section";
+import type {
+  EventsContactFormFieldData,
+  SectionProps,
+} from "../../../types/section";
+import { renderEventsIcon } from "../../../lib/eventsIcons";
 
 export default function EventsContact1({ data = {} }: SectionProps) {
   const description = data.desc ?? data.description;
   const leftContent = data.leftContent ?? {};
   const form = data.form ?? {};
+
+  const formFields = useMemo<EventsContactFormFieldData[]>(() => {
+    if (Array.isArray(form.fields) && form.fields.length > 0) {
+      return form.fields;
+    }
+
+    return [
+      { placeholder: form.namePlaceholder ?? "Your Name *", type: "text" },
+      {
+        placeholder: form.emailPlaceholder ?? "Email Address *",
+        type: "email",
+      },
+      { placeholder: form.subjectPlaceholder ?? "Subject *", type: "text" },
+      {
+        placeholder: form.messagePlaceholder ?? "Message *",
+        type: "textarea",
+      },
+    ];
+  }, [form]);
 
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -35,6 +58,7 @@ export default function EventsContact1({ data = {} }: SectionProps) {
     <section
       ref={sectionRef}
       id="contact"
+      data-editor-fields="pretitle title desc leftBadge leftTitle leftTitleHighlight leftDesc features ctaLabel ctaHref form"
       className="mt-8 w-full scroll-mt-24 md:mt-10 lg:mt-14"
     >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -87,9 +111,12 @@ export default function EventsContact1({ data = {} }: SectionProps) {
                 </p>
               )}
 
-              {leftContent.title && (
+              {(leftContent.title || leftContent.titleHighlight) && (
                 <h3 className="mt-2 text-3xl font-black leading-none text-slate-900">
-                  {leftContent.title.split("\n").map((line, index) => (
+                  {(leftContent.titleHighlight
+                    ? [leftContent.title ?? "", leftContent.titleHighlight]
+                    : (leftContent.title ?? "").split("\n")
+                  ).map((line, index) => (
                     <span
                       key={`${line}-${index}`}
                       className={
@@ -112,33 +139,16 @@ export default function EventsContact1({ data = {} }: SectionProps) {
                 {(leftContent.features ?? []).map((feature, index) => (
                   <div key={`${feature.title}-${index}`} className="flex gap-4">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#fde8f2] text-[#d61b58]">
-                      {feature.icon === "shield" && (
-                        <svg
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          aria-hidden
-                        >
-                          <path d="M12 2L4 5v6c0 5.5 3.8 10.7 8 12 4.2-1.3 8-6.5 8-12V5l-8-3z" />
-                        </svg>
-                      )}
-                      {feature.icon === "users" && (
-                        <svg
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          aria-hidden
-                        >
-                          <path d="M16 11a4 4 0 10-4-4 4 4 0 004 4zm-8 1a3 3 0 100-6 3 3 0 000 6zm0 2c-2.7 0-8 1.3-8 4v2h10v-2c0-1.3.6-2.5 1.7-3.4A14 14 0 008 14zm8 0c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z" />
-                        </svg>
-                      )}
+                      {renderEventsIcon(feature.icon, "h-5 w-5")}
                     </div>
 
                     <div>
                       <h4 className="text-lg font-bold text-slate-900">
                         {feature.title}
                       </h4>
-                      <p className="text-slate-600">{feature.description}</p>
+                      <p className="text-slate-600">
+                        {feature.description ?? feature.desc}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -165,31 +175,36 @@ export default function EventsContact1({ data = {} }: SectionProps) {
                 : "translate-y-10 opacity-0"
             }`}
           >
-            <form className="space-y-6" onSubmit={(event) => event.preventDefault()}>
+            <form
+              className="space-y-6"
+              onSubmit={(event) => event.preventDefault()}
+            >
               <div className="grid gap-6 sm:grid-cols-2">
-                <input
-                  type="text"
-                  placeholder={form.namePlaceholder ?? ""}
-                  className="h-14 w-full rounded-3xl border border-[#f3d2df] bg-[#fff5f9] px-4 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-[#d61b58] focus:ring-2 focus:ring-[#d61b58]/10 sm:px-5"
-                />
-                <input
-                  type="email"
-                  placeholder={form.emailPlaceholder ?? ""}
-                  className="h-14 w-full rounded-3xl border border-[#f3d2df] bg-[#fff5f9] px-4 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-[#d61b58] focus:ring-2 focus:ring-[#d61b58]/10 sm:px-5"
-                />
+                {formFields.map((field, index) => {
+                  const isTextarea = field.type === "textarea";
+                  const isFullWidth =
+                    field.width === "full" || isTextarea;
+                  const sharedClassName =
+                    "w-full rounded-3xl border border-[#f3d2df] bg-[#fff5f9] px-4 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-[#d61b58] focus:ring-2 focus:ring-[#d61b58]/10 sm:px-5";
+                  const widthClass = isFullWidth ? "sm:col-span-2" : "";
+
+                  return isTextarea ? (
+                    <textarea
+                      key={`contact-field-${index}`}
+                      rows={4}
+                      placeholder={field.placeholder ?? ""}
+                      className={`${sharedClassName} py-4 ${widthClass}`}
+                    />
+                  ) : (
+                    <input
+                      key={`contact-field-${index}`}
+                      type={field.type ?? "text"}
+                      placeholder={field.placeholder ?? ""}
+                      className={`${sharedClassName} h-14 ${widthClass}`}
+                    />
+                  );
+                })}
               </div>
-
-              <input
-                type="text"
-                placeholder={form.subjectPlaceholder ?? ""}
-                className="h-14 w-full rounded-3xl border border-[#f3d2df] bg-[#fff5f9] px-4 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-[#d61b58] focus:ring-2 focus:ring-[#d61b58]/10 sm:px-5"
-              />
-
-              <textarea
-                rows={4}
-                placeholder={form.messagePlaceholder ?? ""}
-                className="w-full rounded-3xl border border-[#f3d2df] bg-[#fff5f9] px-4 py-4 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:border-[#d61b58] focus:ring-2 focus:ring-[#d61b58]/10 sm:px-5"
-              />
 
               <div className="pt-2">
                 <button
@@ -197,21 +212,9 @@ export default function EventsContact1({ data = {} }: SectionProps) {
                   className="mx-auto flex h-12 w-56 cursor-pointer items-center justify-center gap-3 rounded-3xl bg-[#d61b58] px-8 text-sm font-semibold text-white transition hover:bg-[#b01648]"
                 >
                   {form.buttonLabel}
-                  {form.buttonIcon === "send" && (
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M22 2 11 13" />
-                      <path d="M22 2 15 22 11 13 2 9 22 2Z" />
-                    </svg>
-                  )}
+                  {form.buttonIcon
+                    ? renderEventsIcon(form.buttonIcon, "h-5 w-5")
+                    : null}
                 </button>
               </div>
             </form>

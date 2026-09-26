@@ -30,6 +30,11 @@ const types = [
     icon: Briefcase,
   },
   {
+    title: "NGO",
+    desc: "Non-profit and charity sites",
+    icon: Heart,
+  },
+  {
     title: "Portfolio",
     desc: "Showcase your work",
     icon: FileText,

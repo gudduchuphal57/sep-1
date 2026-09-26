@@ -94,6 +94,61 @@ export const normalizeTemplatePageComponents = (
 export const getCategoryNamesWithContent = () =>
   Object.keys(categoryContent.categories);
 
+export const getTemplateHomeSignature = (
+  category: string,
+  templateId: string,
+) => {
+  const definition =
+    categoryContent.categories[category]?.templateComponents?.[templateId];
+
+  if (!definition || !isTemplateComposition(definition)) return "";
+
+  return normalizeTemplatePageComponents(definition.pages.home?.components)
+    .map((component) => `${component.key}:${component.component}`)
+    .join("|");
+};
+
+export const insertMissingHomeSections = (
+  current: SectionItem[],
+  templateSections: SectionItem[],
+): SectionItem[] => {
+  const templateHome = templateSections.filter((section) => !section.page);
+  const currentHomeTypes = new Set(
+    current.filter((section) => !section.page).map((section) => section.type),
+  );
+  const missing = templateHome.filter(
+    (section) => !currentHomeTypes.has(section.type),
+  );
+
+  if (!missing.length) return current;
+
+  const next = [...current];
+
+  for (const section of missing) {
+    const normalized = {
+      ...section,
+      id: section.id ?? `home-${section.type}`,
+    };
+    const templateIndex = templateHome.findIndex(
+      (item) => item.type === section.type,
+    );
+    const beforeType = templateHome[templateIndex - 1]?.type;
+    let insertAt = next.findIndex((item) => item.type === "Footer");
+    if (insertAt < 0) insertAt = next.length;
+
+    if (beforeType) {
+      const beforeIndex = next.findIndex(
+        (item) => item.type === beforeType && !item.page,
+      );
+      if (beforeIndex >= 0) insertAt = beforeIndex + 1;
+    }
+
+    next.splice(insertAt, 0, normalized);
+  }
+
+  return next;
+};
+
 export type CategoryLayoutOption = {
   id: string;
   name: string;
@@ -113,6 +168,16 @@ const getCategorySectionVariants = (
   return isRecord(categorySection) && isRecord(categorySection.variants)
     ? categorySection.variants
     : {};
+};
+
+export const getCategoryVariantData = (
+  category: string,
+  sectionType: string,
+  componentVariant: string,
+): Record<string, unknown> | undefined => {
+  const variants = getCategorySectionVariants(category, sectionType);
+  const data = variants[componentVariant];
+  return isRecord(data) ? data : undefined;
 };
 
 type CategoryVariantEntry = {
@@ -149,9 +214,22 @@ const getCategoryPageVariantEntries = (
 
           if (
             !match ||
-            normalizeSectionName(match[1]) !== targetSectionName ||
             !isRecord(variantData)
           ) {
+            return [];
+          }
+
+          const matchedSectionName = normalizeSectionName(match[1]);
+          const matchedSectionKey = normalizeSectionName(sectionKey);
+          const matchesTarget =
+            matchedSectionName === targetSectionName ||
+            matchedSectionKey === targetSectionName ||
+            // AboutPage / AboutUsPage editors resolve EventsAboutPage*
+            ((targetSectionName === "aboutpage" ||
+              targetSectionName === "aboutuspage") &&
+              matchedSectionName === "about");
+
+          if (!matchesTarget) {
             return [];
           }
 
@@ -231,8 +309,7 @@ export const getCategoryLayoutOptions = (
           componentVariant,
         ),
     )
-    .map(
-    ([componentVariant, variantData], index) => {
+    .map(([componentVariant, variantData], index) => {
       const match = componentVariant.match(/(\d+)$/);
       const layoutNumber = match ? Number(match[1]) : index + 1;
       const content = isRecord(variantData) ? variantData : {};
@@ -242,8 +319,7 @@ export const getCategoryLayoutOptions = (
         name: getCategoryVariantTitle(content, componentVariant),
         componentVariant,
       };
-    },
-  );
+    });
 };
 
 export const getCategoryPageLayoutOptions = (
@@ -788,6 +864,22 @@ const createDefaultSectionData = (sectionType: string): Record<string, SectionDa
       "Testimonial-1": data,
       "Testimonial-2": data,
       "Testimonial-3": data,
+    };
+  }
+
+  if (sectionType === "Cta") {
+    const data: SectionData = {
+      title: "Want You Know How Can Help?",
+      desc: "Join our mission by donating, volunteering, or partnering with us to create sustainable change for communities around the world.",
+      button: {
+        label: "Donate Now",
+        href: "/donate",
+      },
+    };
+
+    return {
+      "Cta-1": data,
+      "Cta-2": data,
     };
   }
 

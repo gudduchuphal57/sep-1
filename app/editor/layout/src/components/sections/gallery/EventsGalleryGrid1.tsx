@@ -77,7 +77,12 @@ export default function EventsGalleryGrid1({ data = {} }: SectionProps) {
                   {card.image ? (
                     <Image
                       src={card.image}
-                      alt={card.title ?? card.subtitle ?? "Gallery card image"}
+                      alt={
+                        card.imageAlt ??
+                        card.title ??
+                        card.subtitle ??
+                        "Gallery card image"
+                      }
                       fill
                       className="object-cover transition duration-500 group-hover:scale-105"
                       sizes="(max-width: 1024px) 100vw, 33vw"

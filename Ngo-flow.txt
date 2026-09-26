@@ -1,0 +1,319 @@
+NGO TEMPLATE-2 FLOW (copy this for any NEW template)
+====================================================
+Editor URL example:
+  http://localhost:3000/editor?templateId=template-2&category=NGO
+
+Reference source for NGO2 inner pages (GitHub):
+  https://github.com/amanprajapati3/NGO2
+
+Goal when user says "new template bana / is repo se pages bana":
+  1) Match source UI (GitHub / Figma / live site).
+  2) Break each INNER page into editor subsections (not one giant block).
+  3) Wire editor Content + Layout tabs. Do NOT add Box Layout for NGO-style inner pages.
+  4) Do not commit / push unless user asks.
+
+
+NAMING RULES
+------------
+Category folder / JSON key:  NGO  (or Events / Realestate / NEW category same style)
+
+Template id:                 template-2
+Component suffix:            2   (template-1 -> 1, template-3 -> 3)
+
+Home section variant:        NGO{Section}2          e.g. NGOAbout2, NGOBanner2
+Inner PAGE wrapper:          NGO{Page}Page2         e.g. NGOBrochurePage2
+Inner PAGE subsection:       NGO{Page}{Part}2       e.g. NGOBrochureIntro2, NGOBrochureList2
+
+Section TYPE (JSON "key"):   PascalCase, no "Page" unless it already exists
+                             e.g. Brochure, CaseStudy, RefundPolicy, PrivacyPolicy
+                             NOT "BrochurePage" unless Events already used that.
+
+Page SLUG (JSON pages key):  kebab-case, short
+                             e.g. brochure, case-study, refund, privacy
+                             This becomes section.page and editor Page dropdown.
+
+Footer / header HREF:        often longer: /refund-policy, /privacy-policy
+                             If href slug != pages key, add ROUTE ALIAS.
+                             Do NOT duplicate the same page twice under two keys
+                             (that renders the page twice).
+
+data-editor-section-label:   Human label shown in editor.
+  Breadcrumb ALWAYS:         "Breadcrumb"
+  Content blocks:            short name, e.g. "Refund Content", "Brochure Intro"
+  Layout map lookup is:      label.trim().toLowerCase()
+  So label "Refund Content" must match layout key "refund content".
+  If label is "Refund Policy Content" but layout key is "refund content" -> editor Layout tab breaks.
+
+data-editor-fields:          space-separated JSON field names for THAT subsection only.
+                             Do not list banner fields on content, or vice versa.
+
+
+FILE MAP (every inner page)
+---------------------------
+A) Components
+   app/editor/layout/src/components/sections/{folder}/
+     NGO{Page}Page2.tsx          compose page
+     NGO{Page}{Part}2.tsx        one file per visual block
+     NGOPageBanner2 lives in:    .../breadcrumb/NGOPageBanner2.tsx
+                                 REUSE this for all NGO inner pages. Do not invent Box Layout banner.
+
+B) Register components (BOTH import + export object)
+   app/editor/layout/src/lib/sectionRegistry.ts
+
+C) Subsection -> layout variant map + preview
+   app/editor/layout/src/lib/ngoSubsectionLayouts.tsx
+   (For a new category copy this file pattern: eventsSubsectionLayouts / {cat}SubsectionLayouts)
+
+D) Page route aliases (footer href vs pages key)
+   app/editor/layout/src/lib/pageVariantRouting.ts  PAGE_ROUTE_ALIASES
+
+E) Default copy / images / lists
+   app/editor/layout/src/data/categoryContent.json
+     categories.NGO.templateComponents.template-2.pages.{slug}
+     categories.NGO.sections.{SectionType}.variants.{NGO...Page2}
+
+F) Editor wiring (Content fields, Layout tab, no Box Layout, add/delete lists)
+   app/editor/layout/src/components/builder/EditSectionModal.tsx
+
+G) How pages are spawned from JSON
+   app/editor/layout/src/data/templateFlow.ts
+   (reads templateComponents[templateId].pages)
+
+H) Live canvas
+   app/editor/layout/page.tsx
+   Sticky chrome: app/editor/layout/src/lib/chromeSticky.ts
+   Published:     app/published/[siteId]/page.tsx
+
+
+NGO TEMPLATE-2 HOME (pages.home, section.page is EMPTY)
+-------------------------------------------------------
+Shared chrome (template-2.shared):
+  Topbar  -> NGOTopbar2
+  Header  -> NGOHeader2
+  Footer  -> NGOFooter2
+
+Home stack:
+  Banner       NGOBanner2
+  About        NGOAbout2
+  Causes       NGOCauses2
+  Cta          NGOCta2
+  Projects     NGOProjects2
+  Events       NGOEvents2
+  Testimonial  NGOTestimonial2
+  Blog         NGOBlog2
+
+Home sections are SINGLE components (not Page2 wrappers).
+Editor click = whole section. Inner pages are the ones you split.
+
+
+NGO TEMPLATE-2 INNER PAGES (pages.{slug})
+-----------------------------------------
+slug                 key / type            page component
+about                AboutPage             NGOAboutPage2
+gallery              Gallery               NGOGalleryPage2
+blog                 Blog                  NGOBlogPage2
+blog-detail          BlogDetails           NGOBlogDetailsPage2
+contact              Contact               NGOContactPage2
+faq                  FAQ                   NGOFAQPage2
+teams                Teams                 NGOTeamsPage2
+team-detail          TeamDetail            NGOTeamDetailPage2
+careers              Careers               NGOCareersPage2
+careers-apply        CareersApply          NGOCareersApplyPage2   (expand: roles)
+events               EventsPage            NGOEventsPage2
+event-detail         EventDetail           NGOEventDetailPage2    (expand: events)
+awards               AwardsPage            NGOAwardsPage2
+testimonials         TestimonialsPage      NGOTestimonialsPage2
+projects             ProjectsPage          NGOProjectsPage2
+project-detail       ProjectDetail         NGOProjectDetailPage2
+services             Services              NGOServicesPage2
+service-detail       ServiceDetail         NGOServiceDetailPage2  (expand: items)
+support              Support               NGOSupportPage2
+partners             Partners              NGOPartnersPage2
+csr                  CSR                   NGOCsrPage2
+brochure             Brochure              NGOBrochurePage2
+case-study           CaseStudy             NGOCaseStudyPage2
+case-details         CaseDetails           NGOCaseDetailsPage2
+enquiry              Enquiry               NGOEnquiryPage2
+frenchise            Frenchise             NGOFrenchisePage2      (spelling kept)
+branches             Branches              NGOBranchesPage2
+industry             Industry              NGOIndustryPage2
+media                Media                 NGOMediaPage2
+privacy              PrivacyPolicy         NGOPrivacyPolicyPage2
+terms                TermsCondition        NGOTermsConditionPage2
+cookie               CookiePolicy          NGOCookiePolicyPage2
+disclaimer           Disclaimer            NGODisclaimerPage2
+refund               RefundPolicy          NGORefundPolicyPage2
+
+ROUTE ALIASES (href -> pages key). Add both directions.
+  testimonial        <-> testimonials
+  case-details       <-> casedetails, case-detail
+  frenchise          <-> franchise
+  enquiry            <-> enquiry-now, enquirynow
+  refund             <-> refund-policy, refundpolicy
+  privacy            <-> privacy-policy, privacypolicy
+  terms              <-> terms-conditions, termsconditions
+  cookie             <-> cookie-policy, cookiepolicy
+
+Footer legal hrefs in NGOFooter2 data:
+  /refund-policy  /cookie-policy  /disclaimer  /terms-conditions  /privacy-policy
+
+
+HOW ONE INNER PAGE IS BUILT (STEP BY STEP)
+------------------------------------------
+Example: Brochure. Repeat this for every new page on a new template.
+
+STEP 1 - Read source
+  Match GitHub/layout blocks. Inner NGO pages = Banner + N content blocks.
+  Banner is ALWAYS NGOPageBanner2 (label Breadcrumb). Never "Box Layout".
+
+STEP 2 - Create subsection components
+  Folder: app/editor/layout/src/components/sections/brochure/
+  Each visual block = own file.
+  Required on the OUTER <section> of each block:
+    data-editor-section-label="Brochure Intro"
+    data-editor-fields="pretitle title desc features"
+  Must live inside page <main> (editor uses closest("main")).
+
+STEP 3 - Create page composer
+  NGOBrochurePage2.tsx:
+    <main>
+      <NGOPageBanner2 {...getNGOPageBannerProps(data)} />
+      <NGOBrochureIntro2 data={data} />
+      <NGOBrochureList2 data={data} />
+      <NGOBrochureCta2 data={data} />
+    </main>
+  Pass the SAME page data object into every child (flatten fields on page JSON).
+  Nested objects (header.heading) only if you also flatten them in EditSectionModal.
+
+STEP 4 - Register
+  sectionRegistry.ts: import + add to the registry object.
+
+STEP 5 - Layout map (CRITICAL)
+  ngoSubsectionLayouts.tsx ngoSubsectionLayoutByPage:
+    NGOBrochurePage2: {
+      breadcrumb: "NGOPageBanner2",
+      "brochure intro": "NGOBrochureIntro2",
+      brochures: "NGOBrochureList2",
+      "brochure list": "NGOBrochureList2",
+      "together we can": "NGOBrochureCta2",
+      "brochure cta": "NGOBrochureCta2",
+    }
+  Keys = lowercase of data-editor-section-label.
+  Add extra aliases if the label might vary.
+
+STEP 6 - JSON page entry
+  categories.NGO.templateComponents.template-2.pages.brochure = {
+    "components": [{ "key": "Brochure", "component": "NGOBrochurePage2" }]
+  }
+  One component per inner page (the Page2 wrapper). Do not list intro/list/cta here.
+
+STEP 7 - JSON default data
+  categories.NGO.sections.Brochure.variants.NGOBrochurePage2 = { title, banner, breadcrumb, ...block fields }
+  Banner shape:
+    "title": "Brochure",
+    "backgroundImage": "/NGO_Images/....jpg",
+    "banner": { "breadcrumbCurrent", "breadcrumbHome", "bgImageUrl" },
+    "breadcrumb": [{ "label":"Home","href":"/" }, { "label":"Brochure" }]
+
+STEP 8 - Nav / footer links
+  Put href "/brochure" (or aliased path) on Header mega menu / Footer columns.
+
+STEP 9 - EditSectionModal checklist
+  a) componentContentFieldsByVariant:
+       "NGOBrochureIntro2": ["pretitle","title","desc","features"]
+       "NGOBrochureList2": [...]
+       "NGOBrochureCta2": [...]
+       "NGOBrochurePage2": same as first content block (fallback)
+  b) normalizeSectionType aliases if slug has hyphens:
+       brochure -> Brochure, refundpolicy -> RefundPolicy, privacy -> PrivacyPolicy
+  c) isNGO{Page}Section flag OR fold into isNGOAboutPageSubsection list
+     so subsection Content + Layout tabs appear.
+  d) Disable Box Layout for that section type (showBoxLayoutTab exclusions).
+  e) userManageableCollectionFields: add list keys (brochures, conditions, items, ...)
+  f) visibleCardFieldsByCollection: ONLY fields to show per card.
+       conditions: ["title","content"]     // hide id
+       sections: ["title","content"]
+  g) newItems template for Add New (no id unless UI needs it).
+  h) If data is nested (header.heading), flatten on load + write-through on change
+     (see Enquiry / Frenchise in EditSectionModal).
+  i) Form pages (Frenchise / Enquiry): extra Form tab + field max; Layout stays in sidebar.
+
+STEP 10 - Click test in editor
+  Open template, Page dropdown / footer link.
+  Click banner -> Breadcrumb Content + Breadcrumb Layout.
+  Click each block -> "{Label} Content" + "{Label} Layout".
+  Edit text, Add/Delete list items, confirm canvas updates.
+  Check other pages still work (no leftover JSX / getField errors).
+
+
+LEGAL PAGES PATTERN (privacy, terms, cookie, disclaimer, refund)
+----------------------------------------------------------------
+Same UI: banner + stacked title/body list (conditions).
+
+Shared renderer:
+  privacy-policy/NGOLegalContent2.tsx  (editorLabel prop, fields="conditions")
+
+Thin wrappers (so Layout maps to a dedicated variant):
+  NGOPrivacyContent2     label "Privacy Content"
+  NGOTermsContent2       label "Terms Content"
+  NGOCookieContent2      label "Cookie Content"
+  NGODisclaimerContent2  label "Disclaimer Content"
+  NGORefundContent2      label "Refund Content"  (can be standalone copy)
+
+Page composers only banner + that content component.
+JSON list field name: conditions  [{ title, content }]  (id optional, hide in editor).
+
+
+DETAIL / EXPAND PAGES
+---------------------
+careers-apply, event-detail, service-detail use JSON:
+  "expand": "roles" | "events" | "items"
+  "expandSection": parent type
+  "expandVariant": parent page variant
+Keep that if the source has many detail URLs from a list.
+Simple one-off detail (case-details) can be a single fixed page, no expand.
+
+
+EDITOR SUBSECTION RULES (DO NOT BREAK)
+--------------------------------------
+- Labels on nodes INSIDE <main> only.
+- closest("main") is required; missing main = one blob, not component-wise.
+- Layout key must equal lowercase label.
+- Do not change Events Contact limits / Events pages unless user asks.
+- Do not add Box Layout to NGO inner pages.
+- Collection Add/Delete uses userManageableCollectionFields.
+- Hide technical keys (id, slug internals) via visibleCardFieldsByCollection.
+
+
+TOPBAR + HEADER STICKY
+----------------------
+Files:
+  app/editor/layout/src/lib/chromeSticky.ts
+  app/editor/layout/page.tsx
+  app/editor/layout/src/components/builder/EditableSection.tsx
+  app/published/[siteId]/page.tsx
+
+Behavior:
+  One sticky: that bar uses top: 0.
+  BOTH sticky: topbar top:0, header top: measured topbar height.
+  Header z-index (130) ABOVE topbar (120) so overlapping logo stays visible
+  (NGO logo sits on both bars). Do not raise topbar z above header or logo hides.
+
+
+NEW TEMPLATE CHECKLIST (template-3 / new category)
+--------------------------------------------------
+1. Pick suffix N and category key.
+2. Add templateComponents.template-N (shared + pages.home + inner pages).
+3. Add sections.*.variants.NGO*N / NGO*PageN copy (or new content).
+4. Clone components with new suffix; keep same editor labels / field names if layout is same.
+5. Register every new variant.
+6. Add {cat}SubsectionLayouts map for every PageN.
+7. EditSectionModal: fields, is{Cat} flags, box-layout off, aliases, collections.
+8. pageVariantRouting aliases for footer hrefs.
+9. Header/Footer links.
+10. Sticky chrome if template has overlapping logo.
+11. Browser-verify: home + each inner page, editor subsections, sticky, logo overlap.
+
+Do not invent a second pages key for the same screen.
+Do not put inner blocks in templateComponents.pages — only the Page wrapper.
+Match GitHub first, then editor, then stop. No extra docs/commits unless asked.
